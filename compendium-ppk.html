@@ -2619,16 +2619,40 @@
   });
 })();
 </script>
+  
 <script>
 (function () {
   let currentSearchResults = [];
   let currentSearchIndex = -1;
 
+  function getVisibleSearchRoot() {
+    const activeShell = document.querySelector("#guide-app .guide-shell.is-active");
+    if (!activeShell) return document.body;
+
+    const activeArticle = activeShell.querySelector(".guide-article-panel.is-active");
+    if (activeArticle) return activeArticle;
+
+    const activeList = activeShell.querySelector(".guide-list-panel.is-active");
+    if (activeList) return activeList;
+
+    return activeShell;
+  }
+
+  function isActuallyVisible(el) {
+    if (!el) return false;
+
+    const hiddenParent = el.closest(
+      ".guide-shell:not(.is-active), .guide-list-panel:not(.is-active), .guide-article-panel:not(.is-active)"
+    );
+
+    if (hiddenParent) return false;
+
+    return true;
+  }
+
   function getPalette() {
     const styles = getComputedStyle(document.documentElement);
-
-    const theme =
-      document.documentElement.getAttribute("data-color-scheme") || "dark";
+    const theme = document.documentElement.getAttribute("data-color-scheme") || "dark";
 
     const color9 = styles.getPropertyValue("--color9").trim() || "#ffe066";
     const color3 = styles.getPropertyValue("--color3").trim() || "#1a1a1a";
@@ -2723,17 +2747,24 @@
       return;
     }
 
+    const root = getVisibleSearchRoot();
     const regex = new RegExp("(" + escapeRegex(query) + ")", "gi");
     const palette = getPalette();
 
     const walker = document.createTreeWalker(
-      document.body,
+      root,
       NodeFilter.SHOW_TEXT,
       {
         acceptNode: node => {
-          const tag = node.parentElement?.tagName?.toLowerCase();
+          const parent = node.parentElement;
+          if (!parent) return NodeFilter.FILTER_REJECT;
 
+          const tag = parent.tagName?.toLowerCase();
           if (["script", "style", "mark", "textarea"].includes(tag)) {
+            return NodeFilter.FILTER_REJECT;
+          }
+
+          if (!isActuallyVisible(parent)) {
             return NodeFilter.FILTER_REJECT;
           }
 
@@ -2785,7 +2816,7 @@
       node.parentNode.replaceChild(frag, node);
     });
 
-    currentSearchResults = Array.from(document.querySelectorAll(".search-highlight"));
+    currentSearchResults = Array.from(root.querySelectorAll(".search-highlight"));
     currentSearchIndex = currentSearchResults.length ? 0 : -1;
 
     if (currentSearchIndex >= 0) {
@@ -2825,5 +2856,6 @@
   });
 })();
 </script>
+  
 </body>
 </html>
