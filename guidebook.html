@@ -1,0 +1,1357 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Guidebook</title>
+
+  <script>
+    (function () {
+      var STORAGE_KEY = "ppk-theme-preference";
+      var LEGACY_KEY = "color-scheme";
+      var VALID_THEMES = { dark: true, light: true, autumn: true };
+
+      function getSystemTheme() {
+        return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches
+          ? "dark"
+          : "light";
+      }
+
+      function getSavedTheme() {
+        var saved = localStorage.getItem(STORAGE_KEY);
+        if (!saved) {
+          var legacy = localStorage.getItem(LEGACY_KEY);
+          if (VALID_THEMES[legacy]) {
+            saved = legacy;
+            localStorage.setItem(STORAGE_KEY, legacy);
+          }
+        }
+        return VALID_THEMES[saved] ? saved : null;
+      }
+
+      var theme = getSavedTheme() || getSystemTheme();
+      document.documentElement.setAttribute("data-color-scheme", theme);
+    })();
+  </script>
+
+  <!-- CSS DE PUMPKINS -->
+  <link rel="stylesheet" href="https://dl.dropboxusercontent.com/scl/fi/pg06fkxia9gju5idtu6ax/pumpkins.css?rlkey=ljbnr5e7x4bajc554bmd5nmbm&st=hlm2rlvy">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    @font-face {
+      font-family: 'Glow Night';
+      src: url('https://dl.dropboxusercontent.com/scl/fi/sclz8zc7gpxg3w46p3y0w/Glow-Night.otf?rlkey=x33h8no2mt3sdqwntc78fcfb2&st=7eyj8944') format('truetype');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+    :root {
+      --layout-width: 1150px;
+      --layout-padding: 28px;
+      --layout-gap: 25px;
+      --sidebar-width: 261px;
+      --sidebar-collapsed-width: 78px;
+      --highlight-color: var(--color9);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    #layout {
+      width: var(--layout-width);
+      height: 100vh;
+      padding: var(--layout-padding);
+      display: flex;
+      gap: var(--layout-gap);
+      background: var(--color8);
+    }
+    .chatcurieux {
+      position: absolute;
+      margin-top: 10px;
+      margin-left: -3px;
+    }
+    .intro {
+        font: 80px 'Glow Night';
+    color: var(--color5);
+    }
+    .introdiv {
+        height: 100px;
+    background: var(--color13);
+    width: 315px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 25px 30px;
+    }
+    /* ============================================================
+       SIDEBAR
+    ============================================================ */
+
+    #sidebar {
+      width: var(--sidebar-width);
+      min-width: var(--sidebar-width);
+      height: 100%;
+      position: relative;
+      overflow: visible;
+      transition:
+        width 0.78s cubic-bezier(0.16, 1, 0.3, 1),
+        min-width 0.78s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 20;
+    }
+
+    #sidebar.collapsed {
+      width: var(--sidebar-collapsed-width);
+      min-width: var(--sidebar-collapsed-width);
+    }
+
+    #sidebar-shell {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: var(--color1);
+      padding: 19px 17px;
+      border-radius: 15px;
+      box-shadow: 0px 4px 4px var(--dropshadow), var(--panel-1-inset);
+      transition: padding 0.78s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    #sidebar.collapsed #sidebar-shell {
+      padding: 19px 8px;
+    }
+
+    /* bouton fermer le menu = même style visuel que les nav-links */
+    #toggle-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      padding: 5px 15px 5px 8px;
+      margin-bottom: 5px;
+      border-radius: 10px;
+      white-space: nowrap;
+      overflow: hidden;
+      color: var(--color5);
+      text-decoration: none;
+      cursor: pointer;
+      user-select: none;
+      background: transparent;
+      justify-content: flex-start;
+      transition:
+        background 0.25s ease,
+        padding 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+        gap 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    #toggle-btn:hover {
+      background: var(--color6);
+    }
+
+    .toggle-icon-wrap {
+      min-width: 20px;
+      width: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    #toggle-btn i {
+      font-size: 15px;
+      color: var(--color9);
+      flex-shrink: 0;
+      transition: color 0.2s ease;
+    }
+
+    #toggle-label {
+      overflow: hidden;
+      min-width: 0;
+      max-width: 180px;
+      opacity: 1;
+      transform: translateX(0);
+      color: var(--color5);
+      font: bold 18px Calibri;
+      transition:
+        opacity 0.26s ease,
+        max-width 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+        color 0.2s ease;
+    }
+
+    #sidebar.collapsed #toggle-btn {
+      justify-content: center;
+      padding: 8px 0;
+      gap: 0;
+    }
+
+    #sidebar.collapsed #toggle-label {
+      opacity: 0;
+      max-width: 0;
+      transform: translateX(-6px);
+    }
+
+    #sidebar-content {
+      overflow-y: auto;
+      overflow-x: hidden;
+      flex: 1;
+      padding: 8px 0;
+      position: relative;
+    }
+
+    #sidebar-content::-webkit-scrollbar {
+      display: none;
+    }
+
+    .nav-category {
+      display: flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 25px 12px 4px 12px;
+      white-space: nowrap;
+      overflow: hidden;
+      color: var(--color5);
+      font: 14px "Glow Night";
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      transition:
+        padding 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+        opacity 0.26s ease;
+    }
+
+    .nav-category__full,
+    .nav-category__short {
+      display: block;
+      line-height: 1;
+    }
+
+    .nav-category__full {
+      opacity: 1;
+      transition: opacity 0.26s ease;
+    }
+
+    .nav-category__short {
+      display: none;
+      padding: 25px 12px 4px 12px;
+    }
+
+    #sidebar.collapsed .nav-category {
+      justify-content: center;
+      padding: 12px 0 4px 0;
+    }
+
+    #sidebar.collapsed .nav-category__full {
+      display: none;
+    }
+
+    #sidebar.collapsed .nav-category__short {
+      display: block;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 5px 15px 5px 8px;
+      cursor: pointer;
+      width: 100%;
+      margin-bottom: 5px;
+      border-radius: 10px;
+      white-space: nowrap;
+      overflow: hidden;
+      color: var(--color5);
+      text-decoration: none;
+      justify-content: flex-start;
+      transition:
+        background 0.25s ease,
+        padding 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+        gap 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+        color 0.2s ease;
+    }
+
+    .nav-link:hover {
+      background: var(--color6);
+    }
+
+    .nav-link.active {
+      background: var(--color2);
+      font-weight: bold;
+      color: var(--blanc);
+    }
+
+    .nav-link i {
+      font-size: 18px;
+      min-width: 20px;
+      text-align: center;
+      color: var(--color9);
+      flex-shrink: 0;
+      transition: color 0.2s ease;
+      padding-top: 2px;
+    }
+
+    .nav-link .link-label {
+      overflow: hidden;
+      min-width: 0;
+      max-width: 180px;
+      opacity: 1;
+      transform: translateX(0);
+      color: var(--color5);
+      font: bold 18px Calibri;
+      transition:
+        opacity 0.26s ease,
+        max-width 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+        color 0.2s ease;
+    }
+
+    .nav-link.active i,
+    .nav-link.active .link-label {
+      color: var(--blanc);
+    }
+
+    #sidebar.collapsed .nav-link .link-label {
+      opacity: 0;
+      max-width: 0;
+      transform: translateX(-6px);
+    }
+
+    #sidebar.collapsed .nav-link {
+      justify-content: center;
+      padding: 8px 0;
+      gap: 0;
+    }
+
+    /* ============================================================
+       TOOLTIP CUSTOM NAV
+    ============================================================ */
+
+    #nav-tooltip {
+      position: fixed;
+      left: 0;
+      top: 0;
+      transform: translate3d(0, 0, 0);
+      pointer-events: none;
+      z-index: 99999;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.16s ease, visibility 0.16s ease;
+      max-width: 240px;
+      padding: 8px 11px;
+      border-radius: 10px;
+      background: var(--color2);
+      color: var(--blanc);
+      box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.22);
+      font: 15px Calibri;
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+
+    #nav-tooltip.is-visible {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* ============================================================
+       MAIN
+    ============================================================ */
+
+    #main {
+      flex: 1;
+      min-width: 0;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: var(--layout-gap);
+      overflow: visible;
+    }
+
+    #topbar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 14px;
+      min-height: 58px;
+      flex-shrink: 0;
+      background: var(--color1);
+      border-radius: 15px;
+      box-shadow: 0px 4px 4px var(--dropshadow), var(--panel-1-inset);
+    }
+
+    .search-field {
+      position: relative;
+      flex: 1;
+      max-width: 320px;
+    }
+
+    .search-field__icon {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 13px;
+      color: rgba(250, 249, 250, 0.65);
+      pointer-events: none;
+    }
+
+    #search-input {
+      width: 100%;
+      height: 34px;
+      padding: 0 10px 0 32px;
+      border: none;
+      border-radius: 10px;
+      outline: none;
+      background: var(--color3);
+      color: var(--blanc);
+      box-shadow: var(--glass);
+      font: 14px Calibri;
+    }
+
+    #search-input::placeholder {
+      color: rgba(250, 249, 250, 0.65);
+    }
+
+    #search-nav {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      min-width: max-content;
+    }
+
+    #search-count {
+      font: 12px Calibri;
+      color: var(--color5);
+      white-space: nowrap;
+      opacity: 0.8;
+      min-width: 72px;
+      text-align: right;
+    }
+
+    .search-nav-btn {
+      width: 26px;
+      height: 26px;
+      border: none;
+      border-radius: 8px;
+      background: var(--color3);
+      color: var(--blanc);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--glass);
+      transition: 200ms ease;
+    }
+
+    .search-nav-btn:hover:not(:disabled) {
+      background: var(--color2);
+    }
+
+    .search-nav-btn:disabled {
+      opacity: 0.35;
+      cursor: default;
+    }
+
+    .search-nav-btn.hidden {
+      display: none;
+    }
+
+    .search-nav-btn i {
+      font-size: 11px;
+    }
+
+    .topbar-spacer {
+      flex: 1 1 auto;
+    }
+
+    /* ============================================================
+       IFRAME CONTAINER
+    ============================================================ */
+
+    #iframe-container {
+      flex: 1;
+      min-height: 0;
+      overflow: auto;
+      position: relative;
+      background: var(--color1);
+      border-radius: 15px;
+      box-shadow: 0px 4px 4px var(--dropshadow), var(--panel-1-inset);
+    }
+
+    #iframe-container::-webkit-scrollbar {
+      display: none;
+    }
+
+    #placeholder {
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      justify-content: center;
+      height: 100%;
+      text-align: center;
+      padding: 30px;
+      color: var(--color5);
+      gap: 50px;
+      font: 16px Calibri;
+      opacity: 1;
+    }
+
+    .guide-frame {
+      display: none;
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: transparent;
+    }
+
+    .guide-frame.active {
+      display: block;
+    }
+
+    .search-highlight {
+      background-color: var(--highlight-color);
+      border-radius: 2px;
+      color: var(--color3);
+    }
+
+    .search-highlight-current {
+      background-color: var(--color9) !important;
+      color: var(--color3) !important;
+      border-radius: 2px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="layout">
+    <!-- ==================== SIDEBAR ==================== -->
+    <nav id="sidebar">
+      <div id="sidebar-shell">
+        <div class="nav-link" id="toggle-btn" title="Fermer le menu" data-nav-tip="Ouvrir le menu" aria-label="Fermer le menu">
+          <span class="toggle-icon-wrap">
+            <i id="toggle-icon" class="fa-solid fa-angles-left"></i>
+          </span>
+          <span id="toggle-label">Fermer le menu</span>
+        </div>
+
+        <div id="sidebar-content">
+          <div class="nav-category">
+            <span class="nav-category__full">Bien débuter</span>
+            <span class="nav-category__short">01</span>
+          </div>
+
+          <div class="nav-link" data-nav-tip="Règlement" data-frame="frame-reglement" title="Règlement">
+            <i class="fa-solid fa-scroll"></i>
+            <span class="link-label">Règlement</span>
+          </div>
+
+          <div class="nav-link" data-nav-tip="Staff" data-frame="frame-staff" title="Staff">
+            <i class="fa-solid fa-users"></i>
+            <span class="link-label">Staff</span>
+          </div>
+
+          <div class="nav-category">
+            <span class="nav-category__full">Univers</span>
+            <span class="nav-category__short">02</span>
+          </div>
+
+          <div class="nav-link" data-nav-tip="Contexte" data-frame="frame-contexte" title="Contexte">
+            <i class="fa-solid fa-feather-pointed"></i>
+            <span class="link-label">Contexte</span>
+          </div>
+
+          <div class="nav-link" data-nav-tip="Magie & Pouvoirs" data-frame="frame-magie" title="Magie & Pouvoirs">
+            <i class="fa-solid fa-wand-sparkles"></i>
+            <span class="link-label">Magie & Pouvoirs</span>
+          </div>
+
+          <div class="nav-link" data-nav-tip="Origines" data-frame="frame-origines" title="Origines">
+            <i class="fa-solid fa-ghost"></i>
+            <span class="link-label">Origines</span>
+          </div>
+
+          <div class="nav-link" data-nav-tip="Compendium" data-frame="frame-compendium" title="Compendium">
+            <i class="fa-solid fa-book"></i>
+            <span class="link-label">Compendium</span>
+          </div>
+
+          <div class="nav-link" data-nav-tip="PNJ" data-frame="frame-pnj" title="PNJ">
+            <i class="fa-solid fa-hat-wizard"></i>
+            <span class="link-label">PNJ</span>
+          </div>
+
+          <div class="nav-category">
+            <span class="nav-category__full">Mécaniques</span>
+            <span class="nav-category__short">03</span>
+          </div>
+
+          <div class="nav-link" data-nav-tip="Évènements" data-frame="frame-evenements" title="Évènements">
+            <i class="fa-solid fa-moon"></i>
+            <span class="link-label">Évènements</span>
+          </div>
+
+          <div class="nav-link" data-nav-tip="Divers" data-frame="frame-divers" title="Divers">
+            <i class="fa-solid fa-ellipsis"></i>
+            <span class="link-label">Divers</span>
+          </div>
+
+          <div class="nav-category">
+            <span class="nav-category__full">Toujours utiles</span>
+            <span class="nav-category__short">04</span>
+          </div>
+
+          <div class="nav-link" data-nav-tip="Foire aux questions" data-frame="frame-faq" title="Foire aux questions">
+            <i class="fa-solid fa-circle-question"></i>
+            <span class="link-label">Foire aux questions</span>
+          </div>
+
+          <div class="nav-link" data-nav-tip="Codes RP" data-frame="frame-codes" title="Codes RP">
+            <i class="fa-solid fa-code"></i>
+            <span class="link-label">Codes RP</span>
+          </div>
+
+          <a href="/" class="nav-link" data-nav-tip="Retourner au forum" title="Retourner au forum">
+            <i class="fa-solid fa-house"></i>
+            <span class="link-label">Retourner au forum</span>
+          </a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- ==================== MAIN ==================== -->
+    <div id="main">
+      <div id="topbar">
+        <div class="search-field">
+          <i class="fa-solid fa-magnifying-glass search-field__icon"></i>
+          <input type="text" id="search-input" placeholder="Rechercher..." autocomplete="off" />
+        </div>
+
+        <div id="search-nav">
+          <span id="search-count"></span>
+
+          <button type="button" id="search-prev" class="search-nav-btn hidden" aria-label="Occurrence précédente" title="Occurrence précédente">
+            <i class="fa-solid fa-chevron-up"></i>
+          </button>
+
+          <button type="button" id="search-next" class="search-nav-btn hidden" aria-label="Occurrence suivante" title="Occurrence suivante">
+            <i class="fa-solid fa-chevron-down"></i>
+          </button>
+        </div>
+
+        <div class="topbar-spacer"></div>
+
+        <div class="theme-switch glass" id="themeSwitch">
+          <div class="theme-switch-clip">
+            <div class="theme-thumb"></div>
+          </div>
+
+          <button type="button" data-tip="Dark" class="theme-btn fa-tip" data-theme="dark" aria-label="Thème sombre" aria-pressed="false">
+            <i class="fa-solid fa-moon" aria-hidden="true"></i>
+          </button>
+
+          <button type="button" data-tip="Light" class="theme-btn fa-tip" data-theme="light" aria-label="Thème clair" aria-pressed="false">
+            <i class="fa-solid fa-sun" aria-hidden="true"></i>
+          </button>
+
+          <button type="button" data-tip="Autumn" class="theme-btn fa-tip" data-theme="autumn" aria-label="Thème automne" aria-pressed="false">
+            <i class="fa-solid fa-leaf" aria-hidden="true"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="iframe-container">
+        <div id="placeholder"><span class="intro">UDE</span><img data-theme-image="chatCurieux" class="chatcurieux" src="https://2img.net/i.imgur.com/FgOcsFl.png"><div class="introdiv">Sélectionne une section dans le menu pour afficher son contenu !</div></div>
+
+        <iframe id="frame-reglement" class="guide-frame" src="h2-reglement" loading="lazy"></iframe>
+        <iframe id="frame-staff" class="guide-frame" src="h3-staff" loading="lazy"></iframe>
+        <iframe id="frame-contexte" class="guide-frame" src="h4-contexte" loading="lazy"></iframe>
+        <iframe id="frame-magie" class="guide-frame" src="h5-" loading="lazy"></iframe>
+        <iframe id="frame-origines" class="guide-frame" src="h6-" loading="lazy"></iframe>
+        <iframe id="frame-compendium" class="guide-frame" src="https://pumpkinforumrpg-netizen.github.io/ppk/compendium-ppk.html" loading="lazy"></iframe>
+        <iframe id="frame-pnj" class="guide-frame" src="h8-" loading="lazy"></iframe>
+        <iframe id="frame-evenements" class="guide-frame" src="h9-" loading="lazy"></iframe>
+        <iframe id="frame-divers" class="guide-frame" src="h10-" loading="lazy"></iframe>
+        <iframe id="frame-faq" class="guide-frame" src="h11-" loading="lazy"></iframe>
+        <iframe id="frame-codes" class="guide-frame" src="h12-" loading="lazy"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <div id="nav-tooltip" aria-hidden="true"></div>
+
+<script>
+/* ============================================================
+   1. TOGGLE SIDEBAR
+============================================================ */
+const sidebar = document.getElementById("sidebar");
+const toggleBtn = document.getElementById("toggle-btn");
+const toggleIcon = document.getElementById("toggle-icon");
+const toggleLabel = document.getElementById("toggle-label");
+
+toggleBtn.addEventListener("click", () => {
+  sidebar.classList.toggle("collapsed");
+
+  if (sidebar.classList.contains("collapsed")) {
+    toggleIcon.className = "fa-solid fa-angles-right";
+    toggleBtn.title = "Ouvrir le menu";
+    toggleBtn.setAttribute("aria-label", "Ouvrir le menu");
+    toggleLabel.textContent = "Ouvrir le menu";
+  } else {
+    toggleIcon.className = "fa-solid fa-angles-left";
+    toggleBtn.title = "Fermer le menu";
+    toggleBtn.setAttribute("aria-label", "Fermer le menu");
+    toggleLabel.textContent = "Fermer le menu";
+  }
+
+  hideNavTooltip();
+});
+
+/* ============================================================
+   1B. TOOLTIP CUSTOM NAV
+============================================================ */
+const navTooltip = document.getElementById("nav-tooltip");
+const navTooltipTargets = document.querySelectorAll("#sidebar .nav-link[data-nav-tip]");
+let currentTooltipTarget = null;
+
+function isSidebarCollapsed() {
+  return sidebar.classList.contains("collapsed");
+}
+
+function showNavTooltip(target) {
+  if (!isSidebarCollapsed()) return;
+
+  const text = target.getAttribute("data-nav-tip");
+  if (!text) return;
+
+  currentTooltipTarget = target;
+  navTooltip.textContent = text;
+  navTooltip.classList.add("is-visible");
+  navTooltip.setAttribute("aria-hidden", "false");
+  positionNavTooltip(target);
+}
+
+function hideNavTooltip() {
+  currentTooltipTarget = null;
+  navTooltip.classList.remove("is-visible");
+  navTooltip.setAttribute("aria-hidden", "true");
+}
+
+function positionNavTooltip(target) {
+  if (!target || !isSidebarCollapsed()) return;
+
+  const rect = target.getBoundingClientRect();
+  const tooltipRect = navTooltip.getBoundingClientRect();
+
+  const gap = 12;
+  let left = rect.right + gap;
+  let top = rect.top + rect.height / 2 - tooltipRect.height / 2;
+
+  const maxLeft = window.innerWidth - tooltipRect.width - 10;
+  const maxTop = window.innerHeight - tooltipRect.height - 10;
+
+  left = Math.min(left, maxLeft);
+  top = Math.max(10, Math.min(top, maxTop));
+
+  navTooltip.style.left = left + "px";
+  navTooltip.style.top = top + "px";
+}
+
+navTooltipTargets.forEach(link => {
+  link.addEventListener("mouseenter", () => showNavTooltip(link));
+  link.addEventListener("mouseleave", hideNavTooltip);
+  link.addEventListener("focus", () => showNavTooltip(link));
+  link.addEventListener("blur", hideNavTooltip);
+
+  link.addEventListener("mousemove", () => {
+    if (currentTooltipTarget === link) {
+      positionNavTooltip(link);
+    }
+  });
+});
+
+window.addEventListener("scroll", () => {
+  if (currentTooltipTarget) positionNavTooltip(currentTooltipTarget);
+}, true);
+
+window.addEventListener("resize", () => {
+  if (currentTooltipTarget) positionNavTooltip(currentTooltipTarget);
+});
+
+/* ============================================================
+   2. NAVIGATION IFRAMES
+============================================================ */
+const navLinks = document.querySelectorAll(".nav-link[data-frame]");
+const placeholder = document.getElementById("placeholder");
+
+navLinks.forEach(link => {
+  link.addEventListener("click", () => {
+    const targetId = link.dataset.frame;
+    const targetFrame = document.getElementById(targetId);
+    if (!targetFrame) return;
+
+    document.querySelectorAll(".guide-frame").forEach(frame => {
+      frame.classList.remove("active");
+    });
+
+    placeholder.style.display = "none";
+    targetFrame.classList.add("active");
+
+    navLinks.forEach(item => item.classList.remove("active"));
+    link.classList.add("active");
+
+    syncFrameTheme(targetFrame, getEffectiveTheme());
+    applySearch(searchInput.value.trim());
+  });
+});
+
+/* ============================================================
+   3. RECHERCHE DANS L'IFRAME ACTIVE
+============================================================ */
+const searchInput = document.getElementById("search-input");
+const searchCount = document.getElementById("search-count");
+const searchPrev = document.getElementById("search-prev");
+const searchNext = document.getElementById("search-next");
+
+let currentSearchResults = [];
+let currentSearchIndex = -1;
+let currentSearchDoc = null;
+
+searchInput.addEventListener("input", () => {
+  applySearch(searchInput.value.trim());
+});
+
+searchPrev.addEventListener("click", () => {
+  goToSearchResult(-1);
+});
+
+searchNext.addEventListener("click", () => {
+  goToSearchResult(1);
+});
+
+searchInput.addEventListener("keydown", e => {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    goToSearchResult(e.shiftKey ? -1 : 1);
+  }
+});
+
+function updateSearchArrowVisibility() {
+  const query = searchInput.value.trim();
+  const shouldShowArrows = query.length >= 2;
+  searchPrev.classList.toggle("hidden", !shouldShowArrows);
+  searchNext.classList.toggle("hidden", !shouldShowArrows);
+}
+
+function resetSearchState() {
+  currentSearchResults = [];
+  currentSearchIndex = -1;
+  currentSearchDoc = null;
+  searchCount.textContent = "";
+  updateSearchNavButtons();
+  updateSearchArrowVisibility();
+}
+
+function updateSearchNavButtons() {
+  const hasResults = currentSearchResults.length > 0;
+  searchPrev.disabled = !hasResults;
+  searchNext.disabled = !hasResults;
+}
+
+function updateSearchCount() {
+  const query = searchInput.value.trim();
+
+  if (!query || query.length < 2) {
+    searchCount.textContent = "";
+    return;
+  }
+
+  if (!currentSearchResults.length) {
+    searchCount.textContent = "0 résultat";
+    return;
+  }
+
+  searchCount.textContent = currentSearchIndex + 1 + " / " + currentSearchResults.length;
+}
+
+function getActiveFrameDocument() {
+  const activeFrame = document.querySelector(".guide-frame.active");
+  if (!activeFrame) return null;
+
+  try {
+    return activeFrame.contentDocument || activeFrame.contentWindow.document;
+  } catch (e) {
+    return null;
+  }
+}
+
+function getHighlightPalette() {
+  const theme = document.documentElement.getAttribute("data-color-scheme") || getEffectiveTheme();
+  const rootStyles = getComputedStyle(document.documentElement);
+
+  const color9 = rootStyles.getPropertyValue("--color9").trim() || "#ffe066";
+  const color3 = rootStyles.getPropertyValue("--color3").trim() || "#1a1a1a";
+  const blanc = rootStyles.getPropertyValue("--blanc").trim() || "#ffffff";
+
+  if (theme === "dark") {
+    return {
+      baseBg: color9,
+      baseColor: color3,
+      currentBg: "rgb(27 12 50)",
+      currentColor: blanc
+    };
+  }
+
+  if (theme === "autumn") {
+    return {
+      baseBg: color9,
+      baseColor: blanc,
+      currentBg: "rgb(85 54 49)",
+      currentColor: blanc
+    };
+  }
+
+  return {
+    baseBg: color9,
+    baseColor: blanc,
+    currentBg: "rgb(197 150 126)",
+    currentColor: blanc
+  };
+}
+
+function applySearch(query) {
+  updateSearchArrowVisibility();
+
+  const doc = getActiveFrameDocument();
+
+  if (!doc) {
+    currentSearchResults = [];
+    currentSearchIndex = -1;
+    currentSearchDoc = null;
+    searchCount.textContent = query.length >= 2 ? "⚠ Indisponible" : "";
+    updateSearchNavButtons();
+    return;
+  }
+
+  if (!doc.body) {
+    resetSearchState();
+    return;
+  }
+
+  removeHighlights(doc);
+  currentSearchResults = [];
+  currentSearchIndex = -1;
+  currentSearchDoc = doc;
+
+  if (!query || query.length < 2) {
+    searchCount.textContent = "";
+    updateSearchNavButtons();
+    return;
+  }
+
+  highlightText(doc.body, query);
+  currentSearchResults = Array.from(doc.querySelectorAll(".search-highlight"));
+  currentSearchIndex = currentSearchResults.length > 0 ? 0 : -1;
+
+  if (currentSearchIndex >= 0) {
+    setCurrentSearchResult(currentSearchIndex, true);
+  } else {
+    updateSearchCount();
+    updateSearchNavButtons();
+  }
+}
+
+function goToSearchResult(direction) {
+  if (!currentSearchResults.length) return;
+
+  clearCurrentSearchResult();
+
+  if (direction > 0) {
+    currentSearchIndex = (currentSearchIndex + 1) % currentSearchResults.length;
+  } else {
+    currentSearchIndex = (currentSearchIndex - 1 + currentSearchResults.length) % currentSearchResults.length;
+  }
+
+  setCurrentSearchResult(currentSearchIndex, true);
+}
+
+function clearCurrentSearchResult() {
+  if (!currentSearchDoc) return;
+
+  const palette = getHighlightPalette();
+
+  currentSearchDoc.querySelectorAll(".search-highlight-current").forEach(mark => {
+    mark.classList.remove("search-highlight-current");
+    mark.style.backgroundColor = palette.baseBg;
+    mark.style.color = palette.baseColor;
+  });
+}
+
+function setCurrentSearchResult(index, shouldScroll) {
+  if (!currentSearchResults.length || index < 0 || index >= currentSearchResults.length) {
+    updateSearchCount();
+    updateSearchNavButtons();
+    return;
+  }
+
+  clearCurrentSearchResult();
+
+  const target = currentSearchResults[index];
+  if (!target) return;
+
+  const palette = getHighlightPalette();
+
+  target.classList.add("search-highlight-current");
+  target.style.backgroundColor = palette.currentBg;
+  target.style.color = palette.currentColor;
+
+  if (shouldScroll) {
+    target.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+
+  updateSearchCount();
+  updateSearchNavButtons();
+}
+
+function removeHighlights(doc) {
+  doc.querySelectorAll(".search-highlight, .search-highlight-current").forEach(mark => {
+    const parent = mark.parentNode;
+    parent.replaceChild(doc.createTextNode(mark.textContent), mark);
+    parent.normalize();
+  });
+}
+
+function highlightText(element, query) {
+  const regex = new RegExp(`(${escapeRegex(query)})`, "gi");
+  const doc = element.ownerDocument;
+  const palette = getHighlightPalette();
+
+  const walker = doc.createTreeWalker(
+    element,
+    NodeFilter.SHOW_TEXT,
+    {
+      acceptNode: node => {
+        const tag = node.parentElement?.tagName?.toLowerCase();
+        if (["script", "style", "mark", "textarea"].includes(tag)) {
+          return NodeFilter.FILTER_REJECT;
+        }
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    }
+  );
+
+  const nodes = [];
+  while (walker.nextNode()) nodes.push(walker.currentNode);
+
+  nodes.forEach(node => {
+    const text = node.textContent;
+    if (!text) return;
+
+    regex.lastIndex = 0;
+    if (!regex.test(text)) return;
+    regex.lastIndex = 0;
+
+    const frag = doc.createDocumentFragment();
+    let lastIndex = 0;
+    let match;
+
+    while ((match = regex.exec(text)) !== null) {
+      if (match.index > lastIndex) {
+        frag.appendChild(doc.createTextNode(text.slice(lastIndex, match.index)));
+      }
+
+      const mark = doc.createElement("mark");
+      mark.className = "search-highlight";
+      mark.style.backgroundColor = palette.baseBg;
+      mark.style.borderRadius = "2px";
+      mark.style.color = palette.baseColor;
+      mark.textContent = match[0];
+      frag.appendChild(mark);
+
+      lastIndex = regex.lastIndex;
+    }
+
+    if (lastIndex < text.length) {
+      frag.appendChild(doc.createTextNode(text.slice(lastIndex)));
+    }
+
+    node.parentNode.replaceChild(frag, node);
+  });
+}
+
+function escapeRegex(str) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+/* ============================================================
+   4. SWITCH DE THÈME + SYNCHRO IFRAMES EXTERNES
+============================================================ */
+const STORAGE_KEY = "ppk-theme-preference";
+const LEGACY_KEY = "color-scheme";
+const VALID_THEMES = { dark: true, light: true, autumn: true };
+
+const THEME_IMAGE_MAP = {
+  dark: {
+    chatCurieux: "https://2img.net/i.imgur.com/nKfZpku.png"
+  },
+  light: {
+    chatCurieux: "https://2img.net/i.imgur.com/AAsxj7q.png"
+  },
+  autumn: {
+    chatCurieux: "https://2img.net/i.imgur.com/FgOcsFl.png"
+  }
+};
+
+function isValidTheme(theme) {
+  return !!VALID_THEMES[theme];
+}
+
+function getSystemTheme() {
+  return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches
+    ? "dark"
+    : "light";
+}
+
+function getSavedTheme() {
+  let saved = localStorage.getItem(STORAGE_KEY);
+
+  if (!saved) {
+    const legacy = localStorage.getItem(LEGACY_KEY);
+    if (isValidTheme(legacy)) {
+      saved = legacy;
+      localStorage.setItem(STORAGE_KEY, legacy);
+    }
+  }
+
+  return isValidTheme(saved) ? saved : null;
+}
+
+function getEffectiveTheme() {
+  return getSavedTheme() || getSystemTheme();
+}
+
+function saveTheme(theme) {
+  localStorage.setItem(STORAGE_KEY, theme);
+  localStorage.setItem(LEGACY_KEY, theme);
+}
+
+function closestThemeButton(node, limit) {
+  while (node && node !== limit) {
+    if (
+      node.classList &&
+      node.classList.contains("theme-btn") &&
+      node.getAttribute("data-theme")
+    ) {
+      return node;
+    }
+
+    node = node.parentNode;
+  }
+
+  return null;
+}
+
+function updateThemeImages(theme, scope) {
+  const map = THEME_IMAGE_MAP[theme] || THEME_IMAGE_MAP.dark;
+  const root = scope || document;
+
+  const images = root.querySelectorAll('img[data-theme-image="chatCurieux"]');
+
+  images.forEach(img => {
+    const key = img.getAttribute("data-theme-image");
+    const nextSrc = map[key];
+
+    if (nextSrc && img.getAttribute("src") !== nextSrc) {
+      img.setAttribute("src", nextSrc);
+    }
+  });
+}
+
+function syncSwitchUI(theme) {
+  const switchEl = document.getElementById("themeSwitch");
+  if (!switchEl) return;
+
+  const buttons = switchEl.querySelectorAll(".theme-btn");
+  const thumb = switchEl.querySelector(".theme-thumb");
+  let activeIndex = 0;
+
+  for (let i = 0; i < buttons.length; i++) {
+    const isActive = buttons[i].getAttribute("data-theme") === theme;
+
+    buttons[i].classList.toggle("active", isActive);
+    buttons[i].setAttribute("aria-pressed", isActive ? "true" : "false");
+
+    if (isActive) activeIndex = i;
+  }
+
+  if (thumb && buttons.length) {
+    const btnWidth = buttons[0].offsetWidth || 0;
+    thumb.style.transform = "translateX(" + activeIndex * btnWidth + "px)";
+  }
+}
+
+function sendThemeToFrame(frame, theme) {
+  if (!frame || !frame.contentWindow) return;
+
+  const message = {
+    type: "PPK_THEME_SYNC",
+    theme: theme
+  };
+
+  try {
+    frame.contentWindow.postMessage(message, "*");
+
+    setTimeout(() => frame.contentWindow.postMessage(message, "*"), 100);
+    setTimeout(() => frame.contentWindow.postMessage(message, "*"), 300);
+    setTimeout(() => frame.contentWindow.postMessage(message, "*"), 700);
+  } catch (e) {}
+}
+
+function ensureFrameBaseStyle(doc) {
+  if (doc.getElementById("ppk-frame-theme-fix")) return;
+
+  const style = doc.createElement("style");
+  style.id = "ppk-frame-theme-fix";
+  style.textContent = `
+    html, body { min-height: 100%; }
+    html { background: transparent !important; }
+    body {
+      margin: 0;
+      background: transparent !important;
+    }
+  `;
+
+  doc.head.appendChild(style);
+}
+
+function syncFrameTheme(frame, theme) {
+  sendThemeToFrame(frame, theme);
+
+  try {
+    const doc = frame.contentDocument || frame.contentWindow.document;
+    if (!doc || !doc.documentElement) return;
+
+    ensureFrameBaseStyle(doc);
+
+    doc.documentElement.setAttribute("data-color-scheme", theme);
+
+    if (doc.body) {
+      doc.body.style.background = "transparent";
+    }
+  } catch (e) {}
+}
+
+function syncGuideFramesTheme(theme) {
+  document.querySelectorAll(".guide-frame").forEach(frame => {
+    syncFrameTheme(frame, theme);
+  });
+}
+
+function applyTheme(theme, persist) {
+  if (!isValidTheme(theme)) theme = "dark";
+
+  document.documentElement.setAttribute("data-color-scheme", theme);
+  syncSwitchUI(theme);
+  updateThemeImages(theme);
+  syncGuideFramesTheme(theme);
+
+  if (persist) saveTheme(theme);
+
+  if (searchInput.value.trim().length >= 2) {
+    applySearch(searchInput.value.trim());
+  }
+}
+
+function bindSwitch() {
+  const switchEl = document.getElementById("themeSwitch");
+  if (!switchEl) return;
+  if (switchEl.getAttribute("data-theme-bound") === "1") return;
+
+  switchEl.setAttribute("data-theme-bound", "1");
+
+  switchEl.addEventListener("click", function (e) {
+    const button = closestThemeButton(e.target, switchEl);
+    if (!button) return;
+
+    const theme = button.getAttribute("data-theme");
+    if (!isValidTheme(theme)) return;
+
+    applyTheme(theme, true);
+  });
+}
+
+function bindFrameLoads() {
+  const frames = document.querySelectorAll(".guide-frame");
+
+  frames.forEach(frame => {
+    frame.addEventListener("load", function () {
+      syncFrameTheme(this, getEffectiveTheme());
+
+      if (this.classList.contains("active")) {
+        applySearch(searchInput.value.trim());
+      }
+    });
+  });
+}
+
+function watchSystemTheme() {
+  if (!window.matchMedia) return;
+
+  const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+
+  function handleSystemChange() {
+    if (!getSavedTheme()) {
+      applyTheme(getSystemTheme(), false);
+    }
+  }
+
+  if (mediaQuery.addEventListener) {
+    mediaQuery.addEventListener("change", handleSystemChange);
+  } else if (mediaQuery.addListener) {
+    mediaQuery.addListener(handleSystemChange);
+  }
+}
+
+function initThemeManager() {
+  bindSwitch();
+  bindFrameLoads();
+  applyTheme(getEffectiveTheme(), false);
+  watchSystemTheme();
+  updateSearchNavButtons();
+  updateSearchArrowVisibility();
+  hideNavTooltip();
+}
+
+window.addEventListener("message", function (event) {
+  if (!event.data || event.data.type !== "PPK_THEME_REQUEST") return;
+
+  document.querySelectorAll(".guide-frame").forEach(frame => {
+    if (frame.contentWindow === event.source) {
+      sendThemeToFrame(frame, getEffectiveTheme());
+    }
+  });
+});
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initThemeManager);
+} else {
+  initThemeManager();
+}
+
+window.addEventListener("load", function () {
+  applyTheme(getEffectiveTheme(), false);
+});
+</script>
+</body>
+</html>
