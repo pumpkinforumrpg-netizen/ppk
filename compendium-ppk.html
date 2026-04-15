@@ -2619,6 +2619,211 @@
   });
 })();
 </script>
+<script>
+(function () {
+  let currentSearchResults = [];
+  let currentSearchIndex = -1;
 
+  function getPalette() {
+    const styles = getComputedStyle(document.documentElement);
+
+    const theme =
+      document.documentElement.getAttribute("data-color-scheme") || "dark";
+
+    const color9 = styles.getPropertyValue("--color9").trim() || "#ffe066";
+    const color3 = styles.getPropertyValue("--color3").trim() || "#1a1a1a";
+    const blanc = styles.getPropertyValue("--blanc").trim() || "#ffffff";
+
+    if (theme === "dark") {
+      return {
+        baseBg: color9,
+        baseColor: color3,
+        currentBg: "rgb(27 12 50)",
+        currentColor: blanc
+      };
+    }
+
+    if (theme === "autumn") {
+      return {
+        baseBg: color9,
+        baseColor: blanc,
+        currentBg: "rgb(85 54 49)",
+        currentColor: blanc
+      };
+    }
+
+    return {
+      baseBg: color9,
+      baseColor: blanc,
+      currentBg: "rgb(197 150 126)",
+      currentColor: blanc
+    };
+  }
+
+  function reportSearchResults() {
+    try {
+      window.parent.postMessage({
+        type: "PPK_SEARCH_RESULTS",
+        count: currentSearchResults.length,
+        index: currentSearchIndex
+      }, "*");
+    } catch (e) {}
+  }
+
+  function removeHighlights() {
+    document.querySelectorAll(".search-highlight, .search-highlight-current").forEach(mark => {
+      const parent = mark.parentNode;
+      parent.replaceChild(document.createTextNode(mark.textContent), mark);
+      parent.normalize();
+    });
+  }
+
+  function clearCurrent() {
+    const palette = getPalette();
+
+    document.querySelectorAll(".search-highlight-current").forEach(mark => {
+      mark.classList.remove("search-highlight-current");
+      mark.style.backgroundColor = palette.baseBg;
+      mark.style.color = palette.baseColor;
+    });
+  }
+
+  function setCurrent(index, shouldScroll) {
+    if (!currentSearchResults.length || index < 0 || index >= currentSearchResults.length) {
+      reportSearchResults();
+      return;
+    }
+
+    clearCurrent();
+
+    currentSearchIndex = index;
+
+    const target = currentSearchResults[currentSearchIndex];
+    const palette = getPalette();
+
+    target.classList.add("search-highlight-current");
+    target.style.backgroundColor = palette.currentBg;
+    target.style.color = palette.currentColor;
+
+    if (shouldScroll) {
+      target.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+
+    reportSearchResults();
+  }
+
+  function applySearch(query) {
+    removeHighlights();
+
+    currentSearchResults = [];
+    currentSearchIndex = -1;
+
+    if (!query || query.length < 2) {
+      reportSearchResults();
+      return;
+    }
+
+    const regex = new RegExp("(" + escapeRegex(query) + ")", "gi");
+    const palette = getPalette();
+
+    const walker = document.createTreeWalker(
+      document.body,
+      NodeFilter.SHOW_TEXT,
+      {
+        acceptNode: node => {
+          const tag = node.parentElement?.tagName?.toLowerCase();
+
+          if (["script", "style", "mark", "textarea"].includes(tag)) {
+            return NodeFilter.FILTER_REJECT;
+          }
+
+          if (!node.textContent || !node.textContent.trim()) {
+            return NodeFilter.FILTER_REJECT;
+          }
+
+          return NodeFilter.FILTER_ACCEPT;
+        }
+      }
+    );
+
+    const nodes = [];
+    while (walker.nextNode()) {
+      nodes.push(walker.currentNode);
+    }
+
+    nodes.forEach(node => {
+      const text = node.textContent;
+      regex.lastIndex = 0;
+
+      if (!regex.test(text)) return;
+      regex.lastIndex = 0;
+
+      const frag = document.createDocumentFragment();
+      let lastIndex = 0;
+      let match;
+
+      while ((match = regex.exec(text)) !== null) {
+        if (match.index > lastIndex) {
+          frag.appendChild(document.createTextNode(text.slice(lastIndex, match.index)));
+        }
+
+        const mark = document.createElement("mark");
+        mark.className = "search-highlight";
+        mark.style.backgroundColor = palette.baseBg;
+        mark.style.borderRadius = "2px";
+        mark.style.color = palette.baseColor;
+        mark.textContent = match[0];
+
+        frag.appendChild(mark);
+        lastIndex = regex.lastIndex;
+      }
+
+      if (lastIndex < text.length) {
+        frag.appendChild(document.createTextNode(text.slice(lastIndex)));
+      }
+
+      node.parentNode.replaceChild(frag, node);
+    });
+
+    currentSearchResults = Array.from(document.querySelectorAll(".search-highlight"));
+    currentSearchIndex = currentSearchResults.length ? 0 : -1;
+
+    if (currentSearchIndex >= 0) {
+      setCurrent(currentSearchIndex, true);
+    } else {
+      reportSearchResults();
+    }
+  }
+
+  function moveSearch(direction) {
+    if (!currentSearchResults.length) return;
+
+    if (direction > 0) {
+      currentSearchIndex = (currentSearchIndex + 1) % currentSearchResults.length;
+    } else {
+      currentSearchIndex =
+        (currentSearchIndex - 1 + currentSearchResults.length) % currentSearchResults.length;
+    }
+
+    setCurrent(currentSearchIndex, true);
+  }
+
+  function escapeRegex(str) {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  }
+
+  window.addEventListener("message", function (event) {
+    if (!event.data) return;
+
+    if (event.data.type === "PPK_SEARCH_APPLY") {
+      applySearch(event.data.query || "");
+    }
+
+    if (event.data.type === "PPK_SEARCH_MOVE") {
+      moveSearch(Number(event.data.direction) || 1);
+    }
+  });
+})();
+</script>
 </body>
 </html>
