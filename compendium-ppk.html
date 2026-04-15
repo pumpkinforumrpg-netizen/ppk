@@ -2327,8 +2327,47 @@
 (function () {
   const VALID_THEMES = { dark: true, light: true, autumn: true };
 
+  const THEME_FIX_CSS = `
+    html[data-color-scheme="dark"] .rpg-dropdown:hover,
+    html[data-color-scheme="dark"] .guide-choice:hover,
+    html[data-color-scheme="dark"] #guide-app .guide-article-link:hover {
+      background: var(--color13) !important;
+    }
+
+    html[data-color-scheme="light"] .guide-actions {
+      background: var(--blanc) !important;
+    }
+
+    html[data-color-scheme="light"] .chrono-item::before {
+      color: var(--color9) !important;
+      text-shadow:
+        4px 0 var(--color1),
+        -4px 0 var(--color1),
+        0 4px var(--color1),
+        0 -4px var(--color1) !important;
+    }
+
+    html[data-color-scheme="light"] .chronologie::before {
+      background: var(--color1) !important;
+    }
+  `;
+
+  function injectThemeFixCss() {
+    let style = document.getElementById("ppk-theme-fix-css");
+
+    if (!style) {
+      style = document.createElement("style");
+      style.id = "ppk-theme-fix-css";
+      document.head.appendChild(style);
+    }
+
+    style.textContent = THEME_FIX_CSS;
+  }
+
   function applySyncedTheme(theme) {
     if (!VALID_THEMES[theme]) return;
+
+    injectThemeFixCss();
 
     document.documentElement.setAttribute("data-color-scheme", theme);
 
@@ -2351,10 +2390,14 @@
   });
 
   window.addEventListener("load", function () {
+    injectThemeFixCss();
+
     try {
       window.parent.postMessage({ type: "PPK_THEME_REQUEST" }, "*");
     } catch (e) {}
   });
+
+  injectThemeFixCss();
 })();
 </script>
 </html>
