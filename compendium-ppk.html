@@ -1,0 +1,2304 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+
+  <script>
+    (function () {
+      var STORAGE_KEY = "ppk-theme-preference";
+      var LEGACY_KEY = "color-scheme";
+      var VALID_THEMES = { dark: true, light: true, autumn: true };
+
+      function getSystemTheme() {
+        return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches
+          ? "dark"
+          : "light";
+      }
+
+      function getSavedTheme() {
+        var saved = localStorage.getItem(STORAGE_KEY);
+
+        if (!saved) {
+          var legacy = localStorage.getItem(LEGACY_KEY);
+          if (VALID_THEMES[legacy]) {
+            saved = legacy;
+            localStorage.setItem(STORAGE_KEY, legacy);
+          }
+        }
+
+        return VALID_THEMES[saved] ? saved : null;
+      }
+
+      var theme = getSavedTheme() || getSystemTheme();
+      document.documentElement.setAttribute("data-color-scheme", theme);
+    })();
+  </script>
+
+  <!-- CSS Pumpkins -->
+  <link rel="stylesheet"
+    href="https://dl.dropboxusercontent.com/scl/fi/pg06fkxia9gju5idtu6ax/pumpkins.css?rlkey=ljbnr5e7x4bajc554bmd5nmbm&st=hlm2rlvy">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+  <style>
+    @font-face {
+      font-family: 'Glow Night';
+      src: url('https://dl.dropboxusercontent.com/scl/fi/sclz8zc7gpxg3w46p3y0w/Glow-Night.otf?rlkey=x33h8no2mt3sdqwntc78fcfb2&st=7eyj8944') format('truetype');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      min-height: 100%;
+      background: var(--color2) var(--body-bg-image) no-repeat fixed center / cover;
+      color: var(--blanc);
+    }
+
+    body {
+      min-height: 100%;
+      margin: 0;
+      padding: 28px;
+      font-family: Arial, sans-serif;
+      background: transparent;
+      color: var(--blanc);
+    }
+
+    body::-webkit-scrollbar {
+      display: none;
+    }
+
+    ul {
+      padding: 5px 25px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      color: var(--color5) !important;
+    }
+
+    textarea {
+      border: none;
+      width: 100%;
+      background: none;
+      appearance: none;
+      resize: none;
+      color: var(--color9);
+      padding-top: 12px;
+    }
+
+    .rpg-dropdown__text {
+      font-weight: 300;
+    }
+
+    .paragraphe h2 {
+      font-size: 22px !important;
+    }
+
+    .rpg-dropdown {
+      border: 2px solid var(--color3bis);
+      border-radius: 16px;
+      overflow: hidden;
+      background: transparent;
+      transition: 300ms ease;
+    }
+
+    .rpg-dropdown:hover {
+      border-color: var(--color14);
+      transition: 300ms ease;
+    }
+
+    .rpg-dropdown:hover .rpg-dropdown__title,
+    .rpg-dropdown:hover .rpg-dropdown__icon {
+      color: var(--blanc);
+    }
+
+    .rpg-dropdown__head {
+      cursor: pointer;
+    }
+
+    .rpg-dropdown__content {
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      background: var(--color1);
+      transition:
+        max-height 0.5s ease,
+        opacity 0.35s ease;
+    }
+
+    .rpg-dropdown.active .rpg-dropdown__content {
+      opacity: 1;
+    }
+
+    .rpg-dropdown__inner {
+      padding: 0 24px 22px 24px;
+      background: var(--color1);
+      color: var(--color5) !important;
+    }
+
+    .rpg-dropdown__text {
+      margin: 0;
+      padding-top: 20px;
+      font: 18px Calibri;
+      color: var(--color5);
+      line-height: 20px;
+    }
+
+    .rpg-dropdown__title,
+    .rpg-dropdown__icon {
+      color: var(--color5);
+    }
+
+    .rpg-dropdown.active .rpg-dropdown__head {
+      background: var(--color14);
+    }
+
+    .rpg-dropdown.active {
+      border-color: var(--color14);
+    }
+
+    .rpg-dropdown.active .rpg-dropdown__title,
+    .rpg-dropdown.active .rpg-dropdown__icon {
+      color: var(--blanc);
+    }
+
+    .rpg-dropdown__title:before {
+      display: none !important;
+    }
+
+    .intro {
+      font: 28px 'Glow Night';
+    }
+
+    .introdiv {
+      height: auto;
+      background: var(--color13);
+      width: 100%;
+      border-radius: 10px;
+      line-height: 20px;
+      text-align: center;
+      padding: 20px 25px;
+    }
+
+    #placeholder {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+    }
+
+    p {
+      line-height: 20px;
+    }
+
+    desc {
+      font: italic 16px Calibri;
+      color: var(--color5);
+    }
+
+    .rpg-dropdown:hover desc,
+    .rpg-dropdown.active desc {
+      color: var(--blanc);
+    }
+
+    #guide-app {
+      --bg-main: var(--color2);
+      --bg-card: var(--color1);
+      --bg-soft: var(--color3bis);
+      --accent: var(--color14);
+      --text: var(--color5);
+      --text-soft: var(--color9);
+      --border: var(--color3bis);
+
+      max-width: 100%;
+      margin: 0;
+      color: var(--text);
+      font: 18px/1.6 Calibri, Arial, sans-serif;
+    }
+
+    #guide-app * {
+      box-sizing: border-box;
+    }
+
+    #guide-app .guide-shell {
+      display: none;
+      border-radius: 18px;
+    }
+
+    #guide-app .guide-shell.is-active {
+      display: block;
+    }
+
+    #guide-app .guide-home {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    #guide-app.is-collapsed .guide-home {
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+
+    #guide-app .guide-choice {
+      flex: 1 1 100%;
+      min-width: 0;
+      border: 2px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text);
+      border-radius: 16px;
+      padding: 24px;
+      cursor: pointer;
+      transition: 0.25s ease;
+      min-height: 80px;
+      box-shadow: 0px 4px 4px var(--dropshadow), var(--panel-1-inset);
+      text-align: left;
+    }
+
+    #guide-app.is-collapsed .guide-choice {
+      flex: 1 1 calc(50% - 8px);
+    }
+
+    #guide-app .guide-choice:hover {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    #guide-app .guide-choice strong {
+      display: block;
+      font-size: 22px;
+      margin-bottom: 8px;
+      font-family: "Glow Night", Calibri, serif;
+      font-weight: normal;
+    }
+
+    .guide-choice span {
+      font: 18px Calibri;
+    }
+
+    #guide-app .guide-breadcrumb {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 18px;
+      font: 14px Calibri;
+      color: var(--text-soft);
+    }
+
+    #guide-app .guide-breadcrumb button {
+      background: none;
+      border: none;
+      color: inherit;
+      cursor: pointer;
+      padding: 0;
+      font: inherit;
+    }
+
+    #guide-app .guide-breadcrumb button:hover {
+      color: var(--text);
+    }
+
+    #guide-app .guide-panel {
+      border-radius: 16px;
+    }
+
+    #guide-app .guide-title {
+      font: 28px "Glow Night", Calibri, serif;
+      font-weight: normal;
+      margin: 0 0 16px;
+      color: var(--text);
+      text-transform: uppercase;
+    }
+
+    #guide-app .guide-list-panel,
+    #guide-app .guide-article-panel {
+      display: none;
+    }
+
+    #guide-app .guide-list-panel.is-active,
+    #guide-app .guide-article-panel.is-active {
+      display: block;
+    }
+
+    #guide-app .guide-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    #guide-app .guide-article-link {
+      width: 100%;
+      text-align: left;
+      border: 2px solid var(--border);
+      background: var(--bg-card);
+      color: var(--color5);
+      border-radius: 12px;
+      padding: 14px 16px;
+      cursor: pointer;
+      transition: 0.25s ease;
+      font: 18px Calibri;
+    }
+
+    #guide-app .guide-article-link:hover {
+      border-color: var(--accent);
+      background: var(--accent);
+      color: var(--blanc);
+    }
+
+    #guide-app .guide-article-link strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 17px;
+    }
+
+    #guide-app .guide-current-article-title {
+      margin-left: 6px;
+    }
+
+    #guide-app .guide-content {
+      border-radius: 14px;
+      margin-bottom: 16px;
+      color: var(--color5);
+    }
+
+    #guide-app .guide-content>*:last-child {
+      margin-bottom: 0;
+    }
+
+    #guide-app .guide-actions {
+      display: flex;
+      margin-bottom: 25px;
+      flex-wrap: wrap;
+      gap: 10px;
+      width: 100%;
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      background: var(--color1);
+      padding: 12px 0;
+    }
+
+    #guide-app .guide-list-actions {
+      margin-top: 16px;
+    }
+
+    #guide-app .guide-btn {
+      border: none;
+      background: var(--bg-main);
+      color: var(--blanc);
+      border-radius: 10px;
+      padding: 10px 14px;
+      cursor: pointer;
+      transition: 0.25s ease;
+      font: bold 16px Calibri;
+    }
+
+    #guide-app .guide-btn:hover:not(:disabled) {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    #guide-app .guide-btn:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    #guide-app .guide-btn.-back {
+      margin-right: auto;
+    }
+
+    @media (max-width: 700px) {
+      #guide-app {
+        padding: 14px;
+      }
+
+      #guide-app .guide-shell {
+        padding: 16px;
+      }
+
+      #guide-app .guide-actions {
+        flex-direction: column;
+      }
+
+      #guide-app .guide-btn.-back {
+        margin-right: 0;
+      }
+
+      #guide-app.is-collapsed .guide-home {
+        flex-direction: column;
+      }
+
+      #guide-app.is-collapsed .guide-choice {
+        flex: 1 1 100%;
+      }
+    }
+  </style>
+</head><div id="guide-app">
+
+  <div class="guide-shell guide-home-view is-active">
+    <div class="guide-home">
+      <div id="placeholder">
+        <span class="intro">EDM</span>
+        <div class="introdiv">
+          Le compendium regroupe les annexes du forum. Sélectionne une catégorie pour commencer ta lecture !
+        </div>
+      </div>
+
+      <button class="guide-choice" type="button" data-open-section="univers-1">
+        <strong>Amberwoods</strong>
+        <span>Si le monde humain n'a plus aucun secret pour nous, ce n'est pas le cas d'Amberwoods. Découvrez tout de
+          cette petite ville automnale dans cette section.</span>
+      </button>
+
+      <button class="guide-choice" type="button" data-open-section="univers-2">
+        <strong>Vesperune</strong>
+        <span>Le monde magique est un endroit immense, tant dans sa géographie que dans sa complexité. Si vous souhaitez
+          en apprendre davantage sur Vesperune, ces annexes sont faites pour vous.</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="guide-shell guide-section-view" data-section="univers-1">
+    <nav class="guide-breadcrumb">
+      <button type="button" data-action="home">Compendium</button>
+      <span>›</span>
+      <button type="button" data-action="list">Amberwoods</button>
+      <span class="guide-breadcrumb-article" hidden>
+        <span>›</span>
+        <span class="guide-current-article-title"></span>
+      </span>
+    </nav>
+
+    <section class="guide-panel guide-list-panel is-active">
+      <div class="guide-actions guide-list-actions">
+        <button class="guide-btn -back" type="button" data-action="home">← Retour</button>
+      </div>
+
+      <h2 class="guide-title">Amberwoods</h2>
+
+      <div class="guide-list">
+        <button class="guide-article-link" type="button" data-open-article="u1-art1">
+          <strong>Vivre à Amberwoods</strong>
+          <span>Description de l'environnement de la ville, des moeurs et de sa situation géographique.</span>
+        </button>
+
+        <button class="guide-article-link" type="button" data-open-article="u1-art2">
+          <strong>Calendrier des festivités</strong>
+          <span>Amberwoods est une ville festive et conviviale, l'esprit communautaire des habitants transparaît dans
+            les fêtes locales.</span>
+        </button>
+
+        <button class="guide-article-link" type="button" data-open-article="u1-art3">
+          <strong>Établissements & Commerces</strong>
+          <span>La ville est peuplée de divers établissements et commerces offrant à la population une multitude
+            d'emplois. Découvrez ici les cafés, échoppes et autres complexes qui y logent.</span>
+        </button>
+      </div>
+    </section>
+
+    <article class="guide-panel guide-article-panel" data-article="u1-art1">
+      <div class="guide-actions">
+        <button class="guide-btn -back" type="button" data-action="list">← Retour</button>
+        <button class="guide-btn" type="button" data-action="prev">← Annexe précédente</button>
+        <button class="guide-btn" type="button" data-action="next">Calendrier des festivités →</button>
+      </div>
+
+      <h2 class="guide-title">Vivre à Amberwoods</h2>
+
+      <div class="guide-content">
+        <p>Amberwoods est une petite ville située au cœur du <ppkb>Vermont</ppkb>, au nord-est des États-Unis. Tout près de la
+          frontière canadienne, elle s’étend sur dix-huit kilomètres de superficie totale, entourée par une <ppkb>immense
+            forêt d’érables</ppkb>. <br /><br />
+
+          La ville est construite autour d’une bouche de rivière, dans laquelle se déverse une <ppkb>cascade de plus de douze
+            mètres</ppkb> de haut. Elle forme une éclaircie dans un espace ambré, au pied de montagnes boisées. Un
+          <ppkb>embarcadère</ppkb> permet aux barques et petits bateaux de naviguer sur celle-ci. <br /><br />
+
+          La rivière suit son cours sur près de quinze kilomètres jusqu’à la ville la plus proche. Sa délimitation se
+          fait par un <ppkb>pont de pierre</ppkb> traversant le cours d’eau : une fois les arches dépassées, vous vous retrouvez à
+          <ppkb>Hazelgrove</ppkb>. <br /><br />
+
+          Les rues d’Amberwoods sont tantôt vastes, tantôt étroites et jonchées de feuilles d’érables. Un grand espace
+          circulaire a été aménagé en face de la crique, pour permettre aux passants de contempler la vue sans être trop
+          dérangés par le vacarme provenant de <ppkb>l'allée marchande</ppkb>, s’étendant le long de la rive gauche de la crique.
+          Cette place est le <ppkb>centre des festivités</ppkb>.<br /><br />
+
+          Le centre-ville est situé dans le creux que l’on trouve entre les montagnes. On le reconnaît de loin grâce à
+          sa <ppkb>grande horloge</ppkb>, dont la cloche tinte tous les midis. Modestes immeubles et maisons mitoyennes y sont
+          éparpillés. Un <ppkb>parc naturel</ppkb> accompagne la traversée de l’horloge à la mairie, en passant par l’arrière du
+          commissariat.<br /><br />
+
+          Dans les zones résidentielles, les jardins sont décorés de pousses de citrouilles, de plantations diverses et
+          de pots de fleurs entretenus. Il y fait bon vivre et personne ne se marche dessus : c’est une ville qui a su
+          gérer son espace au mieux, pour le plus grand bonheur des habitants. <br /><br />
+
+          Le quartier des Hauts-Bois, lui, vit au beau milieu des arbres, dont il tient son nom. La <ppkb>forêt d’ambre</ppkb> se
+          déverse sur la majorité de ses habitations. Les animaux sauvages n’ont de cesse de s’y rendre par curiosité,
+          et c’est également le quartier le plus peuplé par nos amis les félins <ppki>(il y en a de plus en plus ces derniers
+            temps, non… ?)</ppki>. <br /><br />
+
+          À Amberwoods, on compte environ <ppkb>1800 habitants en 2010</ppkb>. C’est une <ppkb>très petite ville</ppkb> dans laquelle
+          les arrivées discrètes sont possibles, mais ne restent pas secrètes bien longtemps. <br /><br />
+
+          Les écoles sont situées en centre-ville : une crèche, deux écoles primaires, un collège et un
+          collège-lycée. Ceux qui souhaitent poursuivre des études supérieures se rendent habituellement à
+          Hazelgrove, la ville voisine, qui possède une assez bonne <ppkb>université</ppkb>. <br /><br />
+
+          Amberwoods possède sa propre <ppkb>police municipale</ppkb>. Placée sous l’autorité du maire, celle-ci est uniquement
+          compétente sur le territoire de la ville. Les budgets sont votés par la municipalité et le recrutement est
+          essentiellement local. À ce jour, la ville ne compte qu’un seul fonctionnaire de police — appelé <ppki>« Marshal »</ppki>.
+          Mais il se murmure dans les couloirs de la mairie qu’un <ppkb>adjoint</ppkb> devrait bientôt rejoindre les rangs…
+          <br /><br />
+
+          Quant aux forêts d’érables, elles sont denses et pleines de surprises. On trouve un <ppkb>cimetière</ppkb> au nord de la
+          ville, à deux kilomètres après la pente boisée. Quelques grottes naturelles sont cachées à certains endroits
+          de la forêt. On trouve également un <ppkb>lac</ppkb> au beau milieu d’une clairière, en pleine forêt, dont la localisation
+          redevient étrangement floue chaque fois qu’on le quitte…<br /><br />
+
+          Les routes principales sont des <ppkb>routes de campagne</ppkb> faites de gravier et sont situées très loin de la ville,
+          après la forêt, au nord et à l’ouest de la ville. Un <ppkb>arrêt de bus</ppkb> est situé sur chacune d’entre elles, et le
+          bus passe à la même heure <ppkb>deux fois par jour</ppkb> : une fois le matin, une fois le soir. Ce dernier relie
+          Hazelgrove et Amberwoods et ne dessert qu’au terminus.
+        </p><br />
+        <div class="paragraphe" style="padding: 0;">
+          <h2>Saisons</h2>
+          <p>En raison de sa géolocalisation, Amberwoods connaît un <ppkb>printemps pluvieux</ppkb> et des <ppkb>étés très chauds et
+            humides</ppkb> <ppki>(particulièrement en août)</ppki>. L’<ppkb>automne</ppkb> <ppki>(fin septembre à mi-octobre)</ppki> est la
+            saison la plus spectaculaire, avec ses forêts qui se parent de feuillages teintés d’or et de rouge. Les
+            <ppkb>hivers</ppkb>, quant à eux, sont <ppkb>particulièrement rigoureux</ppkb> et réputés pour être
+            <ppkb>exceptionnellement froids</ppkb>, avec un <ppkb>fort enneigement</ppkb>.<br /><br />
+
+            Les <ppkb>records de températures</ppkb> sont :
+          <ul class="custom-list">
+            <li style="margin-top: 10px;"><ppkb>41 °C</ppkb> à Vernon le 4 juillet 1911</li>
+            <li><ppkb>−46 °C</ppkb> à Bloomfield le 30 décembre 1933</li>
+          </ul>
+          </p>
+        </div>
+        <div class="paragraphe" style="padding: 0;">
+          <h2>MŒurs</h2>
+          <p>Amberwoods est une <ppkb>ville familiale</ppkb>. La population partage un <ppkb>esprit de communauté</ppkb> très
+            apprécié par les touristes : en automne, les festivités durent jusque tard dans la nuit, <ppkb>tous les
+              week-ends</ppkb>. De nombreuses <ppkb>fêtes locales</ppkb> ont vu le jour, pour célébrer notamment la
+            <ppkb>fondation</ppkb> de cette dernière, ou le <ppkb>temps des Moissons</ppkb>.</p>
+        </div>
+      </div>
+    </article>
+
+    <article class="guide-panel guide-article-panel" data-article="u1-art2">
+      <div class="guide-actions">
+        <button class="guide-btn -back" type="button" data-action="list">← Retour</button>
+        <button class="guide-btn" type="button" data-action="prev">← Vivre à Amberwoods</button>
+        <button class="guide-btn" type="button" data-action="next">Établissements & Commerces →</button>
+      </div>
+      <h2 class="guide-title">Calendrier des festivités</h2>
+
+      <div class="guide-content">
+        <div class="rpg-dropdown">
+          <div class="rpg-dropdown__head">
+            <div style="line-height: 10px;">
+              <h2 class="rpg-dropdown__title" style="font-size: 22px;">Lundi de Pâques</h2>
+              <desc>Entre le 22 mars et le 25 avril</desc>
+            </div>
+            <i class="fa-solid fa-chevron-down rpg-dropdown__icon"></i>
+          </div>
+          <div class="rpg-dropdown__content">
+            <div class="rpg-dropdown__inner">
+              <p class="rpg-dropdown__text">Le <ppkb>lundi de Pâques</ppkb> est fêté comme partout ailleurs, à la différence près que
+                les <ppkb>artisans chocolatiers</ppkb> de la ville se mettent en quête de dissimuler des petits œufs, citrouilles,
+                pièces et feuilles d’érables en chocolat, emballés dans un <ppkb>papier coloré</ppkb>, un peu partout dans la ville.
+                Il n’est pas rare d’en trouver aléatoirement lors d’une <ppkb>balade matinale</ppkb> : il est à vous, dégustez-le !
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="rpg-dropdown">
+          <div class="rpg-dropdown__head">
+            <div style="line-height: 10px;">
+              <h2 class="rpg-dropdown__title" style="font-size: 22px;">Fête des Berges</h2>
+              <desc>12 mai</desc>
+            </div>
+            <i class="fa-solid fa-chevron-down rpg-dropdown__icon"></i>
+          </div>
+          <div class="rpg-dropdown__content">
+            <div class="rpg-dropdown__inner">
+              <p class="rpg-dropdown__text">Lorsque l'été montre le bout de son nez, Amberwoods <ppkb>célèbre la rivière et
+                son embarcadère</ppkb>. On y décore les barques, le bord de l'eau et on <ppkb>pique-nique sur la place
+                  centrale</ppkb>. Certains prennent même la peine de se baigner dans la crique, si l'ambiance est au
+                rendez-vous. Une <ppkb>course de barques amicale</ppkb> est organisée toute l'après-midi : deux équipes
+                s'affrontent dans des barques personnalisées pour l'occasion. La première arrivée <ppki>(intacte)</ppki> gagne la course.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="rpg-dropdown">
+          <div class="rpg-dropdown__head">
+            <div style="line-height: 10px;">
+              <h2 class="rpg-dropdown__title" style="font-size: 22px;">Fête de la Fondation</h2>
+              <desc>03 juin</desc>
+            </div>
+            <i class="fa-solid fa-chevron-down rpg-dropdown__icon"></i>
+          </div>
+          <div class="rpg-dropdown__content">
+            <div class="rpg-dropdown__inner">
+              <p class="rpg-dropdown__text">Cette fête commémore la <ppkb>fondation d’Amberwoods</ppkb>. Le centre-ville s’anime
+                autour d’un <ppkb>marché artisanal et de buffets communautaires</ppkb> en journée, envoûtant les passants de sa
+                musique. Ensuite, un <ppkb>bal</ppkb> est organisé sur la place de l'Embarcadère à la nuit tombée. Pour les jeunes,
+                il est de coutume d'emmener la fête au <ppkb>lac</ppkb>, un peu plus loin dans la forêt, lorsque sonnent les coups de
+                minuit.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="rpg-dropdown">
+          <div class="rpg-dropdown__head">
+            <div style="line-height: 10px;">
+              <h2 class="rpg-dropdown__title" style="font-size: 22px;">Temps des Moissons</h2>
+              <desc>3ème weekend de septembre</desc>
+            </div>
+            <i class="fa-solid fa-chevron-down rpg-dropdown__icon"></i>
+          </div>
+          <div class="rpg-dropdown__content">
+            <div class="rpg-dropdown__inner">
+              <p class="rpg-dropdown__text">Les rues se couvrent des <ppkb>couleurs de l'automne</ppkb> et de <ppkb>bottes de paille</ppkb> pour
+                <ppkb>célébrer les récoltes et les traditions locales</ppkb>. C’est l’une des fêtes les plus chaleureuses
+                de l’année. On y déguste des tartes aux pommes, on y organise des <ppkb>concours de citrouilles gravées</ppkb>,
+                on se pare de couronnes de feuilles et on partage du <ppkb>cidre chaud</ppkb> tout le week-end.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="rpg-dropdown">
+          <div class="rpg-dropdown__head">
+            <div style="line-height: 10px;">
+              <h2 class="rpg-dropdown__title" style="font-size: 22px;">Veillées d'Automne</h2>
+              <desc>Tous les weekends d'octobre</desc>
+            </div>
+            <i class="fa-solid fa-chevron-down rpg-dropdown__icon"></i>
+          </div>
+          <div class="rpg-dropdown__content">
+            <div class="rpg-dropdown__inner">
+              <p class="rpg-dropdown__text">Dès que le jour se lève, des <ppkb>stands</ppkb> ouvrent à tous les coins de rue et de la
+                musique douce est jouée près des cafés indépendants. On y allume des <ppkb>feux de camp</ppkb>, on y organise des
+                <ppkb>promenades nocturnes</ppkb> sous les lumières de la ville et toutes les échoppes sont ouvertes tard dans la
+                nuit. Pour les enfants, des <ppkb>histoires</ppkb> sont contées au bord de la crique.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="rpg-dropdown">
+          <div class="rpg-dropdown__head">
+            <div style="line-height: 10px;">
+              <h2 class="rpg-dropdown__title" style="font-size: 22px;">Nuit des Lanternes</h2>
+              <desc>12 octobre</desc>
+            </div>
+            <i class="fa-solid fa-chevron-down rpg-dropdown__icon"></i>
+          </div>
+          <div class="rpg-dropdown__content">
+            <div class="rpg-dropdown__inner">
+              <p class="rpg-dropdown__text">Après Halloween, la <ppkb>Nuit des Lanternes</ppkb> est la <ppkb>fête la plus attendue</ppkb> de tous
+                les habitants. Au matin, <ppkb>chacun écrit un secret</ppkb>, une vieille honte ou une anecdote sur une
+                <ppkb>lanterne</ppkb>. Elles sont ensuite mélangées et distribuées aléatoirement le soir venu, pour que chacun en lise une. Ce
+                jour-là, la ville se couvre de lanternes, on accroche des banderoles de citrouilles sur les lampadaires
+                et un <ppkb>bal costumé</ppkb> est organisé le soir même. Une <ppkb>parade nocturne</ppkb> précède le bal : des chars fleuris
+                défilent de parts et d'autres, puis un vote est lancé pour élire le <ppkb>meilleur char de l'année</ppkb>. La Nuit
+                des Lanternes est une <ppkb>commémoration</ppkb> de la <ppkb>grande révolte de 1868</ppkb> : lors d'une période de
+                pénurie, alors que la ville dépendait encore des marchands de Hazelgrove, celle-ci a privé Amberwoods de
+                ravitaillement. Un artisan lanternier de l'époque, <ppkb>Elias Wren</ppkb>, a appelé toute la population à
+                <ppkb>éclairer la ville en une seule nuit</ppkb>. Ce simple geste avait pour but de montrer que la ville refusait
+                d'abandonner. Depuis ce jour, Amberwoods a pris une <ppkb>totale indépendance</ppkb> et sa solidarité n'a fait
+                qu'augmenter, et ses habitants ont su se ravitailler seuls, au prix de nombreux efforts.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="rpg-dropdown">
+          <div class="rpg-dropdown__head">
+            <div style="line-height: 10px;">
+              <h2 class="rpg-dropdown__title" style="font-size: 22px;">Halloween</h2>
+              <desc>31 octobre</desc>
+            </div>
+            <i class="fa-solid fa-chevron-down rpg-dropdown__icon"></i>
+          </div>
+          <div class="rpg-dropdown__content">
+            <div class="rpg-dropdown__inner">
+              <p class="rpg-dropdown__text"><ppkb>Halloween</ppkb> est de loin la <ppkb>fête préférée</ppkb> de la population d’Amberwoods — et
+                celle des sorcières qui y vivent. Tous sortent vêtus de <ppkb>déguisements</ppkb> plus vrais que nature, en quête de
+                poignées de sucreries. D’ailleurs, une <ppkb>coutume locale</ppkb> veut que chaque maisonnette affiche un <ppkb>masque
+                  de théâtre</ppkb> au-dessus de sa porte. Chaque émotion annonce une ambiance différente une fois la porte ouverte.
+                Par exemple, une maison affichant un masque apeuré ouvrira sur une <ppkb>scène horrifique</ppkb>, pensée pour
+                effrayer les demandeurs de bonbons, tandis qu’un masque joyeux promet une <ppkb>surprise plus amusante</ppkb>.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="rpg-dropdown">
+          <div class="rpg-dropdown__head">
+            <div style="line-height: 10px;">
+              <h2 class="rpg-dropdown__title" style="font-size: 22px;">Secret Santa</h2>
+              <desc>Du 1er au 25 décembre</desc>
+            </div>
+            <i class="fa-solid fa-chevron-down rpg-dropdown__icon"></i>
+          </div>
+          <div class="rpg-dropdown__content">
+            <div class="rpg-dropdown__inner">
+              <p class="rpg-dropdown__text">Début décembre, il est de coutume que la mairie installe, au centre de la
+                place principale, un énorme <ppkb>bac en forme de boule de neige</ppkb> dans lequel chacun pourra déposer son nom et
+                en piocher un à son tour, qui lui désignera une personne de la ville à qui offrir un <ppkb>cadeau de Noël</ppkb>.
+                Tradition chère au cœur de certains, c’est une façon de <ppkb>partager l’esprit de Noël</ppkb>, de <ppkb>souder la
+                  population</ppkb> – et, qui sait, de peut-être faire sourire quelqu’un ou faire une belle rencontre.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="rpg-dropdown">
+          <div class="rpg-dropdown__head">
+            <div style="line-height: 10px;">
+              <h2 class="rpg-dropdown__title" style="font-size: 22px;">Marché aux Étoiles</h2>
+              <desc>15 décembre</desc>
+            </div>
+            <i class="fa-solid fa-chevron-down rpg-dropdown__icon"></i>
+          </div>
+          <div class="rpg-dropdown__content">
+            <div class="rpg-dropdown__inner">
+              <p class="rpg-dropdown__text">Le <ppkb>Marché aux Étoiles</ppkb> clôt l’année en avance de façon conviviale. On y
+                organise un <ppkb>concours de bonhommes de neige</ppkb> pendant que le quartier de l'embarcadère offre aux touristes
+                venus juste pour l'occasion des <ppkb>dégustations gratuites</ppkb> de spécialités locales. De nombreux
+                <ppkb>artisans</ppkb> peuvent en profiter pour vendre leurs confections. C'est un <ppkb>marché de Noël</ppkb>
+                particulièrement apprécié par les locaux.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <article class="guide-panel guide-article-panel" data-article="u1-art3">
+      <div class="guide-actions">
+        <button class="guide-btn -back" type="button" data-action="list">← Retour</button>
+        <button class="guide-btn" type="button" data-action="prev">← Calendrier des festivités</button>
+        <button class="guide-btn" type="button" data-action="next">Annexe suivante →</button>
+      </div>
+
+      <h2 class="guide-title">Établissements & Commerces</h2>
+
+      <div class="guide-content">
+        <div class="rpg-dropdown">
+          <div class="rpg-dropdown__head">
+            <h2 class="rpg-dropdown__title" style="font-size: 22px;">Centre-ville</h2>
+            <i class="fa-solid fa-chevron-down rpg-dropdown__icon"></i>
+          </div>
+          <div class="rpg-dropdown__content">
+            <div class="rpg-dropdown__inner">
+              <div class="paragraphe" style="padding: 0;padding-top: 25px;">
+                <h2>Établissements publics</h2>
+                <p>Le <ppkb>centre-ville</ppkb> comprend des <ppkb>établissements publics et municipaux</ppkb>, tels que : une mairie, des pompes
+                  funèbres, une crèche, des écoles <ppki>(primaire, collège, lycée)</ppki>, un cabinet de santé <ppki>(médecins
+                    généralistes, dentistes)</ppki>, un commissariat, une bibliothèque, une clinique vétérinaire, un toiletteur,
+                  une supérette, un musée, une église <ppki>(site historique)</ppki>, des cafés, une brasserie, un bar, un centre de
+                  loisirs <ppki>(bowling, billard)</ppki>, des restaurants, un gymnase, un terrain de jeu, une station service, une
+                  banque, un petit hôtel, une agence immobilière, etc.
+                  <br /><br />
+                  Mais vous y trouverez également des <ppkb>établissements spécialisés</ppkb>, listés ci-dessous.<br /><br /> <ppki>(Il est
+                    possible d'ajouter votre établissement en effectuant une demande dans les <a href="">Demandes HRP</a>.)</ppki>
+                </p>
+              </div><br />
+
+              <div class="paragraphe" style="padding: 0;">
+                <div style="line-height: 10px;">
+                  <span style="display: flex;align-items: center;gap: 7px;">
+                    <h2>Blackwell Private Investigations (BPI)</h2><span
+                      style="margin-top: -8px;font: italic 16px Calibri;">(Cabinet de détectives privés)</span>
+                  </span>
+                </div>
+                <p>Ouvert seulement depuis <ppkb>trois ans</ppkb> par un certain Blackwell tout droit venu de <ppkb>Chicago</ppkb>, BPI offre aux
+                  citoyens d’Amberwoods des <ppkb>services d’investigations privées</ppkb> à quiconque serait prêt à y mettre le prix
+                  — n’en déplaise au <ppkb>Marshal</ppkb> de la ville, qui voit d’un très mauvais œil l’installation de cet
+                  énergumène des grandes villes…</p>
+              </div><br />
+
+              <div class="paragraphe" style="padding: 0;">
+                <div style="line-height: 10px;">
+                  <span style="display: flex;align-items: center;gap: 7px;">
+                    <h2>Amberwoods Automobile</h2><span
+                      style="margin-top: -8px;font: italic 16px Calibri;">(Garage)</span>
+                  </span>
+                </div>
+                <p>Un problème avec votre voiture ? Une révision à faire ? Un frein à changer en urgence ? <ppkb>Amberwoods
+                    Automobile</ppkb> est l’<ppkb>incontournable stop</ppkb> pour tous vos problèmes de mécaniques à roues. Le
+                  propriétaire et ses mécano s’occupent aussi bien des <ppkb>deux roues</ppkb> que des <ppkb>4x4</ppkb> ou plus gros
+                  gabarits, selon les besoins des gens de la petite ville.</p>
+              </div><br />
+
+              <div class="paragraphe" style="padding: 0;">
+                <div style="line-height: 10px;">
+                  <span style="display: flex;align-items: center;gap: 7px;">
+                    <h2>Red Oak & Co</h2><span style="margin-top: -8px;font: italic 16px Calibri;">(Entreprise de
+                      construction & exploitation forestière)</span>
+                  </span>
+                </div>
+                  <p><ppkb>Société exploitant également la scierie implantée dans les hauts-bois</ppkb>, Red Oak & Co est une entreprise familiale d’exploitation forestière, de transformation du bois et de construction, spécialisée dans la <ppkb>construction et la rénovation</ppkb>, les <ppkb>menuiseries intérieures et extérieures</ppkb>, ainsi que la <ppkb>construction de chalets et de maisons</ppkb>. Leur savoir-faire se passe de génération en génération, et est profondément ancré dans l’esprit d’Amberwoods ainsi que <ppkb>le respect du bois et de ses forêts</ppkb>.</p>
+              </div><br />
+
+              <div class="paragraphe" style="padding: 0;">
+                <div style="line-height: 10px;">
+                  <span style="display: flex;align-items: center;gap: 7px;">
+                    <h2>The Amber Post</h2><span style="margin-top: -8px;font: italic 16px Calibri;">(Éditeur de
+                      journaux et petites annonces)</span>
+                  </span>
+                </div>
+                <p>Fondée en <ppkb>1954</ppkb> à Amberwoods, et toujours propriétaire d’un <ppkb>ancien bâtiment de briques rouges et
+                    de bois</ppkb> du centre-ville, <ppkb>The Amber Post</ppkb> édite et propose chaque semaine une <ppkb>sélection
+                    d'articles</ppkb> sur les événements locaux et régionaux, des <ppkb>petites annonces</ppkb>, ainsi que des enquêtes et
+                  des <ppkb>analyses approfondies</ppkb>.</p>
+              </div><br />
+            </div>
+          </div>
+        </div>
+
+        <div class="rpg-dropdown">
+          <div class="rpg-dropdown__head">
+            <h2 class="rpg-dropdown__title" style="font-size: 22px;">Les Hauts-Bois</h2>
+            <i class="fa-solid fa-chevron-down rpg-dropdown__icon"></i>
+          </div>
+          <div class="rpg-dropdown__content">
+            <div class="rpg-dropdown__inner">
+              <div class="paragraphe" style="padding: 0;padding-top: 25px;">
+                <h2>Établissements publics</h2>
+                <p>Ce quartier est essentiellement composé d’<ppkb>habitations</ppkb>, mais un peu plus loin dans la forêt se
+                  trouvent des établissements encore en activité aujourd'hui, tels que : une <ppkb>mine</ppkb>, une <ppkb>scierie</ppkb> et une
+                  <ppkb>ferme</ppkb>.
+                  <br /><br />
+                  Mais vous y trouverez également des <ppkb>établissements spécialisés</ppkb>, listés ci-dessous.<br /><br /> <ppki>(Il est
+                    possible d'ajouter votre établissement en effectuant une demande dans les <a href="">Demandes HRP</a>.)</ppki>
+                </p>
+              </div><br />
+
+              <div class="paragraphe" style="padding: 0;">
+                <div style="line-height: 10px;">
+                  <span style="display: flex;align-items: center;gap: 7px;">
+                    <h2>Scierie de Red Oak</h2><span style="margin-top: -8px;font: italic 16px Calibri;">(Exploitation forestière)</span>
+                  </span>
+                </div>
+                <p>Filiale de l’entreprise de construction Red Oak & Co, cette <ppkb>vieille scierie récemment modernisée</ppkb>, permet <ppkb>l’exploitation et la gestion durable</ppkb> du bois des environs. Respectueux de l’environnement, ils emploient aussi bien sylviculteurs, bûcherons, que techniciens forestiers s’assurant du renouvellement des parcelles de la forêt.</p>
+              </div><br />
+            </div>
+          </div>
+        </div>
+
+        <div class="rpg-dropdown">
+          <div class="rpg-dropdown__head">
+            <h2 class="rpg-dropdown__title" style="font-size: 22px;">L'Embarcadère</h2>
+            <i class="fa-solid fa-chevron-down rpg-dropdown__icon"></i>
+          </div>
+          <div class="rpg-dropdown__content">
+            <div class="rpg-dropdown__inner">
+              <div class="paragraphe" style="padding: 0;padding-top: 25px;">
+                <h2>Établissements publics</h2>
+                <p>Si l’<ppkb>allée marchande</ppkb> est majoritairement composée de <ppkb>petits commerces spécialisés</ppkb>, il y existe
+                  également des établissements publics, tels que : XX, XX.
+                  <br /><br />
+                  Mais vous y trouverez également des <ppkb>établissements spécialisés</ppkb>, listés ci-dessous.<br /><br /> <ppki>(Il est
+                    possible d'ajouter votre établissement en effectuant une demande dans les <a href="">Demandes HRP</a>.)</ppki>
+                </p>
+              </div><br />
+
+              <div class="paragraphe" style="padding: 0;">
+                <div class="paragraphe" style="padding: 0;">
+                  <div style="line-height: 10px;">
+                    <span style="display: flex;align-items: center;gap: 7px;">
+                      <h2>Maple & Pine</h2><span style="margin-top: -8px;font: italic 16px Calibri;">(Café)</span>
+                    </span>
+                  </div>
+                  <p><ppkb>Maple & Pine</ppkb> est un <ppkb>café cosy</ppkb> à la devanture ancienne et chaleureuse, célèbre pour ses
+                    <ppkb>pâtisseries maison</ppkb>. Plutôt petit et intimiste, c'est l'endroit idéal pour profiter d'un
+                    <ppkb>après-midi au chaud</ppkb> lorsque les températures se montrent peu clémentes, et déguster un bon thé ou
+                    un chocolat chaud au sirop d'érable <ppki>(local, bien évidemment)</ppki>.</p>
+                </div><br />
+
+                <div class="paragraphe" style="padding: 0;">
+                  <div style="line-height: 10px;">
+                    <span style="display: flex;align-items: center;gap: 7px;">
+                      <h2>Tiny Craft</h2><span style="margin-top: -8px;font: italic 16px Calibri;">(Échoppe de
+                        faits-mains)</span>
+                    </span>
+                  </div>
+                  <p><ppkb>Tiny Craft</ppkb> est l’endroit idéal pour <ppkb>trouver des cadeaux</ppkb> ou repartir avec un <ppkb>souvenir</ppkb>.
+                    Petite boutique de <ppkb>créations faites main</ppkb> pour toute la famille : bijoux, bougies, savons, objets
+                    déco en bois, le tout est <ppkb>100 % artisanal</ppkb> et <ppkb>made in Amberwoods</ppkb> !</p>
+                </div><br />
+
+                <div class="paragraphe" style="padding: 0;">
+                  <div style="line-height: 10px;">
+                    <span style="display: flex;align-items: center;gap: 7px;">
+                      <h2>Amberbloom</h2><span style="margin-top: -8px;font: italic 16px Calibri;">(Fleuriste)</span>
+                    </span>
+                  </div>
+                  <p>Petite fleuristerie lumineuse, Amberbloom <ppkb>embaume toute la rue de ses senteurs de fleurs et autres plantes aromatiques</ppkb>. Sa devanture composée de bois clair et de brique rouge, semble éternellement recouverte d’un lierre grimpant <ppkb>à l’aspect très romantique</ppkb> qui aura su, avec le temps, s’adapter aux intempéries et à la rudesse du climat. Amberbloom propose aussi bien <ppkb>plantes d’intérieur que d’extérieur</ppkb>, des <ppkb>graines</ppkb> ou encore des <ppkb>compositions florales</ppkb>, bouquets, etc.</p>
+                </div><br />
+
+                <div class="paragraphe" style="padding: 0;">
+                  <div style="line-height: 10px;">
+                    <span style="display: flex;align-items: center;gap: 7px;">
+                      <h2>Timber Tools Supply</h2><span style="margin-top: -8px;font: italic 16px Calibri;">(Magasin
+                        d'outillage : informatique, pêche, chasse, soudure...)</span>
+                    </span>
+                  </div>
+                  <p>Timber Tools Supply c’est <ppkb>LE</ppkb> magasin incontournable pour tout <ppkb>amateur d’informatique, de bricolage, de chasse ou de pêche</ppkb>. La petite boutique, éclairée à l’intérieur par des néons grésillants, ressemble à s’y méprendre à un <ppkb>bric-à-brac de tout et de rien</ppkb>, sauf pour l'œil averti qui saura d’office faire la différence entre appâts de pêche et douilles filetées. L’intérieur semble figé dans le temps ; déborde d’ancien matériel informatique, de vis et d’écrous et autres pièces électroniques quasi-obsolètes telles qu’ordinateur vintage ou magnétoscope. Il y règne une forte odeur métallique de transistor.</p>
+                </div><br />
+
+                <div class="paragraphe" style="padding: 0;">
+                  <div style="line-height: 10px;">
+                    <span style="display: flex;align-items: center;gap: 7px;">
+                      <h2>Ash Antiquités</h2><span
+                        style="margin-top: -8px;font: italic 16px Calibri;">(Antiquaire)</span>
+                    </span>
+                  </div>
+                  <p><ppkb>Boutique spécialisée dans les antiquités</ppkb>, vous pourrez ici aussi bien <ppkb>revendre un bien</ppkb> que
+                    trouver une <ppkb>perle rare</ppkb>. Meubles, argenterie, art de la table, peintures, tapisseries… n’hésitez
+                    pas à venir faire un tour chez <ppkb>Ash Antiquités</ppkb> !</p>
+                </div><br />
+
+                <div class="paragraphe" style="padding: 0;">
+                  <div style="line-height: 10px;">
+                    <span style="display: flex;align-items: center;gap: 7px;">
+                      <h2>My'my</h2><span style="margin-top: -8px;font: italic 16px Calibri;">(Institut de beauté /
+                        Coiffeur)</span>
+                    </span>
+                  </div>
+                  <p>Chez <ppkb>My’my</ppkb>, profitez d’un <ppkb>moment de détente cocooning</ppkb> hors du temps, pour un massage,
+                    une manucure, une coupe ou un brushing ! Outre le fait que ce petit institut de beauté semble s’être
+                    arrêté dans les <ppki>sixties</ppki>, attention, il est également le <ppkb>lieu de commérage par excellence</ppkb> de la
+                    pause de onze heures.</p>
+                </div><br />
+
+                <div class="paragraphe" style="padding: 0;">
+                  <div style="line-height: 10px;">
+                    <span style="display: flex;align-items: center;gap: 7px;">
+                      <h2>Poppin'Pepper</h2><span style="margin-top: -8px;font: italic 16px Calibri;">(Pizzeria)</span>
+                    </span>
+                  </div>
+                  <p>L’une des meilleures pizzeria de la ville – <ppki>d’après le pizzaiolo</ppki>. Poppin’Pepper propose des <ppkb>pizzas artisanales</ppkb>, préparées dans la mesure du possible avec <ppkb>des ingrédients locaux et de saison</ppkb>. <br /><br />
+                    Envie d’une pizza 4 saisons avec supplément pepperoni ? Poppin’Pepper <ppkb>vous livre de 11h à 14h et de 18h à 02h, tous les jours de la semaine</ppkb>. Livraison <ppkb>gratuite à partir de 20$</ppkb> !<br /><br />
+                    De plus, tous les 1er et 2ème jeudis du mois, <ppkb>ramenez vos ingrédients</ppkb>, et le chef s’occupe de vous faire votre pizza sur mesure ! À noter que si vous ramenez l’un des ingrédients de saison du moment, vous aurez également -20 % sur votre fabuleuse pizza ! ????</p>
+                </div><br />
+
+                <div class="paragraphe" style="padding: 0;">
+                  <div style="line-height: 10px;">
+                    <span style="display: flex;align-items: center;gap: 7px;">
+                      <h2>Farmer's Market</h2><span style="margin-top: -8px;font: italic 16px Calibri;">(Magasin de
+                        productions locales)</span>
+                    </span>
+                  </div>
+                  <p><ppkb>The Farmer’s Market</ppkb> est une <ppkb>petite supérette lumineuse</ppkb>, une <ppkb>coopérative de revente</ppkb>
+                    qui offre à ses clients toute une panoplie de <ppkb>fruits et légumes frais locaux</ppkb>, de produits en
+                    bocaux, conserves et autres jus en verres consignés, alcools, produits laitiers et céréales. Vous y
+                    trouverez toutes les <ppkb>productions de saison</ppkb> des agriculteurs et producteurs de la région.</p>
+                </div><br />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+  </div>
+
+  <div class="guide-shell guide-section-view" data-section="univers-2">
+    <nav class="guide-breadcrumb">
+      <button type="button" data-action="home">Accueil</button>
+      <span>›</span>
+      <button type="button" data-action="list">Vesperune</button>
+      <span class="guide-breadcrumb-article" hidden>
+        <span>›</span>
+        <span class="guide-current-article-title"></span>
+      </span>
+    </nav>
+
+    <section class="guide-panel guide-list-panel is-active">
+      <div class="guide-actions guide-list-actions">
+        <button class="guide-btn -back" type="button" data-action="home">← Retour</button>
+      </div>
+
+      <h2 class="guide-title">Vesperune</h2>
+
+      <div class="guide-list">
+        <button class="guide-article-link" type="button" data-open-article="u2-art1">
+          <strong>Vivre à Vesperune</strong>
+          <span>Description de l'environnement du monde, des moeurs et de ses particularités.</span>
+        </button>
+
+        <button class="guide-article-link" type="button" data-open-article="u2-art2">
+          <strong>Institutions & Hiérarchie</strong>
+          <span>Listes des pouvoirs et autres institutions actuellement en vigueur en Vesperune.</span>
+        </button>
+
+        <button class="guide-article-link" type="button" data-open-article="u2-art3">
+          <strong>Religion & Croyances</strong>
+          <span>Liste des religions et explication des différentes croyances de la population vesperienne.</span>
+        </button>
+
+        <button class="guide-article-link" type="button" data-open-article="u2-art4">
+          <strong>Chronologie historique</strong>
+          <span>Évènements historiques de Vesperune, classés dans l'ordre chronologique.</span>
+        </button>
+
+        <button class="guide-article-link" type="button" data-open-article="u2-art5">
+          <strong>Lois de Vesperune</strong>
+          <span>Liste des lois actuellement en vigueur en Vesperune.</span>
+        </button>
+
+        <button class="guide-article-link" type="button" data-open-article="u2-art6">
+          <strong>Biomes & Lieux importants</strong>
+          <span>Liste des biomes et descriptions des lieux importants du monde.</span>
+        </button>
+
+        <button class="guide-article-link" type="button" data-open-article="u2-art7">
+          <strong>Calendrier des festivités</strong>
+          <span>Vesperune est marquée par une culture à part entière, et avec elle sont apparues des jours de célébration.</span>
+        </button>
+
+        <!--
+        <a href="h13-codex" target="_blank" class="guide-article-link" type="button">
+          <strong>Codex</strong>
+          <span>Akshually c'est une belladone et pas une mandragore (à venir)</span>
+        </a>
+        -->
+        <!--
+        <a href="h14-bestiaire" target="_blank" class="guide-article-link" type="button">
+          <strong>Bestiaire</strong>
+          <span>GRRRRRRR créatures (à venir)</span>
+        </a>
+        -->
+
+
+      </div>
+    </section>
+
+    <article class="guide-panel guide-article-panel" data-article="u2-art1">
+      <div class="guide-actions">
+        <button class="guide-btn -back" type="button" data-action="list">← Retour</button>
+        <button class="guide-btn" type="button" data-action="prev">← Annexe précédente</button>
+        <button class="guide-btn" type="button" data-action="next">Institutions & Hiérarchie →</button>
+      </div>
+
+      <h2 class="guide-title">Vivre à Vesperune</h2>
+
+      <div class="guide-content">
+        <p><ppkb>Vesperune</ppkb>, aussi communément appelé le <ppkb>monde magique</ppkb>, est le monde d’origine des êtres surnaturels.
+          Sorcières,
+          familiers et reliquaires proviennent de ses fantastiques contrées. Séparé du monde humain par un portail
+          magique,
+          Vesperune possède une géographie, une culture et une histoire tout à fait différentes de celles des
+          humains.<br /><br />
+
+          Ce monde est <ppkb>scindé en deux royaumes</ppkb>, possédant chacun leurs propres mœurs et leur propre mode de vie. D’un
+          côté
+          se tient <ppkb>le royaume d’Opaline</ppkb>, aussi surnommé le <ppkb>royaume Crémeux</ppkb>, région lumineuse où la prospérité n’a
+          d’égale
+          que la rigidité de ses convenances. C’est là que se trouve le blanc <ppkb>château de Chantilly</ppkb> <ppki>(Chantilly Castle)</ppki>,
+          érigé
+          à l’image de la première tempête de neige créatrice, siège de la royauté d’Opaline et du pouvoir reconnu comme
+          majoritaire en Vesperune à l’heure actuelle. De l’autre s’étend <ppkb>le royaume d’Amarena</ppkb>, communément appelé la
+          <ppkb>forêt de Ronces</ppkb> <ppki>(Thornwoods)</ppki>, un territoire tapi dans l’obscurité, né de l’exil d’une partie de la population à
+          l’issue
+          de guerres passées. Là-bas, la nature est hostile, les monstres plus nombreux, les ressources plus rares, et
+          la
+          mémoire des injustices n’a jamais cessé de nourrir les rancœurs.<br /><br />
+
+          Entre ces deux royaumes s’étend <ppkb>Sorbet</ppkb>, un désert entièrement fait de glace et de givre, berceau de nombreuses
+          créatures dangereuses, qui s’érige comme <ppkb>frontière naturelle</ppkb>. Dans l’imaginaire collectif, Sorbet a une portée
+          philosophique et dépeint les écarts, ainsi que l’éternel conflit, entre les territoires d’Opaline et ceux
+          d’Amarena.<br /><br />
+
+          <ppkb>Le royaume Crémeux</ppkb> <ppki>(Creamside)</ppki> est entouré de vastes plaines, de lacs somptueux et de forêts améthyste et
+          verdoyantes ; des brumes rosées aux rivières sucrées, ces paysages féeriques s’ancrent dans le quotidien des
+          sorcières et autres êtres surnaturels. Tout en haut de la colline Cacao se hisse le village de Clafoutis,
+          village
+          le plus renommé pour son historique héroïque : c’est là que la reine Chantilly a vaincu le roi d’Amarena lors
+          de
+          la bataille finale. Village considéré comme béni par le peuple d’Opaline depuis ce jour, les sorciers qui en
+          viennent pour étudier à la capitale sont tous considérés comme prometteurs aux yeux de la société opaline, et
+          particulièrement aux yeux du <ppkb>Trône d’Ivoire</ppkb> — garde royale et autorité d’élite du monde magique.<br /><br />
+
+          <ppkb>La forêt de Ronces</ppkb> <ppki>(royaume d’Amarena)</ppki> tient son nom de toutes ces épaisses forêts de ronces, peuplées de
+          créatures menaçantes, qui l’entourent de part et d’autre, l’encerclant à la perfection. Son château est
+          visible
+          depuis les hauteurs, car celui-ci épouse la plus grande colline du monde et se hisse jusqu’aux nuages. Il est
+          pourvu de tours en forme de pointes et a été bâti en obsidienne. Au-delà des forêts se trouvent les marécages,
+          les
+          montagnes enneigées et les plaines brumeuses de l’Ombre, aussi connues comme le plus grand cimetière de
+          Vesperune.
+          Si le royaume d’Amarena comporte les lieux les plus horrifiques, ce sont aussi les plus chargés d’histoire et,
+          bien que les ressources manquent dans ces contrées, les recherches sur les créatures du monde y avancent bien
+          plus
+          rapidement, au vu de leur nombre.<br /><br />
+
+          La population vesperienne est <ppkb>majoritairement composée de sorcières</ppkb>, bien que familiers et reliquaires
+          s’ajoutent
+          au compte depuis maintenant quelques décennies. Et si les anciennes générations peinent encore à accepter le
+          concept de paix, la nouvelle génération sait se montrer plus ouverte d’esprit à ce sujet. Aujourd’hui, les
+          <ppkb>frontières sont ouvertes</ppkb> et Opalins comme Amarenéens se joignent aux festivités de chaque royaume.<br /><br />
+
+          Même si la paix a été retrouvée, les modes de vie demeurent <ppkb>drastiquement différents</ppkb>, que ce soit entre les
+          deux
+          royaumes ou entre les familles d’un même royaume. <ppkb>Les lignées, les affinités, la nature des dons et la
+          réputation des familles</ppkb> jouent un rôle important dans la perception sociale des individus. Certains pouvoirs sont
+          considérés
+          comme utiles, raffinés et dignes d’estime ; d’autres sont jugés instables, inquiétants ou moralement douteux.
+          Cette distinction, officiellement niée dans les discours contés au peuple, structure pourtant une bonne partie
+          des
+          <ppkb>inégalités du monde</ppkb>.<br /><br />
+
+          Aujourd’hui encore, la <ppkb>technologie</ppkb> est chose inconnue pour les sorciers. Ordinateurs, téléphones et autres
+          dispositifs n’ont pas leur place en ce monde, c’est d’ailleurs l’une des choses qui émerveillent
+          particulièrement
+          les sorciers lors de leurs voyages dans le monde humain. Ça, et les avions. Et si les codes vestimentaires
+          étaient
+          très strictes à l’époque, ce n’est plus le cas aujourd’hui, mais la mode des <ppkb>chapeaux pointus</ppkb> est
+          intemporelle,
+          chez eux, de même que les manteaux queue de pie et le style victorien dans sa globalité. <br /><br />
+
+          <ppkb>La temporalité étant différente à Vesperune</ppkb>, les sorciers ont toujours un peu de mal à s’adapter
+          aux
+          années humaines et à leur calendrier. Les années bissextiles sont, pour eux, un concept tout à fait étrange.
+          <ppkb>Leur
+          calendrier actuel débute lors du traité de paix</ppkb> et se compte en termes de <ppkb>cycles lunaires</ppkb>. Un cycle lunaire
+          dure <ppkb>8 phases lunaires</ppkb>, une phase lunaire dure <ppkb>1 mois entier</ppkb>, de 30 jours, chacun composé de 24 heures. Ainsi, leur
+          jour
+          de naissance est fêté tous les 8 mois et se nomme ainsi. Dans le monde magique, nous sommes le Jour 1 du
+          Dernier-Croissant, 61e cycle (à date humaine du 1er mai 2010) — il s’est écoulé environ 40 ans humains depuis la signature du traité de
+          paix.<br /><br />
+          <div class="note" style="margin-bottom: 25px;">
+            <h2>À savoir</h2>
+            <p>Vous souhaitez <ppkb>convertir l'âge humain de votre personnage en âge sorcier</ppkb> ? Nul besoin de calculer quoique ce soit, ce convertisseur le fait pour vous : <a href="https://pumpkinsrpg.forumactif.com/h15-calculateur-date-sorcier">Convertir son âge humain en âge sorcier</a>.</p>
+          </div>
+        </p>
+        <p>
+
+          <ppkb>L’éducation est au cœur du fonctionnement de Vesperune.</ppkb> Tous les jeunes sorciers ont l’<ppkb>obligation légale</ppkb>
+          d’étudier
+          dans l’école de magie du royaume dans lequel ils se trouvent : à Millefeuille pour Opaline, et au sein de
+          Réglisse
+          pour Amarena. Les sorcières poursuivent cette scolarité jusqu’à environ douze ans, dans le but d’apprendre à
+          maîtriser leurs pouvoirs, de comprendre les règles du monde magique et de vivre sans mettre autrui en danger.
+          Durant leurs études, les sorciers apprennent également d’autres notions telles que l’histoire, la géographie,
+          les
+          mathématiques, les différents domaines de magie et la biologie, mais aussi la littérature, l’art et les
+          sciences
+          humaines. Au terme de leur scolarité, <ppkb>les sorciers effectuent un rite de passage composé de six épreuves</ppkb>
+          semées
+          d’embûches.<br /><br />
+
+          Depuis deux ans maintenant, les sorciers peuvent choisir de demeurer à Vesperune ou de rejoindre le monde
+          humain
+          s’ils réussissent leur rite de passage, à condition d’en respecter les règles de discrétion et les contraintes
+          imposées par la loi vesperienne. Une <ppkb>formation d’au moins trois mois</ppkb> est aussi effectuée avant la traversée du
+          portail, permettant à ceux qui le souhaitent d’en apprendre davantage sur le monde humain et ses mœurs : des
+          cours
+          de culture générale, d’histoire et de modernité sont donnés par des sorciers dotés d’une expérience humaine
+          reconnue. Cette formation s’accompagne, elle aussi, d’une <ppkb>certification finale</ppkb> nécessaire pour s’octroyer le
+          droit
+          de traverser le portail vers Amberwoods.<br /><br />
+
+          Car, ces deux dernières années, et depuis la réforme des lois liées au monde des humains, <ppkb>Vesperune connaît un
+          phénomène nouveau : l’émigration vers le monde humain</ppkb>. La pression sociale, les attentes irréalistes, les
+          hiérarchies figées et le désir d’émancipation ont poussé de nombreuses familles à quitter le monde magique
+          pour
+          commencer une nouvelle vie ailleurs. La nouvelle génération est on ne peut plus concernée par cet « effet de
+          mode
+          » largement en vogue ; ce phénomène vient naturellement avec le reste de la modernité.<br /><br />
+
+          Avec cette modernité vient également <ppkb>la fin des balais magiques et des tapis volants</ppkb>, largement appréciés d’un
+          public plus âgé des années 20 aux années 2000. Place aux <ppkb>véhicules motorisés volants</ppkb> à turbos boosts
+          enflammés,
+          aux nuages cotonneux en fil de Bonbonblanc et aux véhicules fantasmagoriques ou minimalistes, parfois
+          incohérents
+          — <ppki>les rumeurs racontent que le chanteur des Bittersweet se déplace à dos de guitare électrique</ppki>.
+        </p><br />
+        <div class="paragraphe" style="padding: 0;">
+          <h2>En résumé</h2>
+          <p><ppkb>Le royaume d’Opaline</ppkb> <ppki>(le Crémeux)</ppki> est le versant clair, riche et institutionnel du monde magique. On y
+            trouve
+            la couronne <ppki>(le Trône d’Ivoire)</ppki>, les grandes familles reconnues, l’académie la plus respectée <ppki>(Millefeuille)</ppki>
+            et
+            le <ppkb>centre du pouvoir</ppkb>. C’est un territoire associé à la maîtrise, à la discipline, au prestige et à une
+            certaine
+            idée de la respectabilité. Beaucoup d’anciennes générations continuent de considérer les Amarenéens comme de
+            dangereux citoyens, au vu des valeurs qui leur sont inculquées et des différences culturelles.<br /><br />
+
+            <ppkb>Le royaume d’Amarena</ppkb> <ppki>(forêt de Ronces)</ppki> est le versant sombre. Il a été marginalisé pendant les guerres et a
+            longtemps vécu dans des conditions plus dures, en tant que royaume vaincu, jusqu’à l’arrivée de la paix.
+            S’il
+            reste vaincu, les communications et les échanges entre royaumes ont été drastiquement améliorés, permettant
+            ainsi aux nouvelles générations de profiter d’un contexte plus stable et agréable. Mais les habitants y
+            portent
+            souvent le poids d’une réputation injuste ou redoutée, et beaucoup d’anciennes générations nourrissent une
+            rancœur profonde envers Opaline.
+          </p><br />
+        </div>
+        <div class="paragraphe" style="padding: 0;">
+          <h2>Saisons</h2>
+          <p>Les <ppkb>saisons à Vesperune</ppkb> se vivent différemment, en fonction de la position géographique.<br /><br />
+
+            Au <ppkb>royaume d’Opaline</ppkb>, le cycle de l’année est doux et les transitions se font lentement. Les printemps sont
+            lumineux, les étés agréables, les automnes très ambrés et les hivers très froids. Les paysages y changent
+            joliment au fil des mois, pour le plus grand bonheur de sa population.<br /><br />
+
+            Au <ppkb>royaume d’Amarena</ppkb>, le climat est <ppkb>plus dur et plus instable</ppkb>. Les changements de saisons sont nets
+            et
+            parfois régressifs. Les nuits sont plus longues, l’humidité plus présente et la brume y est plus fréquente,
+            rendant le quotidien plus hostile. Certaines zones, comme la capitale elle-même, semblent vivre dans une
+            forme
+            de <ppkb>crépuscule permanent</ppkb>.<br /><br />
+
+            De manière générale, la <ppkb>lune de Vesperune</ppkb> est bien plus grande que celle du monde humain. Elle est très
+            importante pour la culture commune du monde surnaturel, à tel point que certaines religions la considèrent
+            comme
+            une <ppkb>véritable figure divine</ppkb>. Le monde magique est fortement influencé par cette dernière, et les <ppkb>phases
+            lunaires</ppkb> rythment également certaines pratiques magiques, comme les rituels ou les sorts complexes. La nuit, elle
+            arbore
+            des reflets violets dans les contrées opalines, ou bleutés dans les paysages amarenéens.
+          </p><br />
+        </div>
+        <div class="paragraphe" style="padding: 0;">
+          <h2>MŒurs</h2>
+          <p><ppkb>Vesperune est un monde de traditions, de réputation et de mémoire</ppkb>. Les familles y occupent une place
+            centrale,
+            et l’on hérite autant d’un nom que d’une attente, d’un prestige ou d’un discrédit. Les convenances y sont
+            parfois rigides, surtout dans les sphères proches du pouvoir. L’éducation, la maîtrise de soi, la manière de
+            pratiquer la magie et l’utilité de son don influencent fortement la place qu’on occupe dans la
+            société.<br /><br />
+
+            Au royaume d’Opaline, <ppkb>la politesse, le sens du devoir et l’élégance des apparences</ppkb> sont particulièrement
+            valorisés. À Amarena, <ppkb>la méfiance, l'instinct de survie et la solidarité interne</ppkb> pèsent davantage. Partout,
+            cependant, la <ppkb>magie fait partie du quotidien</ppkb> : elle habite les gestes ordinaires, les objets familiers, les
+            soins, les déplacements, les croyances et les fêtes.<br /><br />
+
+            Depuis plusieurs décennies, une partie de la jeunesse aspire toutefois à autre chose. Beaucoup rêvent
+            d’échapper
+            aux attentes de Vesperune, de quitter ses hiérarchies, sa rigidité, de vivre en dehors des cadres imposés
+            par
+            leur naissance et, depuis ces deux dernières années, d’<ppkb>explorer le monde humain</ppkb>. Cette envie de départ
+            transforme peu à peu le monde magique.
+          </p><br />
+        </div>
+        <div class="paragraphe" style="padding: 0;">
+          <h2>Passage entre les mondes</h2>
+          <p>À l’heure actuelle, il n’existe qu’<ppkb>un seul portail</ppkb> liant les deux mondes. <br /><br />
+
+            Du côté de <ppkb>Vesperune</ppkb>, ce portail se situe dans le <ppkb>royaume d’Opaline</ppkb>. Il se trouve dans le ciel, à l’endroit
+            où
+            la lune atteint son zénith. Un moyen de transport aérien est nécessaire pour s’y rendre. <br /><br />
+
+            Du côté du <ppkb>monde humain</ppkb>, le portail se trouve dans un lac situé dans les montagnes boisées d’une petite
+            ville
+            isolée du reste du monde, nommée <ppkb>Amberwoods</ppkb>. Pour y accéder de ce côté, il suffit de plonger là où la lune
+            se
+            reflète.<br /><br />
+
+            Si le portail est resté fermé des siècles durant, il est désormais ouvert la plupart du temps. En revanche,
+            une
+            sécurité supplémentaire y a été appliquée : désormais, pour ouvrir le portail, il faudra user d’<ppkb>un sort de déverrouillage simple</ppkb> ; sans quoi, le portail restera fermé. D’autre part, le portail est <ppkb>fermé tous les soirs de pleine lune</ppkb>, car jugé trop instable à ces périodes.
+          </p>
+        </div>
+      </div>
+    </article>
+
+    <article class="guide-panel guide-article-panel" data-article="u2-art2">
+      <div class="guide-actions">
+        <button class="guide-btn -back" type="button" data-action="list">← Retour</button>
+        <button class="guide-btn" type="button" data-action="prev">← Vivre à Vesperune</button>
+        <button class="guide-btn" type="button" data-action="next">Religions & Croyances →</button>
+      </div>
+      <h2 class="guide-title">Institutions & Hiérarchies</h2>
+
+      <div class="guide-content">
+        <p>
+
+        <div class="paragraphe" style="padding: 0;">
+          <h2>Royaume d'Opaline</h2>
+          <p><br />
+            <span style="font: 20px 'Glow Night';">Hiérarchie</span><br />
+            <ppkb>La Couronne</ppkb><br />
+            Le sommet du pouvoir, actuellement représenté par la Reine Chantilly. Celle-ci incarne l’<ppkb>autorité suprême</ppkb>,
+            autant politique, magique que symbolique. Par défaut, si un Roi ou une Reine d’Opaline possède une
+            descendance, celle-ci ne sera pas considérée comme succession au trône. Le pouvoir doit être mérité à
+            l’issue de nombreuses épreuves.<br /><br />
+
+            <ppkb>Les Émissaires</ppkb><br />
+            Le <ppkb>cercle proche de la Couronne</ppkb>. Ils sont au <ppkb>nombre de 9</ppkb>. Ce sont les grands représentants du royaume, les
+            porte-parole de la Reine, choisis pour leur loyauté, leur influence, leur puissance et leurs facultés
+            magiques. Ils sont soigneusement triés au volet par la Reine elle-même et ne sont destitués qu’à leur mort.
+            Chaque Émissaire a un but précis, et tous ont l’objectif commun de protéger exclusivement la Reine.<br /><br />
+
+
+          <div class="rpg-dropdown">
+            <div class="rpg-dropdown__head">
+              <h2 class="rpg-dropdown__title" style="font-size: 22px;">Liste des émissaires</h2>
+              <i class="fa-solid fa-chevron-down rpg-dropdown__icon"></i>
+            </div>
+            <div class="rpg-dropdown__content">
+              <div class="rpg-dropdown__inner">
+                <div class="paragraphe" style="padding: 0;">
+                  <br />
+                  <ul class="custom-list">
+                    <li><ppkb>Éclipse</ppkb> : bras droit de la Reine, Éclipse est chargé de gérer la communication entre les
+                      Émissaires, de délivrer les missives de la Reine lorsque celle-ci n’est pas en mesure de les
+                      délivrer elle-même et d’assister cette dernière dans toutes ses décisions, en tant que Conseiller.
+                    </li>
+                    <li><ppkb>Nouvelle Lune</ppkb> : chasseur de renseignements, Nouvelle Lune recueille les informations sensibles
+                      et s’érige garant de la sûreté des secrets du royaume. C’est vers lui que se tourne la Reine
+                      lorsque la situation exige un espion, car son pouvoir de métamorphoses multiples s’avère très
+                      utile dans certaines circonstances. Nouvelle Lune est capable de dissimuler sa présence avec une
+                      aisance déconcertante ; il est, en quelque sorte, le familier volontaire de la Reine, bien qu’il
+                      n’ait subi aucun châtiment.</li>
+                    <li><ppkb>Aube-Lune</ppkb> : maître alchimiste et expert en objets magiques, Aube-Lune est chargé de préparer les
+                      potions pour les autres émissaires et pour la garde d’ivoire, d’étudier les reliques et autres
+                      objets magiques retrouvés dans des contrées lointaines et de garder ces derniers en lieu sûr.</li>
+                    <li><ppkb>Tranche-Lune</ppkb> : aucun projet de loi n’est voté sans passer entre les mains de Tranche-Lune, une
+                      âme juste et ayant à cœur de démontrer une neutralité sans pareille. Garant de la justice,
+                      Tranche-Lune agit comme Conseiller aux oreilles de la Reine en termes de litiges et de décisions
+                      de justice.</li>
+                    <li><ppkb>Songe-Lune</ppkb> : gardien de la magie, Songe-Lune est celui qui prépare et dirige les rituels et
+                      autres sortilèges les plus importants, directement commandés par la Reine. C’est lui qui s’occupe
+                      de prendre les décisions vis-à-vis de la magie en l’absence de cette dernière, et de sceller ou
+                      desceller ce qui a besoin de l’être.</li>
+                    <li><ppkb>Pleine Lune</ppkb> : visage officiel de la Couronne après la Reine, Pleine Lune supervise les grandes
+                      cérémonies du royaume, les réceptions, apparitions publiques et coordonne les événements
+                      diplomatiques majeurs. Lorsque la Reine est indisponible, c’est Pleine Lune qui s’occupe des
+                      annonces publiques. Il est chargé de veiller à ce que la Couronne soit représentée sous ses plus
+                      belles coutures, pour qu’elle puisse affirmer son autorité et sa légitimité ; il est le protecteur
+                      de l’image du royaume. C’est également un fin négociateur et diplomate.</li>
+                    <li><ppkb>Ombre-Lune</ppkb> : fervent protecteur du royaume, Ombre-Lune est attitré à la protection du portail
+                      vers le monde des humains et à son secret. Il use de ses dons d’illusion et de protection pour
+                      dissimuler le portail et le passage des sorciers aux humains, et gère également les droits de
+                      passage de chacun. C’est aussi lui qui maintient la barrière magique autour du portail, empêchant
+                      toute créature mystique de s’y faufiler. Il est le lien entre les deux mondes, le protecteur du
+                      secret du monde magique.</li>
+                    <li><ppkb>Brise-Lune</ppkb> : bras armé de la Couronne, Brise-Lune est l’épaule sur laquelle repose le travail
+                      difficile, comme les exécutions ou les incarcérations. Il est l’autorité suprême en termes
+                      d’arrestations, de traque de criminels et de neutralisation des menaces ; c’est un sorcier
+                      extrêmement puissant. Il est le limier du royaume, envoyé lorsque la parole ne suffit plus,
+                      toujours dans le but de protéger Opaline et sa Reine. Là où Tranche-Lune prend certaines
+                      décisions, Brise-Lune agit en conséquence. Il incarne les sanctions du royaume, la rigidité à
+                      l’état pur et ne fait preuve d’aucune pitié.</li>
+                    <li><ppkb>Cendre-Lune</ppkb> : grand nécromancien du royaume, Cendre-Lune peut posséder à lui seul une armée
+                      monstrueuse à qui il peut donner vie lors des combats les plus importants. Son pouvoir réside dans
+                      le fait de pouvoir insuffler temporairement la vie à des âmes, sous formes de sorciers-zombies
+                      capables d’user de la magie durant un temps donné. À lui seul, Cendre-Lune peut déterminer l’issue
+                      d’une bataille et représente plus de la totalité de la garde d’ivoire en termes de renforts
+                      improvisés. Il possède d’immenses connaissances sur les âmes et leur fonctionnement, ainsi que sur
+                      l’Entre-Lunes, et c’est à lui que reviennent les rituels et autres sortilèges liés à l’au-delà ou
+                      aux âmes damnées. C’est aussi l’Émissaire le plus craint du royaume, parce qu’il a le don
+                      d’effrayer la population ; chez les plus petits, on le surnomme le Croquemitaine. <ppki>(PNJ)</ppki></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          Le <ppkb>Trône d’Ivoire</ppkb><br />
+          L’élite des sorciers, également choisis par la Reine pour incarner la garde royale d’Opaline. Le Trône est un
+          ordre d’intervention, un symbole d’excellence et de justice. Cette garde royale ne se contente pas de protéger
+          la Couronne, contrairement aux Émissaires, ses membres ont la noble tâche de protéger le royaume tout entier.
+          Le Trône possède sa propre hiérarchie interne.<br /><br />
+
+          <div class="rpg-dropdown">
+            <div class="rpg-dropdown__head">
+              <h2 class="rpg-dropdown__title" style="font-size: 22px;">Hiérarchie du Trône d’Ivoire</h2>
+              <i class="fa-solid fa-chevron-down rpg-dropdown__icon"></i>
+            </div>
+            <div class="rpg-dropdown__content">
+              <div class="rpg-dropdown__inner">
+                <div class="paragraphe" style="padding: 0;">
+                  <br />
+                  <ul class="custom-list">
+                    <li><ppkb>Grand Sceptre</ppkb> : commandant du <ppkb>Trône d’Ivoire</ppkb>, il dirige l’ordre et répond directement à la Reine
+                      et à ses Émissaires. C’est celui qui coordonne les grandes décisions, les affectations et les
+                      missions de la garde.</li>
+                    <li><ppkb>Hauts Sceptres</ppkb> : ce sont les officiers supérieurs de la garde. Ils dirigent chacun une escouade
+                      composée de Lances d’Ivoires, les encadrent et prennent en charge les opérations confiées par le
+                      Grand Sceptre.</li>
+                    <li><ppkb>Lances d’Ivoires</ppkb> : ce sont les mages d’élite de la garde, envoyés directement sur le terrain,
+                      dans le cadre de missions de protection, d’escorte, de traque ou d’intervention, sous le
+                      commandement d’un Haut Sceptre. Ils sont répartis dans plusieurs escouades.</li>
+                    <li><ppkb>Mages</ppkb> : ce sont les sorciers enrôlés dans la garde depuis plus d’un an, ils sont tout en bas de
+                      l’échelle hiérarchique de la garde. Pour monter les échelons, les Mages peuvent démontrer leur
+                      bravoure par des faits d’armes marquants.</li>
+                    <li><ppkb>Novices</ppkb> : les sorciers retenus pour entrer dans la garde, au terme d’une formation extrêmement
+                      exigeante — dont l’accès peut se faire dès leur sortie de Millefeuille et se déroule au château —
+                      sont des novices. Ils sont considérés comme tel durant toute leur première année de service et
+                      leur aptitude à y rester est constamment réévaluée jusqu’à la fin de leur période de probation.
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+          <ppkb>Les Jurés</ppkb><br />
+          Ils représentent les sorciers officiellement reconnus par le royaume pour leur bravoure, leur puissance ou un
+          fait d’arme particulier. Lors d’une guerre, ceux-ci sont particulièrement attendus au front. De façon
+          générale, les jurés peuvent être appelés à prendre part à des procès magiques, être envoyés en mission de
+          reconnaissance ou recevoir des missions spéciales qui, parfois, peuvent leur permettre d’accéder à un rang
+          supérieur plus aisément que d’autres sorciers. <br /><br />
+
+          <ppkb>Grandes Lignées</ppkb><br />
+          Il existe de grandes lignées de sorciers, descendant d’anciens dirigeants ou d’anciennes figures historiques
+          ayant gagné en noblesse — qui se mesure en fonction de la puissance et du savoir d’une famille. Bien qu’elles
+          n’aient pas de réel impact politique, ces lignées sont largement connues et respectées de la population.
+          <br /><br />
+
+          <span style="font: 20px 'Glow Night';">Rangs spéciaux</span><br />
+          <ppkb>Les Magistrats</ppkb><br />
+          Les magistrats sont de hauts fonctionnaires, ils décident du sort d’autres êtres surnaturels lors de procès
+          magiques. Ils connaissent les lois du royaume sur le bout des ongles et sont connus pour leur pouvoir
+          décisionnaire, mais surtout leur esprit juste.<br /><br />
+
+          <ppkb>Les Précepteurs</ppkb><br />
+          Ce sont des enseignants de haut rang, employés à Millefeuille pour donner aux jeunes sorciers les clés
+          nécessaires à une vie honorable. Ils sont largement respectés de la population car leur métier consiste à
+          donner de leur personne pour améliorer le quotidien du royaume en s’assurant de forger de futurs sorciers
+          puissants et respectables, capables de raisonner avec justesse.<br /><br />
+
+          <ppkb>Les Archivistes</ppkb><br />
+          Érudits employés par le royaume, pour le royaume, les archivistes conservent et consignent le savoir, les
+          lois, pactes, lignées et rituels historiques dans la bibliothèque du château de Chantilly. Considérés comme
+          les gardiens de l’Histoire, ils sont particulièrement protégés lors d’une guerre et n’ont pas l’autorisation
+          de prendre part aux batailles.
+
+
+          </p>
+        </div><br />
+
+        <div class="paragraphe" style="padding: 0;">
+          <h2>Royaume d'Amarena</h2>
+          <p><ppkb>La Cour</ppkb><br />
+            Le pouvoir du royaume, la Couronne d’Amarena, est constituée de la famille royale, mais également des
+            familles les plus nobles du royaume — nommées les Grandes Maisons —, loyales au roi, siégeant à la Cour
+            d’Amarena. Toutes les décisions politiques furent discutées et établies lors de leurs réunions, mêlant ces
+            familles avec le Roi lui-même ; celui-ci gardait, en tout temps, un droit d’opposition suprême et en cas de
+            désaccord, c’était lui qui avait la possibilité de trancher. <br /><br />
+
+            Depuis la <ppkb>destitution du roi</ppkb>, suite à son incarcération lors de la bataille de Clafoutis, et puisque les
+            <ppkb>héritiers du roi</ppkb> étaient encore trop jeunes pour régner, ces familles ont continué d’exercer leur pouvoir
+            sur le royaume. L’héritier légitime ayant atteint la majorité depuis quelques années, la Cour l’intègre
+            petit à petit afin qu’il soit, un jour, capable de <ppkb>monter officiellement sur le trône</ppkb> et de régner à leurs
+            côtés, en tant que <ppkb>pouvoir décisionnaire</ppkb>.<br /><br />
+
+            Outre les <ppkb>héritiers du roi déchu</ppkb>, qui sont au nombre de trois, il n’existe plus <ppkb>aucun membre de la famille
+            royale</ppkb>.<br /><br />
+
+            <ppkb>Les Grandes Maisons</ppkb>, elles, se partagent le pouvoir. Il en existe <ppkb>six</ppkb>.<br /><br />
+
+          <div class="rpg-dropdown">
+            <div class="rpg-dropdown__head">
+              <h2 class="rpg-dropdown__title" style="font-size: 22px;">Les Grandes Maisons d’Amarena</h2>
+              <i class="fa-solid fa-chevron-down rpg-dropdown__icon"></i>
+            </div>
+            <div class="rpg-dropdown__content">
+              <div class="rpg-dropdown__inner">
+                <div class="paragraphe" style="padding: 0;">
+                  <br />
+                  <ul class="custom-list">
+                    <li><ppkb>Maison Percebrume</ppkb> : connue pour sa discrétion imparable et son sens de l’observation, la famille
+                      Percebrume est généralement sur le terrain lorsqu’il s’agit d’explorer des territoires inconnus et
+                      instables tant ils ont de facilité à se mouvoir. Les opérations furtives sont leur favorites, et
+                      la mobilité est leur point fort.</li>
+                    <li><ppkb>Maison Morteronce</ppkb> : maison austère, ses membres sont généralement de noir vêtus. Certains
+                      membres de cette famille ont une affinité particulière avec le domaine des malédictions, ainsi que
+                      le sujet de l’Entre-Lunes. Ils étudient de près les âmes et leur comportement. (Les rumeurs
+                      racontent qu’ils sont voués au culte de la Veille et qu’ils repêchent des corps dans les
+                      cimetières pour leurs expériences étranges…)
+                    </li>
+                    <li><ppkb>Maison Hautelune</ppkb> : maison réputée pour son raffinement, sa rigueur et son sérieux. Les
+                      Hautelunes sont liés aux rites religieux, sont friands de savoir ésotérique et prennent très à
+                      cœur l’influence des cycles lunaires. Ce sont des mages précis, patients et de grands stratèges.
+                    </li>
+                    <li><ppkb>Maison Malorage</ppkb> : maison composée de membres qui savent s’imposer, les Malorages sont connus
+                      pour leur impulsivité et leur magie offensive, brutale et parfois instable. L’orgueil et le goût
+                      du conflit coule dans leurs veines, mais ce sont d’incroyables meneurs.
+                    </li>
+                    <li><ppkb>Maison Vilepierre</ppkb> : les Vilepierres sont appréciés pour leur savoir en termes de protection, qui
+                      égale très certainement les meilleurs éléments d’Opaline. Spécialisés dans les enchantements
+                      défensifs, les sceaux et les barrières, ils participent activement à la protection du royaume.
+                      Pourtant, ils sont connus pour leurs visages marmoréens et leur tempérament glacial.
+                    </li>
+                    <li><ppkb>Maison Sombrerive</ppkb> : les Sombrerives sont des alliés de taille en termes d’influence, mais tous
+                      présentent une certaine instabilité émotionnelle et il est parfois difficile de comprendre leur
+                      charabia. Amoureux de la vie et de l’occulte, ils prennent plaisir à participer à des conflits et
+                      nourrissent leurs espoirs dans le chaos le plus total.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          La noblesse d’Amarena s’étend également sur des <ppkb>Maisons mineures</ppkb>, d’anciennes familles de sorciers, moins
+          puissants et influents que les grandes maisons, mais toujours aussi reconnues. Ces maisons mineures sont bien
+          plus nombreuses et, pour certaines, ont été presque oubliées avec le temps ou les pertes des guerres
+          précédentes.<br /><br />
+
+          <ppkb>La Roncenoire</ppkb><br />
+          Née dans les années les plus sombres d’Amarena, la Roncenoire s’est d’abord construite comme un mouvement de
+          résistance face à une Couronne devenue oppressive envers son propre peuple. Lorsque le roi monta sur le trône,
+          il choisit de rallier cette force rebelle au royaume plutôt que de l’écraser, et la transforma en une
+          véritable institution chargée de protéger le territoire et sa population. Depuis sa chute et son
+          emprisonnement, la Roncenoire a conservé ce rôle : elle continue de veiller sur Amarena, moins par fidélité à
+          la Cour que par loyauté envers le royaume lui-même.<br /><br />
+
+          Semblable à une <ppkb>guilde de mages aguerris</ppkb>, la Roncenoire recrute tous les êtres surnaturels souhaitant s’y
+          enrôler : sorciers mais aussi familiers et reliquaires compris. Elle est dirigée par un Conseil, articulé par
+          les personnes les plus influentes de la guilde. Le Conseil est composé de cinq personnes.<br /><br />
+
+          <ul class="custom-list">
+            <li>XX : traqueur et chasseur professionnel, il représente les yeux et oreilles de la Roncenoire grâce à ses
+              sens surdéveloppés. Il erre dans la forêt de Ronces à l’affût du moindre intrus, ou de la moindre
+              créature.</li>
+            <li>XX : diplomate en chef, c’est lui qui s’occupe de régler calmement les conflits au sein de la guilde, ou
+              même du Conseil lui-même. Il gère la communication interne et externe de la Roncenoire.</li>
+            <li>XX : force offensive de Roncenoire, il est l’élément le plus puissant de toute la guilde, mais son
+              pouvoir est aussi dévastateur qu’il est utile pour cette dernière. Il est incapable de toute forme de
+              second degré et part au quart de tour.</li>
+            <li>XX : maître des remèdes et de la logistique, il assure le soutien de la guilde par la création de
+              potions ou par ses connaissances en soins. Botaniste assumé, il connaît la flore d’Amarena sur le bout des
+              doigts.</li>
+            <li>XX : défenseur en chef du territoire, il est particulièrement doué en termes de protections et de
+              barrières magiques. Il se considère comme le protecteur de la guilde et est toujours là lorsqu’il s’agit
+              de contenir une menace ou de protéger ses troupes.</li>
+          </ul><br />
+
+          Il n’existe <ppkb>aucune hiérarchie</ppkb> au sein même de la guilde, outre le <ppkb>Conseil</ppkb>. Chaque membre de la Roncenoire se
+          distingue par sa spécialité. S’il en existe une infinité, des archétypes ont été retenus au fil des ans. Les
+          Belladones sont des êtres surnaturels spécialisés dans les poisons, les remèdes, l’alchimie de façon plus
+          globale. Les <ppkb>Mandragores</ppkb> sont les forces offensives de la Roncenoire, aussi connues comme les chiens de la
+          Roncenoire ; ils sont dotés de pouvoirs et de sorts offensifs dévastateurs, ce sont par conséquent les
+          premiers appelés en cas d’attaque. Les <ppkb>Aconites</ppkb> sont considérés comme les chasseurs du territoire : ils
+          connaissent la faune environnante sur le bout des doigts et protègent le royaume en neutralisant les créatures
+          maléfiques, aussi puissantes soient-elles, qui menacent les terres d’Amarena. Les <ppkb>Aubépines</ppkb> sont les
+          défenseurs du royaume, particulièrement appréciés pour leurs capacités protectrices et leurs barrières
+          magiques impénétrables. Les <ppkb>Morelles</ppkb> sont les farceurs, les illusionnistes et les plus redoutés de la
+          Roncenoire, ils possèdent des pouvoirs d’influence et d’illusion qui ne cessent d’impressionner la population.<br /><br />
+
+          <ppkb>L’Église de la Veille</ppkb><br />
+          De nombreuses religions existent à Vesperune. L’Église de la Veille en est l’une d’entre elles et, loin d’être
+          la plus répandue, elle reste la plus redoutée de toutes. Elle est largement présente sur les territoires
+          d’Amarena puisqu’à l’origine, cette religion était interdite en Opaline et ses premiers prêcheurs ont été
+          bannis du royaume Crémeux jusque dans ces terres de ronces. Depuis, sa popularité a grimpé et elle est devenue
+          l’une des religions les plus pratiquées en Amarena. <br /><br />
+
+          <ppkb>L’Église de la Veille</ppkb> se place comme <ppkb>institution indépendante</ppkb>, hors de portée du pouvoir royal. Elle se
+          considère comme une autorité spirituelle. Elle n’obéit à aucun royaume, aucun pouvoir, autre que la volonté
+          des ancêtres et de l’Entre-Lunes. Son influence est telle, et ses partisans si nombreux, que le royaume
+          d’Amarena s’efforce de la tolérer. <br /><br />
+
+          Pour le commun des sorciers, cette religion <ppkb>inspire la crainte</ppkb> et la présence de ses partisans en un lieu est
+          synonyme de mauvais présage. Elle évoque la mort, la fatalité, la plus sombre partie des sciences occultes,
+          celle qui inquiète plus qu’elle n’inspire. Certains s’y tournent lors de moments de désespoir, quand aucune
+          solution ne semble se présenter à eux et qu’ils cherchent désespérément à trouver des réponses à leurs
+          questions. Aux yeux de la population, l'Église de la Veille semble savoir des choses que tout le monde ne sait
+          pas ; des choses trop sombres pour être contées. Leurs rites dérangent, leurs accoutrements sont dépréciés —
+          ils sont vêtus de robes noires à capuches brodées d’un croissant de lune inversé. Lorsque l’Église foule un
+          village, l’odeur de la Mort apparaît.<br /><br />
+
+          Pourtant, cette religion est souvent <ppkb>méconnue</ppkb> et de nombreux préjugés s’y attachent depuis la nuit des temps.
+          En réalité, ses préceptes reposent sur la conviction qu’un <ppkb>destin inévitable</ppkb> attend le monde, une bascule que
+          nul ne pourra empêcher et que seuls les êtres à l’<ppkb>âme suffisamment pure</ppkb> traverseront sans se
+          perdre.<br /><br />
+
+          L’Église enseigne donc la <ppkb>patience</ppkb>, la <ppkb>discipline</ppkb> et la <ppkb>pureté de l’âme</ppkb>. Pour ses fidèles, une âme doit être
+          allégée avant la mort, éprouvée avant d’être jugée, et préparée avant le passage. C’est pour cette raison
+          qu’ils veillent les mourants, accompagnent les âmes troublées, surveillent les âmes damnées et pratiquent des
+          rites de purification que beaucoup jugent glaçants. Certains fidèles passent des nuits entières sans sommeil à
+          prier, à jeûner ou à chanter jusqu’à l’épuisement. D’autres se soumettent à des bains rituels, à des
+          confessions publiques, à des veillées funéraires prolongées ou à des cérémonies où l’on oblige l’âme à faire
+          face à ce qu’elle porte de plus sombre.
+
+          </p>
+        </div>
+
+        <div class="note" style="margin-top: 25px;">
+          <h2>Note</h2>
+          <p>Le Chœur des Veilleurs tient son nom <ppkb>de la forme que prennent les rituels du culte</ppkb>. Lors de ces cérémonies,
+            les Veilleurs <ppkb>chantent en chœur</ppkb> et psalmodient dans une langue qui leur est propre, parfois durant des nuits
+            entières, <ppkb>jusqu’à entrer dans un état de transe presque inquiétant</ppkb>. On dit que leurs chants attirent les
+            âmes perdues, apaisent les morts agités et révèlent les souillures qu’un être cherchait à cacher. C’est là
+            que naît la peur qu’ils inspirent : l’Église de la Veille ne promet aucun réconfort. Le
+            chœur, lui, regarde la mort en face.</p>
+        </div>
+
+        </p>
+      </div>
+    </article>
+
+    <article class="guide-panel guide-article-panel" data-article="u2-art3">
+      <div class="guide-actions">
+        <button class="guide-btn -back" type="button" data-action="list">← Retour</button>
+        <button class="guide-btn" type="button" data-action="prev">← Institutions & Hiérarchies</button>
+        <button class="guide-btn" type="button" data-action="next">Chronologie historique →</button>
+      </div>
+
+      <h2 class="guide-title">Religion & Croyances</h2>
+
+      <div class="guide-content">
+        <p>
+
+        <div class="paragraphe" style="padding: 0;">
+          <p><ppkb>Vesperune est peuplée de religions et de croyances diverses</ppkb>. Depuis les origines du monde, la magie, les
+            âmes et les cycles lunaires ont donné naissance à de nombreuses interprétations. Si la plupart cherchent à
+            donner un sens à la vie et à l’au-delà, d’autres croyances sont orientées différemment. Certaines sont
+            anciennes, fortement ancrées dans les traditions, d’autres sont plus récentes ou simplement moins
+            représentées. Mais de manière générale, la religion et les croyances sont des choses respectées en
+            Vesperune. On l’appelle la <ppkb>liberté d’esprit</ppkb>.</p><br />
+
+          <div class="note">
+            <h2>À savoir</h2>
+            <p>Cette liberté n’existait pas avant le cycle zéro ; certaines croyances étaient plus valorisées que
+              d’autres, et les croyances à tendances sinistres étaient dépréciées voire interdites, comme celles de
+              l’Église de la Veille.</p>
+          </div><br />
+
+          <p>Si les croyances diffèrent, toutes partagent un <ppkb>socle commun</ppkb> : la magie, les âmes, l’Entre-Lunes et la lune
+            sont considérées comme des <ppkb>forces mystiques</ppkb>, au-delà du sorcier. Toutes les religions se valent — à l'exception de <ppkb>l'Église de la Veile</ppkb> qui, elle, est dépréciée de la majorité — mais l’une d’entre elles est réputée pour ses <ppkb>préceptes doux et enthousiastes</ppkb>.</p>
+        </div><br />
+
+        <div class="paragraphe" style="padding: 0;">
+          <h2>L'Ordalie Lunaire</h2>
+          <p>Religion <ppkb>monothéiste</ppkb>, elle considère la lune comme la <ppkb>gardienne du monde</ppkb> : celle qui éclaire les âmes,
+            génère l’énergie magique et veille sur ses protégés. Elle est vue comme une présence sacrée et, selon les
+            mouvements, elle est représentée comme personnifiée de différentes façons : de la femme à la longue
+            chevelure blanche et ondulée à la robe voilée, à la figure divinement lumineuse dépourvue de forme physique.
+            <br /><br />
+
+            L’Ordalie pense que la lune influence la <ppkb>force et l’humeur de la magie</ppkb>, sa densité et son impact sur la
+            faune. Les <ppkb>phases lunaires</ppkb> sont, pour elle, une danse gracieuse, un rituel de purification du monde qui
+            perdure éternellement. Les membres de l’Ordalie considèrent que chaque phase vient avec son lot de valeurs
+            spirituelles, celles-ci peuvent dépendre du mouvement et de la branche de croyance. Par exemple, le <ppkb>Premier
+              Croissant</ppkb> est souvent synonyme d’espoir, de <ppkb>renouveau</ppkb> et de persévérance, et la <ppkb>Pleine Lune</ppkb> est vue comme un
+            symbole de révélation ou de puissance.<br /><br />
+
+            Les pratiques de l’Ordalie sont <ppkb>ponctuelles et peu chronophages</ppkb>, généralement constituées de <ppkb>veillées
+              lunaires</ppkb> : les fidèles se réunissent certaines nuits pour prier, chanter, méditer et déposer des offrandes à
+            ciel ouvert, sous les étoiles. On bénit les naissances, les unions, les défunts avec de l’eau claire ou des
+            fleurs blanches. <br /><br />
+
+            Les prêtres de l’Ordalie se nomment les <ppkb>Chantelunes</ppkb>, ce sont eux qui organisent et gèrent le déroulé des
+            événements religieux. Plusieurs églises ont été érigées en l’honneur de l’Ordalie, bien qu’il existe
+            d’autres établissements dédiés à d’autres branches religieuses.
+          </p>
+        </div>
+
+      </div>
+    </article>
+
+    <article class="guide-panel guide-article-panel" data-article="u2-art4">
+      <div class="guide-actions">
+        <button class="guide-btn -back" type="button" data-action="list">← Retour</button>
+        <button class="guide-btn" type="button" data-action="prev">← Religions & Croyances</button>
+        <button class="guide-btn" type="button" data-action="next">Lois de Vesperune →</button>
+      </div>
+
+      <h2 class="guide-title">Chronologie historique</h2>
+
+      <div class="guide-content">
+        <p>
+
+          <div class="chronologie">
+          
+              <div class="chrono-item">
+                <div class="chrono-era">
+                  <span class="chrono-era-main">58e</span>
+                  <span class="chrono-cycle">⏾</span>
+                  <span class="chrono-year">(2008)</span>
+                </div>
+              
+                <div class="chrono-title">Chasse aux déviants</div>
+                <div class="chrono-text">Texte ici.</div>
+              </div>
+          
+              <div class="chrono-item">
+                <div class="chrono-era">
+                  <span class="chrono-era-main">58e</span>
+                  <span class="chrono-cycle">⏾</span>
+                  <span class="chrono-year">(2008)</span>
+                </div>
+                <div class="chrono-title">Chasse aux déviants</div>
+                <div class="chrono-text">
+                  Pastry gummi bears donut jelly-o bear claw chupa chups chupa chups marzipan.
+                  Fruitcake chocolate bar candy canes chupa chups brownie. Dragée candy canes cotton candy halvah oat cake topping.
+                  Marzipan icing jelly beans chocolate dessert tiramisu. Wafer icing fruitcake cheesecake marshmallow jujubes marshmallow.
+                </div>
+              </div>
+          
+            </div>
+
+        </p>
+      </div>
+    </article>
+
+    <article class="guide-panel guide-article-panel" data-article="u2-art5">
+      <div class="guide-actions">
+        <button class="guide-btn -back" type="button" data-action="list">← Retour</button>
+        <button class="guide-btn" type="button" data-action="prev">← Chronologie historique</button>
+        <button class="guide-btn" type="button" data-action="next">Biomes & Lieux importants →</button>
+      </div>
+
+      <h2 class="guide-title">Lois de Vesperune</h2>
+
+      <div class="guide-content">
+        <p>
+
+        <ul class="custom-list" style="color: var(--color5)!important;">
+          <li>La magie doit <ppkb>rester cachée au monde humain</ppkb> et ne pas en bouleverser durablement l’ordre.</li>
+          <li>Les <ppkb>passages entre Vesperune et le monde humain</ppkb> sont <ppkb>strictement encadrés</ppkb> ; toute ouverture clandestine
+            est interdite. Seules les personnes souhaitant s’y rendre durablement sont autorisées à connaître
+            l’emplacement du portail.</li>
+          <li>Tout jeune sorcier doit recevoir une <ppkb>formation magique et humaine</ppkb> avant d’être autorisé à vivre
+            durablement dans le monde humain</li>
+          <li>Toute <ppkb>manifestation magique inhabituelle</ppkb> chez un humain doit être signalée aux autorités compétentes</li>
+          <li>Toute <ppkb>relique</ppkb> et tout <ppkb>objet maudit ou dangereux</ppkb> doit être déclaré et placé sous surveillance</li>
+          <li>Tout sorcier dont l’âme a été <ppkb>damnée</ppkb>, <ppkb>corrompue</ppkb> ou est devenue dangereusement instable doit être signalé,
+            surveillé ou pris en charge</li>
+          <li>Les familiers restent soumis à leur <ppkb>sentence</ppkb> tant qu’aucune <ppkb>réhabilitation officielle</ppkb> n’a été prononcée
+          </li>
+          <li>En cas de <ppkb>menace majeure</ppkb> contre Vesperune, les êtres magiques du royaume peuvent être appelés à participer
+            à sa défense</li>
+          <li>Toute personne ayant connaissance d’une <ppkb>menace grave</ppkb>, d’une <ppkb>pratique interdite</ppkb> ou d’un <ppkb>passage illégal</ppkb> a
+            l’obligation de le signaler</li>
+          <li>Les grandes lignées, maisons nobles et autorités locales restent soumises à l’<ppkb>autorité supérieure du
+            royaume</ppkb></li>
+          <li>Toute <ppkb>expérimentation magique</ppkb> susceptible d’affecter durablement un lieu, une population ou l’équilibre
+            entre les mondes doit être <ppkb>strictement encadrée</ppkb></li><br />
+
+          Sont prohibées par le royaume les pratiques magiques suivantes :
+          <li>
+            <ppkb>Toute pratique visant à endommager, corrompre, manipuler ou détruire une âme</ppkb>.
+          </li>
+          <li>
+            <ppkb>Tout rituel nécessitant la souffrance, la mort ou la destruction partielle ou complète d’un être
+              vivant</ppkb>
+            <ppki>(rituel sacrificiel)</ppki>.
+          </li>
+          <li>
+            <ppkb>Toute création d’objet magique ayant pour effet de nuire, de corrompre ou d’asservir un être vivant
+            </ppkb>.
+          </li>
+          <li>
+            <ppkb>Toute invocation de forces jugées incontrôlables ou excessivement dangereuses</ppkb> pouvant
+            compromettre la
+            sécurité du royaume magique ou du monde humain.
+          </li>
+          <li>
+            <ppkb>Tout sortilège visant à siphonner la magie ou l’énergie vitale d’une personne contre son gré</ppkb>.
+          </li>
+        </ul>
+
+        </p>
+      </div>
+    </article>
+
+    <article class="guide-panel guide-article-panel" data-article="u2-art6">
+      <div class="guide-actions">
+        <button class="guide-btn -back" type="button" data-action="list">← Retour</button>
+        <button class="guide-btn" type="button" data-action="prev">← Lois de Vesperune</button>
+        <button class="guide-btn" type="button" data-action="next">Calendrier des festivités →</button>
+      </div>
+
+      <h2 class="guide-title">Biomes & Lieux importants</h2>
+
+      <div class="guide-content">
+        <p>
+
+        <div class="paragraphe" style="padding: 0;">
+          <h2>Biomes</h2>
+          <p>
+            <ppkb>Forêt de ronces</ppkb><br />
+            Territoire dense et hostile, la forêt de Ronces est un enchevêtrement de végétation noire et épineuse où la
+            lumière se fait rare. Elle marque l’identité d’Amarena, l’entoure de toutes parts et abrite créatures
+            dangereuses, anciennes ruines et grottes sinistres.<br /><br />
+
+            <ppkb>Montagnes enneigées</ppkb><br />
+            Ces sommets glacés dominent les hauteurs des terres amarenéennes. Leur climat est si glacial qu’aucun
+            village n’a su s’y implanter convenablement. Un sanctuaire dédié à l’Église des Flocons y est toutefois
+            érigé. <br /><br />
+
+            <ppkb>Désert de Sorbet</ppkb><br />
+            Longues étendues de glace séparant les deux royaumes, le désert de Sorbet est de loin la zone la plus
+            dangereuse du monde, mais également un <ppkb>territoire neutre</ppkb>. Outre les créatures malfaisantes qui foulent son
+            territoire, il est extrêmement difficile d’y survivre plus d’une semaine au vu de ses vents glacials, de ses
+            tempêtes, de ses dunes glacées et de la finesse de certaines couches de glace. Les grottes du désert de
+            Sorbet sont l’équivalent d’un oasis dans un désert de sable, au vu de leur rareté et de leur capacité à
+            garder la chaleur des voyageurs. On y trouve des lacs souterrains, des stalactites et de redoutables
+            monstres des neiges. <br /><br />
+
+            <ppkb>Plaines verdoyantes</ppkb><br />
+            Ces plaines encerclent Opaline et sont utilisées pour l’agriculture, l’élevage et les grandes routes
+            commerciales. Leur immensité est telle qu’elles sont également appréciées pour leur tranquillité. De jour
+            comme de nuit, la verdure y est prédominante et les animaux adorent s’y balader longuement.<br /><br />
+
+            <ppkb>Forêts améthystes</ppkb><br />
+            Les troncs sont mauves et les érables violets. Au cœur de ces forêts, danse une brume pailletée aux
+            propriétés enivrantes et désinhibantes, à consommer avec modération. Les forêts améthystes sont connues pour
+            leur abondance en ressources alchimiques et la présence de créatures attendrissantes. <br /><br />
+
+            <ppkb>Bois-Champignons</ppkb><br />
+            Le Bois-Champignons est un biome souterrain à part entière, où les arbres et les plantes sont de
+            gigantesques champignons : champignons grimpants, champignons géants, champignons microscopiques formant des
+            masses bleutées sur les surfaces… Tous les champignons ont le corps beige et le chapeau bleu, leurs
+            propriétés luminescentes donnent au biome un charme sans pareil. Si la majorité des champignons du bois sont
+            comestibles <ppki>(et délicieux, une fois cuisinés)</ppki>, attention toutefois à ne pas croiser les champignons jaunes,
+            qui eux sont des bombes de spores toxiques à retardement.<br /><br />
+
+            <ppkb>Marécages</ppkb><br />
+            Les marécages sont des zones humides où les roseaux pullulent et les créatures marécageuses prospèrent.
+            Chaque pas doit être entrepris avec prudence car les sols y sont particulièrement traîtres. Les marécages
+            sont également le repère de certains covens de sorcières peu recommandables, s’adonnant à des pratiques
+            anciennement interdites et on ne peut plus dépréciées du grand public.<br /><br />
+
+            <ppkb>Plaine de l’Ombre</ppkb><br />
+            Le plus grand cimetière de Vesperune. Cette plaine s’étend sur plusieurs kilomètres et est connue pour être
+            le linceul de nombre d’âmes tombées au combat, durant les guerres d’antan. La brume y a élu domicile et la
+            terre y est grisée, monotone. Il n’y a pas, ou très peu, de verdure dans la plaine de l’Ombre, qui doit son
+            nom à des présences spectrales indésirables, dissimulées dans l’ombre des arbres morts. <br /><br />
+
+            <ppkb>Steppes de Cannelle</ppkb><br />
+            Région sèche aux herbes rousses et parfumées, le sable à ras le sol a le goût et l’odeur de cannelle. C’est
+            une zone particulièrement appréciée des fauves et des rapaces, mais également de certains petits villages
+            sauvages. <br /><br />
+
+            <ppkb>Archipel</ppkb><br />
+            L’archipel est un ensemble d’îles, entourées d’eaux claires et de bancs de sable fin où se déposent parfois
+            des amas de poussière d’étoiles luminescents. <ppkb>C’est le plus bel endroit du monde</ppkb> ; les reflets irisés de
+            l’écume font chavirer les cœurs. C’est l’un des endroits les plus prisés pour ses ressources maritimes
+            rares. Les poissons y sont exquis.
+          </p>
+        </div><br />
+
+        <div class="paragraphe" style="padding: 0;">
+          <h2>Lieux importants</h2>
+          <p><ppkb>Opaline</ppkb> <ppki>(Capitale)</ppki><br />
+            La capitale porte le nom du royaume. Opaline est une <ppkb>cité lumineuse</ppkb>, où la nuit tombe tard le soir, aux
+            sentiers naturels et aux quartiers raffinés. Elle représente le <ppkb>siège politique et culturel de Vesperune</ppkb>,
+            incarne l’<ppkb>ordre</ppkb>, l’<ppkb>excellence</ppkb> et l’<ppkb>honneur</ppkb> dans les esprits. <br /><br />
+
+            <ppkb>Amarena</ppkb> <ppki>(Capitale)</ppki><br />
+            La capitale porte le nom du royaume. <ppkb>Située au cœur de la forêt de Ronces, territoire hostile et sinistre</ppkb>,
+            c’est une ville dense et <ppkb>marquée par la survie de son peuple</ppkb>. Son architecture s’ancre dans le genre
+            gothique, les nuits y durent plus longtemps et sont plus sombres qu’à Opaline. <ppkb>Les habitants y sont plus
+            teigneux, mais plus libres et plus expressifs.</ppkb> <br /><br />
+
+            <ppkb>Château de Chantilly</ppkb><br />
+            Le château de Chantilly porte le nom de sa Reine, étant la résidence royale du territoire. Il est fait de
+            nacre et d’ivoire, de pierres blanches et soigneusement taillées. L’intérieur est un véritable labyrinthe,
+            aussi certains disent que ses couloirs changent de forme et comportent des branches piégées, voire aménagées
+            pour les épreuves royales. Il détecte les intrus de lui-même et les rejette par les fenêtres, les faisant
+            s’écrouler plusieurs centaines de mètres plus bas, sur le nuage géant qui entoure le château. <br /><br />
+
+            <ppkb>École Millefeuille</ppkb><br />
+            L’école est <ppkb>l’établissement le plus prestigieux du royaume</ppkb>. Ses tours sont immenses et ses couloirs infinis,
+            et ne parlons pas de la taille de sa bibliothèque. C’est ici que sont formés les jeunes sorciers, et
+            qu’enseignent les précepteurs du royaume. Elle est réputée pour son exigence, son enseignement structuré
+            mais également pour les sorciers prodigieux qu’elle produit depuis des siècles lunaires.<br /><br />
+
+            <ppkb>École Réglisse</ppkb><br />
+            Réglisse est l’équivalent amarenéen de Millefeuille. C’est un bâtiment sombre, gigantesque, aux tours en
+            pointes et aux allures de château. Les jeunes sorciers amarenéens y étudient un apprentissage libre et
+            pragmatique de la magie, beaucoup plus organique que le programme de Millefeuille. Les plus grands sorciers
+            du royaume y enseignent et les représentants de Grandes Maisons y sont souvent conviés pour assister et
+            participer au déroulement des cours, afin de former aux mieux les futurs espoirs. Toutefois, les punitions y
+            sont extrêmement sévères et déplaisantes.<br /><br />
+
+            <ppkb>Village de Clafoutis</ppkb><br />
+            <ppkb>Lieu historique et emblématique de Vesperune</ppkb>, le village de Clafoutis est connu pour avoir été le théâtre de
+            la bataille finale, décisive, opposant la reine Chantilly et le roi déchu. Aujourd’hui, bien qu’il reste un
+            modeste village de sorciers fermiers, Clafoutis reste chargé de souvenirs et est très apprécié des locaux.
+            D’ailleurs, depuis ce jour, sa démographie a drastiquement augmenté.
+
+          </p>
+        </div>
+
+        </p>
+      </div>
+    </article>
+
+    <article class="guide-panel guide-article-panel" data-article="u2-art7">
+      <div class="guide-actions">
+        <button class="guide-btn -back" type="button" data-action="list">← Retour</button>
+        <button class="guide-btn" type="button" data-action="prev">← Vivre à Amberwoods</button>
+        <button class="guide-btn" type="button" data-action="next">Établissements & Commerces →</button>
+      </div>
+      <h2 class="guide-title">Calendrier des festivités</h2>
+
+      <div class="guide-content">
+
+        <div class="rpg-dropdown">
+          <div class="rpg-dropdown__head">
+            <div style="line-height: 10px;">
+              <h2 class="rpg-dropdown__title" style="font-size: 22px;">Les Flocons</h2>
+              <desc>18e Jour du Premier-Croissant</desc>
+            </div>
+            <i class="fa-solid fa-chevron-down rpg-dropdown__icon"></i>
+          </div>
+          <div class="rpg-dropdown__content">
+            <div class="rpg-dropdown__inner">
+              <p class="rpg-dropdown__text">Cette veillée est <ppkb>la plus grande célébration de Vesperune</ppkb>, commune aux deux
+                royaumes. On y fête l’origine même du monde. <br /><br />
+
+                Selon les plus anciens récits, le monde aurait été recouvert par une tempête de neige à l’origine de
+                l’essence de la magie. Les flocons auraient fini par se mêler à cette énergie pour créer les <ppkb>premières âmes</ppkb>. <br /><br />
+
+                Elle est organisée et célébrée lors des <ppkb>premières neiges de l’hiver</ppkb>. La coutume est d’allumer des
+                lanternes blanches, de se parer de vêtements blancs et de partager de bons moments sous la neige, au
+                cœur des capitales. On offre des fleurs blanches aux personnes que l’on apprécie et on y boit des
+                boissons chaudes et réconfortantes. Depuis quelques générations, un <ppkb>concours de bonhommes de neige</ppkb> y a
+                lieu et le gagnant obtient une médaille en forme de flocon de neige, ainsi que le titre de <ppkb>Roi ou Reine
+                des Neiges</ppkb> jusqu’à l’hiver suivant, où celui-ci est remis en jeu.
+
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="rpg-dropdown">
+          <div class="rpg-dropdown__head">
+            <div style="line-height: 10px;">
+              <h2 class="rpg-dropdown__title" style="font-size: 22px;">Fête de la Nouvelle Lune</h2>
+              <desc>1er Jour de la Nouvelle-Lune</desc>
+            </div>
+            <i class="fa-solid fa-chevron-down rpg-dropdown__icon"></i>
+          </div>
+          <div class="rpg-dropdown__content">
+            <div class="rpg-dropdown__inner">
+              <p class="rpg-dropdown__text">À chaque début de cycle, sa <ppkb>Nouvelle Lune</ppkb>. Cette fête apparaît
+                originairement d’une tradition religieuse, nous provenant de <ppkb>l’Ordalie Lunaire</ppkb>, créée dans le but de
+                célébrer le <ppkb>nouveau cycle à venir</ppkb>. C’est l’équivalent, chez les humains, du nouvel an. <br /><br />
+
+
+                On y célèbre le <ppkb>renouveau</ppkb> et l’espoir d’un avenir radieux, les débuts et l’apprentissage. Des vœux sont
+                formulés, à l’attention de la lune, et posés sur papier avant d’être réduits massivement en poussière
+                d’étoiles par les sorciers. Cette poudre étoilée est ensuite déversée sur la foule, lors de l’ouverture
+                de la soirée dansante ; parfois, elle continue de tomber jusqu’au petit matin. <br /><br />
+
+
+                Des buffets sont installés pour l’occasion, une scène est mise en place et les sorciers peuvent discuter
+                autour de boissons rafraîchissantes. C’est <ppkb>le moment du cycle le plus convivial</ppkb>, et cette célébration
+                <ppkb>n’a aucune frontière</ppkb> ; elle est aussi bien fêtée en Opaline qu’en Amarena.
+
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="rpg-dropdown">
+          <div class="rpg-dropdown__head">
+            <div style="line-height: 10px;">
+              <h2 class="rpg-dropdown__title" style="font-size: 22px;">Bal des Merveilles</h2>
+              <desc>27e Jour de la Pleine-Lune</desc>
+            </div>
+            <i class="fa-solid fa-chevron-down rpg-dropdown__icon"></i>
+          </div>
+          <div class="rpg-dropdown__content">
+            <div class="rpg-dropdown__inner">
+              <p class="rpg-dropdown__text">Une fois par cycle, pour marquer la fin de la guerre, la Reine Chantilly
+                organise dans son château un <ppkb>bal masqué des plus somptueux</ppkb>, où sont conviés Opalins et Amarénées. Ainsi,
+                le temps d'une nuit, chacun revêtu de ses plus beaux atours, le visage masqué, les deux cultures se
+                <ppkb>mêlent en secret</ppkb> et profitent d'un moment de paix où les rancœurs et les vieux préjugés sont mis de
+                côté. Vu à l'origine comme un moyen de panser les plaies de jadis, il est aujourd'hui <ppkb>un événement incontournable</ppkb>, qui montre que les deux facettes de ce monde peuvent coexister, qu'importe leurs
+                différences.
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </article>
+
+  </div>
+</div>
+
+<script>
+  (function () {
+    const app = document.getElementById("guide-app");
+    const homeView = app.querySelector(".guide-home-view");
+    const sectionViews = Array.from(app.querySelectorAll(".guide-section-view"));
+
+    function syncLayoutWithParentSidebar() {
+      try {
+        const parentSidebar = window.parent.document.getElementById("sidebar");
+        if (!parentSidebar) {
+          app.classList.remove("is-collapsed");
+          return;
+        }
+        app.classList.toggle("is-collapsed", parentSidebar.classList.contains("collapsed"));
+      } catch (e) {
+        app.classList.remove("is-collapsed");
+      }
+    }
+
+    function observeParentSidebar() {
+      try {
+        const parentSidebar = window.parent.document.getElementById("sidebar");
+        if (!parentSidebar) return;
+
+        const observer = new MutationObserver(syncLayoutWithParentSidebar);
+        observer.observe(parentSidebar, {
+          attributes: true,
+          attributeFilter: ["class"]
+        });
+      } catch (e) { }
+    }
+
+    function hideAllViews() {
+      app.querySelectorAll(".guide-shell").forEach(view => {
+        view.classList.remove("is-active");
+      });
+    }
+
+    function showHome() {
+      hideAllViews();
+      homeView.classList.add("is-active");
+      sectionViews.forEach(section => resetSection(section));
+    }
+
+    function showSection(sectionId) {
+      const section = app.querySelector('.guide-section-view[data-section="' + sectionId + '"]');
+      if (!section) return;
+      hideAllViews();
+      section.classList.add("is-active");
+      resetSection(section);
+    }
+
+    function resetSection(section) {
+      const listPanel = section.querySelector(".guide-list-panel");
+      const articlePanels = section.querySelectorAll(".guide-article-panel");
+      const crumbArticle = section.querySelector(".guide-breadcrumb-article");
+      const crumbTitle = section.querySelector(".guide-current-article-title");
+
+      if (listPanel) listPanel.classList.add("is-active");
+      articlePanels.forEach(panel => panel.classList.remove("is-active"));
+      if (crumbArticle) crumbArticle.hidden = true;
+      if (crumbTitle) crumbTitle.textContent = "";
+    }
+
+    function openArticle(section, articleId) {
+      const listPanel = section.querySelector(".guide-list-panel");
+      const articlePanels = Array.from(section.querySelectorAll(".guide-article-panel"));
+      const articleLinks = Array.from(section.querySelectorAll(".guide-article-link"));
+      const crumbArticle = section.querySelector(".guide-breadcrumb-article");
+      const crumbTitle = section.querySelector(".guide-current-article-title");
+
+      const link = articleLinks.find(btn => btn.dataset.openArticle === articleId);
+      const panel = articlePanels.find(item => item.dataset.article === articleId);
+
+      if (!link || !panel) return;
+
+      if (listPanel) listPanel.classList.remove("is-active");
+      articlePanels.forEach(item => item.classList.remove("is-active"));
+      panel.classList.add("is-active");
+
+      const titleNode = link.querySelector("strong");
+      const articleTitle = titleNode ? titleNode.textContent.trim() : link.textContent.trim();
+
+      if (crumbArticle) crumbArticle.hidden = false;
+      if (crumbTitle) crumbTitle.textContent = articleTitle;
+
+      const ids = articleLinks
+        .filter(btn => btn.dataset.openArticle)
+        .map(btn => btn.dataset.openArticle);
+
+      const index = ids.indexOf(articleId);
+
+      const prevBtn = panel.querySelector('[data-action="prev"]');
+      const nextBtn = panel.querySelector('[data-action="next"]');
+      const prevLink = index > 0 ? articleLinks[index - 1] : null;
+      const nextLink = index >= 0 && index < articleLinks.length - 1 ? articleLinks[index + 1] : null;
+      const prevTitle = prevLink ? prevLink.querySelector("strong")?.textContent.trim() || prevLink.textContent.trim() : "Annexe précédente";
+      const nextTitle = nextLink ? nextLink.querySelector("strong")?.textContent.trim() || nextLink.textContent.trim() : "Annexe suivante";
+
+      if (prevBtn) {
+        prevBtn.disabled = index <= 0;
+        prevBtn.textContent = index > 0 ? `← ${prevTitle}` : "← Annexe précédente";
+      }
+      if (nextBtn) {
+        nextBtn.disabled = index >= ids.length - 1;
+        nextBtn.textContent = index >= 0 && index < ids.length - 1 ? `${nextTitle} →` : "Annexe suivante →";
+      }
+    }
+
+    function getActiveSection() {
+      return app.querySelector(".guide-section-view.is-active");
+    }
+
+    function getActiveArticlePanel(section) {
+      if (!section) return null;
+      return section.querySelector(".guide-article-panel.is-active");
+    }
+
+    function goRelative(direction) {
+      const section = getActiveSection();
+      const activePanel = getActiveArticlePanel(section);
+      if (!section || !activePanel) return;
+
+      const links = Array.from(section.querySelectorAll(".guide-article-link"))
+        .filter(btn => btn.dataset.openArticle);
+
+      const ids = links.map(btn => btn.dataset.openArticle);
+      const currentId = activePanel.dataset.article;
+      const currentIndex = ids.indexOf(currentId);
+      const nextIndex = currentIndex + direction;
+
+      if (nextIndex < 0 || nextIndex >= ids.length) return;
+      openArticle(section, ids[nextIndex]);
+    }
+
+    function openExternalFrame(src) {
+      try {
+        const parentDoc = window.parent.document;
+        const container = parentDoc.getElementById("iframe-container");
+        const placeholder = parentDoc.getElementById("placeholder");
+
+        if (!container) {
+          window.location.href = src;
+          return;
+        }
+
+        let externalFrame = parentDoc.getElementById("frame-codex");
+
+        if (!externalFrame) {
+          externalFrame = parentDoc.createElement("iframe");
+          externalFrame.id = "frame-codex";
+          externalFrame.className = "guide-frame";
+          externalFrame.loading = "lazy";
+          externalFrame.src = src;
+
+          externalFrame.addEventListener("load", function () {
+            try {
+              if (typeof window.parent.syncFrameTheme === "function" && typeof window.parent.getEffectiveTheme === "function") {
+                window.parent.syncFrameTheme(externalFrame, window.parent.getEffectiveTheme());
+              }
+            } catch (e) { }
+          });
+
+          container.appendChild(externalFrame);
+        } else if (externalFrame.getAttribute("src") !== src) {
+          externalFrame.setAttribute("src", src);
+        }
+
+        parentDoc.querySelectorAll(".guide-frame").forEach(frame => {
+          frame.classList.remove("active");
+        });
+
+        if (placeholder) {
+          placeholder.style.display = "none";
+        }
+
+        externalFrame.classList.add("active");
+
+        try {
+          if (typeof window.parent.syncFrameTheme === "function" && typeof window.parent.getEffectiveTheme === "function") {
+            window.parent.syncFrameTheme(externalFrame, window.parent.getEffectiveTheme());
+          }
+        } catch (e) { }
+      } catch (e) {
+        window.location.href = src;
+      }
+    }
+
+    app.addEventListener("click", function (event) {
+      const openSectionBtn = event.target.closest("[data-open-section]");
+      if (openSectionBtn) {
+        showSection(openSectionBtn.dataset.openSection);
+        return;
+      }
+
+      const openFrameBtn = event.target.closest("[data-open-frame]");
+      if (openFrameBtn) {
+        openExternalFrame(openFrameBtn.dataset.openFrame);
+        return;
+      }
+
+      const openArticleBtn = event.target.closest("[data-open-article]");
+      if (openArticleBtn) {
+        const section = openArticleBtn.closest(".guide-section-view");
+        if (!section) return;
+        openArticle(section, openArticleBtn.dataset.openArticle);
+        return;
+      }
+
+      const actionBtn = event.target.closest("[data-action]");
+      if (!actionBtn) return;
+
+      const action = actionBtn.dataset.action;
+      const section = actionBtn.closest(".guide-section-view");
+
+      if (action === "home") {
+        showHome();
+        return;
+      }
+
+      if (action === "list" && section) {
+        resetSection(section);
+        return;
+      }
+
+      if (action === "prev") {
+        goRelative(-1);
+        return;
+      }
+
+      if (action === "next") {
+        goRelative(1);
+      }
+    });
+
+    observeParentSidebar();
+    syncLayoutWithParentSidebar();
+    showHome();
+  })();
+</script>
+
+<script>
+  const dropdowns = document.querySelectorAll('.rpg-dropdown');
+
+  dropdowns.forEach(dropdown => {
+    const head = dropdown.querySelector('.rpg-dropdown__head');
+    const content = dropdown.querySelector('.rpg-dropdown__content');
+
+    if (!head || !content) return;
+
+    head.addEventListener('click', () => {
+      const isOpen = dropdown.classList.contains('active');
+
+      if (isOpen) {
+        content.style.maxHeight = '0px';
+        dropdown.classList.remove('active');
+      } else {
+        content.style.maxHeight = content.scrollHeight + 'px';
+        dropdown.classList.add('active');
+      }
+    });
+  });
+
+  window.addEventListener('resize', () => {
+    document.querySelectorAll('.rpg-dropdown.active').forEach(dropdown => {
+      const content = dropdown.querySelector('.rpg-dropdown__content');
+      if (content) {
+        content.style.maxHeight = content.scrollHeight + 'px';
+      }
+    });
+  });
+
+  window.addEventListener('storage', function (e) {
+    if (e.key !== 'ppk-theme-preference' && e.key !== 'color-scheme') return;
+
+    var theme = localStorage.getItem('ppk-theme-preference') || localStorage.getItem('color-scheme') || 'dark';
+    document.documentElement.setAttribute('data-color-scheme', theme);
+  });
+</script>
+
+</html>
