@@ -439,17 +439,21 @@
       }
     }
     /* Corrections spécifiques par thème */
-    html[data-color-scheme="dark"] .rpg-dropdown:hover,
-    html[data-color-scheme="dark"] .guide-choice:hover,
-    html[data-color-scheme="dark"] #guide-app .guide-article-link:hover {
+    html[data-color-scheme="dark"] body .rpg-dropdown:hover,
+    html[data-color-scheme="dark"] body #guide-app .guide-choice:hover,
+    html[data-color-scheme="dark"] body #guide-app .guide-article-link:hover {
       background: var(--color13) !important;
+      background-color: var(--color13) !important;
     }
     
-    html[data-color-scheme="light"] .guide-actions {
+    html[data-color-scheme="light"] body #guide-app .guide-actions,
+    html[data-color-scheme="light"] body #guide-app .guide-actions.guide-list-actions {
       background: var(--blanc) !important;
+      background-color: var(--blanc) !important;
+      background-image: none !important;
     }
     
-    html[data-color-scheme="light"] .chrono-item::before {
+    html[data-color-scheme="light"] body .chrono-item::before {
       color: var(--color9) !important;
       text-shadow:
         4px 0 var(--color1),
@@ -458,8 +462,9 @@
         0 -4px var(--color1) !important;
     }
     
-    html[data-color-scheme="light"] .chronologie::before {
+    html[data-color-scheme="light"] body .chronologie::before {
       background: var(--color1) !important;
+      background-color: var(--color1) !important;
     }
   </style>
 </head><div id="guide-app">
