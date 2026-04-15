@@ -2324,8 +2324,13 @@
 
   window.addEventListener("message", function (event) {
     if (!event.data || event.data.type !== "PPK_THEME_SYNC") return;
-
     applySyncedTheme(event.data.theme);
+  });
+
+  window.addEventListener("load", function () {
+    try {
+      window.parent.postMessage({ type: "PPK_THEME_REQUEST" }, "*");
+    } catch (e) {}
   });
 })();
 </script>
