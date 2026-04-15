@@ -59,6 +59,7 @@
 
     html {
       min-height: 100%;
+      background: transparent !important;
       color: var(--blanc);
     }
 
@@ -67,7 +68,7 @@
       margin: 0;
       padding: 28px;
       font-family: Arial, sans-serif;
-      background: transparent;
+      background: transparent !important;
       color: var(--blanc);
     }
 
@@ -2585,32 +2586,10 @@
       document.body.style.background = "transparent";
     }
 
-    document.documentElement.style.background = "transparent";
-
-    if (typeof syncSwitchUI === "function") {
-      syncSwitchUI(theme);
-    }
-
-    if (typeof updateThemeImages === "function") {
-      updateThemeImages(theme);
-    }
-  }
-
-  function getInitialTheme() {
-    const saved =
-      localStorage.getItem("ppk-theme-preference") ||
-      localStorage.getItem("color-scheme");
-
-    if (VALID_THEMES[saved]) return saved;
-
-    return document.documentElement.getAttribute("data-color-scheme") || "dark";
-  }
-
-  function requestParentTheme() {
+    // Garde aussi une trace locale si le compendium est ouvert seul.
     try {
-      if (window.parent && window.parent !== window) {
-        window.parent.postMessage({ type: "PPK_THEME_REQUEST" }, "*");
-      }
+      localStorage.setItem("ppk-theme-preference", theme);
+      localStorage.setItem("color-scheme", theme);
     } catch (e) {}
   }
 
@@ -2619,25 +2598,25 @@
     applySyncedTheme(event.data.theme);
   });
 
-  applySyncedTheme(getInitialTheme());
+  function requestThemeFromParent() {
+    try {
+      if (window.parent && window.parent !== window) {
+        window.parent.postMessage({ type: "PPK_THEME_REQUEST" }, "*");
+      }
+    } catch (e) {}
+  }
 
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", function () {
-      applySyncedTheme(getInitialTheme());
-      requestParentTheme();
-    });
+    document.addEventListener("DOMContentLoaded", requestThemeFromParent);
   } else {
-    applySyncedTheme(getInitialTheme());
-    requestParentTheme();
+    requestThemeFromParent();
   }
 
   window.addEventListener("load", function () {
-    applySyncedTheme(getInitialTheme());
-    requestParentTheme();
-
-    setTimeout(requestParentTheme, 100);
-    setTimeout(requestParentTheme, 300);
-    setTimeout(requestParentTheme, 700);
+    requestThemeFromParent();
+    setTimeout(requestThemeFromParent, 100);
+    setTimeout(requestThemeFromParent, 300);
+    setTimeout(requestThemeFromParent, 700);
   });
 })();
 </script>
