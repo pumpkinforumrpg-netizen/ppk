@@ -2300,5 +2300,33 @@
     document.documentElement.setAttribute('data-color-scheme', theme);
   });
 </script>
+<script>
+(function () {
+  const VALID_THEMES = { dark: true, light: true, autumn: true };
 
+  function applySyncedTheme(theme) {
+    if (!VALID_THEMES[theme]) return;
+
+    document.documentElement.setAttribute("data-color-scheme", theme);
+
+    if (document.body) {
+      document.body.setAttribute("data-color-scheme", theme);
+    }
+
+    if (typeof syncSwitchUI === "function") {
+      syncSwitchUI(theme);
+    }
+
+    if (typeof updateThemeImages === "function") {
+      updateThemeImages(theme);
+    }
+  }
+
+  window.addEventListener("message", function (event) {
+    if (!event.data || event.data.type !== "PPK_THEME_SYNC") return;
+
+    applySyncedTheme(event.data.theme);
+  });
+})();
+</script>
 </html>
