@@ -466,7 +466,10 @@
       background-color: var(--color1) !important;
     }
   </style>
-</head><div id="guide-app">
+</head>
+
+<body>
+<div id="guide-app">
 
   <div class="guide-shell guide-home-view is-active">
     <div class="guide-home">
@@ -2567,4 +2570,77 @@
   });
 </script>
   
+
+<script>
+(function () {
+  const VALID_THEMES = { dark: true, light: true, autumn: true };
+
+  function applySyncedTheme(theme) {
+    if (!VALID_THEMES[theme]) return;
+
+    document.documentElement.setAttribute("data-color-scheme", theme);
+
+    if (document.body) {
+      document.body.setAttribute("data-color-scheme", theme);
+      document.body.style.background = "transparent";
+    }
+
+    document.documentElement.style.background = "transparent";
+
+    if (typeof syncSwitchUI === "function") {
+      syncSwitchUI(theme);
+    }
+
+    if (typeof updateThemeImages === "function") {
+      updateThemeImages(theme);
+    }
+  }
+
+  function getInitialTheme() {
+    const saved =
+      localStorage.getItem("ppk-theme-preference") ||
+      localStorage.getItem("color-scheme");
+
+    if (VALID_THEMES[saved]) return saved;
+
+    return document.documentElement.getAttribute("data-color-scheme") || "dark";
+  }
+
+  function requestParentTheme() {
+    try {
+      if (window.parent && window.parent !== window) {
+        window.parent.postMessage({ type: "PPK_THEME_REQUEST" }, "*");
+      }
+    } catch (e) {}
+  }
+
+  window.addEventListener("message", function (event) {
+    if (!event.data || event.data.type !== "PPK_THEME_SYNC") return;
+    applySyncedTheme(event.data.theme);
+  });
+
+  applySyncedTheme(getInitialTheme());
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", function () {
+      applySyncedTheme(getInitialTheme());
+      requestParentTheme();
+    });
+  } else {
+    applySyncedTheme(getInitialTheme());
+    requestParentTheme();
+  }
+
+  window.addEventListener("load", function () {
+    applySyncedTheme(getInitialTheme());
+    requestParentTheme();
+
+    setTimeout(requestParentTheme, 100);
+    setTimeout(requestParentTheme, 300);
+    setTimeout(requestParentTheme, 700);
+  });
+})();
+</script>
+
+</body>
 </html>
