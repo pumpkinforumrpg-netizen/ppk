@@ -1,0 +1,248 @@
+@font-face {
+  font-family: 'Glow Night';
+  src: url('https://dl.dropboxusercontent.com/scl/fi/sclz8zc7gpxg3w46p3y0w/Glow-Night.otf?rlkey=x33h8no2mt3sdqwntc78fcfb2&st=7eyj8944') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--color2) var(--body-bg-image) no-repeat fixed center / cover;
+  color: var(--blanc);
+  margin: 0;
+}
+
+.register-page {
+  width: 100%;
+  min-height: 100vh;
+  padding: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.character-register {
+  width: 1100px;
+  padding: 28px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  background: #ffffff;
+  color: #000000;
+  border: 1px solid #000000;
+}
+
+.character-register__title {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: 'Glow Night', serif;
+  font-size: 28px;
+  font-weight: 400;
+  line-height: 1.2;
+  text-align: center;
+  color: var(--color5);
+}
+
+.character-register__tabs,
+.character-register__tools,
+.character-register__status,
+.character-register__content,
+.character-card,
+.character-card__header,
+.character-card__identity,
+.character-card__body,
+.character-card__links,
+.origin-group,
+.origin-group__cards,
+.empty-state,
+.empty-state__inner {
+  display: flex;
+}
+
+.character-register__tabs,
+.character-register__tools,
+.origin-group__cards,
+.character-register__content {
+  flex-wrap: wrap;
+}
+
+.character-register__tabs {
+  gap: 10px;
+}
+
+.register-tab,
+.register-toggle,
+.character-card__links a {
+  border: 1px solid #000000;
+  background: #ffffff;
+  color: #000000;
+  padding: 10px 14px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.register-tab.is-active,
+.register-toggle.is-active {
+  background: #000000;
+  color: #ffffff;
+}
+
+.character-register__tools {
+  gap: 10px;
+  align-items: center;
+}
+
+.register-search {
+  display: flex;
+  flex: 1 1 320px;
+}
+
+.register-search input,
+.register-field select {
+  width: 100%;
+  min-height: 42px;
+  border: 1px solid #000000;
+  background: #ffffff;
+  color: #000000;
+  padding: 10px 12px;
+  font: inherit;
+}
+
+.register-field {
+  display: flex;
+  min-width: 180px;
+}
+
+.register-toggle {
+  min-height: 42px;
+}
+
+.character-register__status {
+  justify-content: space-between;
+  align-items: center;
+}
+
+.character-register__status p {
+  margin: 0;
+}
+
+.character-register__content {
+  width: 100%;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.origin-group {
+  width: 100%;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.origin-group__title {
+  margin: 0;
+  padding: 0;
+  font-size: 20px;
+}
+
+.origin-group__cards {
+  width: 100%;
+  gap: 12px;
+}
+
+.character-card {
+  width: calc(33.333% - 8px);
+  min-width: 300px;
+  flex: 1 1 300px;
+  flex-direction: column;
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid #000000;
+  background: #ffffff;
+}
+
+.character-card__header {
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.character-card__avatar-wrap {
+  width: 80px;
+  min-width: 80px;
+  height: 80px;
+  overflow: hidden;
+  border: 1px solid #000000;
+  display: flex;
+}
+
+.character-card__avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.character-card__identity {
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.character-card__name,
+.character-card__origin,
+.character-card__pnj,
+.character-card__body p {
+  margin: 0;
+}
+
+.character-card__body {
+  flex-direction: column;
+  gap: 8px;
+}
+
+.character-card__links {
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.empty-state {
+  width: 100%;
+  min-height: 200px;
+  justify-content: center;
+  align-items: center;
+  border: 1px dashed #000000;
+}
+
+.empty-state__inner {
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  text-align: center;
+  padding: 20px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 1180px) {
+  .register-page {
+    padding: 12px;
+  }
+
+  .character-register {
+    width: 100%;
+  }
+}
