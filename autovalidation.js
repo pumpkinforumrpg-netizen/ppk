@@ -1,34 +1,75 @@
 (() => {
   "use strict";
 
-  const SCRIPT_VERSION = "2026-04-29-debug-1";
-
   /**
    * PUMPKINS RPG — Auto-validation Forumactif
    *
-   * Forum source : https://pumpkinsrpg.forumactif.com/f2-personnages
-   * Forum cible  : https://pumpkinsrpg.forumactif.com/f21-fiches-validees
+   * À héberger sur GitHub, puis à appeler dans overall_header.
+   *
+   * Ce que fait le script :
+   * 1. Repère une fiche de personnage dans /f2-personnages.
+   * 2. Vérifie qu'un message de validation contient <valid></valid>.
+   * 3. Vérifie que ce message a été posté par Pumpkin.
+   * 4. Récupère l'auteur du premier message du sujet.
+   * 5. Détecte le groupe via une classe dans le code de la fiche :
+   *    sorcier, humain, reliquaire, eveille, familier.
+   * 6. Ajoute l'auteur au groupe adéquat via le PA.
+   * 7. Déplace le sujet vers /f21-fiches-validees.
+   *
+   * Limite importante :
+   * - Ce n'est pas une API Forumactif.
+   * - Le script doit tourner dans le navigateur d'un compte staff/admin connecté.
+   * - Le compte doit avoir accès au PA et à l'administration des groupes.
    */
 
   const CFG = {
     debug: true,
-    dryRun: true,
+    dryRun: false,
 
     sourceForumId: 2,
-    sourceForumUrl: "https://pumpkinsrpg.forumactif.com/f2-personnages",
-
     targetForumId: 21,
     targetForumName: "Fiches validées",
-    targetForumUrl: "https://pumpkinsrpg.forumactif.com/f21-fiches-validees",
 
     validationMarker: "<valid></valid>",
+    renderedValidationSelectors: [
+      ".valid-card",
+    ],
+    renderedValidationTexts: [
+      "Fiche validée",
+      "Félicitations, nous te souhaitons la bienvenue parmi nous",
+      "Ta fiche de personnage a été validée",
+    ],
     validatorUsername: "Pumpkin",
-    validatorUserId: 2,
 
-    // Pour test avec n'importe quel compte staff/admin, mets temporairement : []
-    // Pour prod, [2] signifie : seul Pumpkin peut déclencher l'automatisation.
-    allowedRunnerUserIds: [2],
+    /**
+     * Optionnel mais recommandé.
+     * ID du compte Pumpkin, visible dans son URL de profil : /u1, /u42, etc.
+     * Mets null si tu ne veux vérifier que le pseudo.
+     */
+    validatorUserId: null,
 
+    /**
+     * Optionnel mais recommandé.
+     * IDs des comptes admin/staff autorisés à exécuter automatiquement le script.
+     * L'ID est visible dans l'URL du profil : /u1, /u42, etc.
+     *
+     * Si le tableau reste vide, le script ne bloque pas l'exécution par ID.
+     * Si tu veux verrouiller proprement, mets l'ID de Pumpkin ou des admins ici.
+     */
+    allowedRunnerUserIds: [],
+
+    /**
+     * URLs des pages d'administration de chaque groupe.
+     *
+     * Va dans :
+     * PA > Utilisateurs & Groupes > Administration des groupes > écrou du groupe.
+     *
+     * Copie l'URL de la page.
+     * Si elle contient tid=xxxx, remplace la valeur par tid={tid}.
+     *
+     * Exemple fictif :
+     * "/admin/index.forum?part=users_groups&sub=groups&mode=editgroup&g=4&tid={tid}"
+     */
     groupAdminUrls: {
       sorcier: "/admin/?part=users_groups&sub=groups&g=4&mode=editgroup&extended_admin=1&tid={tid}",
       humain: "/admin/?part=users_groups&sub=groups&g=8&mode=editgroup&extended_admin=1&tid={tid}",
@@ -37,7 +78,12 @@
       familier: "/admin/?part=users_groups&sub=groups&g=6&mode=editgroup&extended_admin=1&tid={tid}",
     },
 
+    /**
+     * Si true, laisse un sujet traceur dans l'ancien forum.
+     * Pour ton cas, laisse false.
+     */
     leaveShadowTopic: false,
+
     storagePrefix: "pumpkins:auto-validation:",
   };
 
@@ -91,6 +137,14 @@
     if (window._userdata && window._userdata.user_id) {
       const id = parseInt(window._userdata.user_id, 10);
       if (!Number.isNaN(id) && id > 0) return id;
+    }
+
+    const candidates = Array.from(document.querySelectorAll('a[href*="/u"]'));
+
+    for (const a of candidates) {
+      const href = a.getAttribute("href") || "";
+      const match = href.match(/\/u(\d+)/);
+      if (match) return parseInt(match[1], 10);
     }
 
     return null;
@@ -181,7 +235,7 @@
   function hasForumBreadcrumb(forumId) {
     const re = new RegExp(`/f${forumId}(?:-|$)`);
 
-    return Array.from(document.querySelectorAll("a[href]")).some((a) => {
+    return Array.from(document.querySelectorAll('a[href]')).some((a) => {
       try {
         const url = new URL(a.href, location.origin);
         return re.test(url.pathname);
@@ -212,13 +266,15 @@
       return text.length > 0 && el.querySelector('a[href*="/u"]');
     });
 
+    // On évite de garder des conteneurs parents si un vrai post enfant existe déjà.
     const posts = candidates.filter((candidate) => {
       return !candidates.some((other) => other !== candidate && candidate.contains(other));
     });
 
     if (posts.length) return posts;
 
-    return Array.from(doc.querySelectorAll("table.forumline tr, .row1, .row2")).filter((el) => {
+    // Fallback Forumactif classique.
+    return Array.from(doc.querySelectorAll('table.forumline tr, .row1, .row2')).filter((el) => {
       return el.textContent && el.querySelector('a[href*="/u"]');
     });
   }
@@ -263,11 +319,27 @@
       .replace(/&lt;/g, "<")
       .replace(/&gt;/g, ">");
 
-    return (
+    const hasRawMarker =
       text.includes(wanted) ||
       html.includes(wanted) ||
-      Boolean(post.querySelector("valid"))
-    );
+      Boolean(post.querySelector("valid"));
+
+    if (hasRawMarker) return true;
+
+    // Sur ton forum, <valid></valid> est transformé en bloc HTML.
+    // Le test le plus fiable est donc la classe du bloc rendu.
+    const hasRenderedValidationBlock = CFG.renderedValidationSelectors.some((selector) => {
+      return Boolean(post.querySelector(selector));
+    });
+
+    if (hasRenderedValidationBlock) return true;
+
+    // Fallback texte, au cas où la classe changerait mais pas le contenu.
+    const normalizedPostText = normalizeText(post.textContent);
+
+    return CFG.renderedValidationTexts.some((expectedText) => {
+      return normalizedPostText.includes(normalizeText(expectedText));
+    });
   }
 
   function getValidationPost() {
@@ -287,8 +359,6 @@
         warn("Marqueur trouvé, mais pas posté par le compte autorisé.", {
           authorUsername,
           authorId,
-          expectedUsername: CFG.validatorUsername,
-          expectedId: CFG.validatorUserId,
         });
         return null;
       }
@@ -375,27 +445,6 @@
     return data;
   }
 
-  async function submitFormLikeBrowser(action, method, data) {
-    const upperMethod = (method || "post").toUpperCase();
-
-    if (upperMethod === "GET") {
-      const url = new URL(action, location.origin);
-
-      for (const [key, value] of data.entries()) {
-        url.searchParams.set(key, value);
-      }
-
-      return fetchText(url.toString(), {
-        method: "GET",
-      });
-    }
-
-    return fetchText(action, {
-      method: upperMethod,
-      body: data,
-    });
-  }
-
   function findTargetForumSelect(form) {
     const selects = Array.from(form.querySelectorAll("select"));
 
@@ -463,6 +512,7 @@
       data.set(targetForum.name, targetForum.value);
     }
 
+    // Noms fréquents selon les variantes Forumactif/phpBB.
     data.set("confirm", "Oui");
     data.set("submit", "Oui");
 
@@ -488,7 +538,11 @@
       return true;
     }
 
-    await submitFormLikeBrowser(action, method, data);
+    await fetchText(action, {
+      method,
+      body: method === "GET" ? undefined : data,
+    });
+
     return true;
   }
 
@@ -577,6 +631,7 @@
     const data = formToFormData(form);
     data.set(usernameInput.name, username);
 
+    // Noms fréquents selon les variantes Forumactif.
     data.set("add", "1");
     data.set("add_member", "1");
     data.set("submit", "Ajouter le membre");
@@ -592,7 +647,6 @@
     log("Ajout au groupe", {
       username,
       group,
-      groupUrl,
       action,
       method,
     });
@@ -602,16 +656,17 @@
       return true;
     }
 
-    await submitFormLikeBrowser(action, method, data);
+    await fetchText(action, {
+      method,
+      body: method === "GET" ? undefined : data,
+    });
+
     return true;
   }
 
   async function run() {
     log("Script chargé", {
-      version: SCRIPT_VERSION,
       url: location.href,
-      sourceForumUrl: CFG.sourceForumUrl,
-      targetForumUrl: CFG.targetForumUrl,
       topicId: getTopicId(),
       tid: getTidToken(),
       currentUserId: getCurrentUserId(),
@@ -648,14 +703,18 @@
       }
 
       const posts = getPostContainers();
-
       log("Posts détectés", {
         count: posts.length,
-        firstPostPreview: posts[0] ? posts[0].textContent.slice(0, 160) : null,
+        previews: posts.map((post, index) => ({
+          index,
+          author: usernameFromProfileLink(getAuthorLinkFromPost(post)),
+          authorId: userIdFromProfileLink(getAuthorLinkFromPost(post)),
+          hasValidationMarker: postContainsValidationMarker(post),
+          text: post.textContent.slice(0, 220),
+        })),
       });
 
       const validationPost = getValidationPost();
-
       if (!validationPost) {
         log("Arrêt : aucun message de validation valide trouvé.", {
           expectedMarker: CFG.validationMarker,
@@ -666,13 +725,11 @@
       }
 
       const author = getTopicAuthor();
-
       if (!author || !author.username) {
         throw new Error("Auteur de la fiche introuvable.");
       }
 
       const group = detectGroupFromFirstPost();
-
       if (!group) {
         throw new Error("Groupe introuvable dans la classe de la fiche. Classes attendues : sorcier, humain, reliquaire, eveille, familier.");
       }
@@ -687,6 +744,8 @@
 
       toast(`Validation détectée : ${author.username} → ${group}. Automatisation en cours…`);
 
+      // Ordre volontaire : d'abord ajouter au groupe, puis déplacer la fiche.
+      // Si l'ajout groupe échoue, la fiche reste dans le forum à traiter.
       await addUserToGroup(author.username, group);
       await moveTopicToValidatedForum();
 
