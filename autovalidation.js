@@ -1,7 +1,7 @@
 (() => {
   "use strict";
 
-  const SCRIPT_VERSION = "2026-04-29-valid-card-retry-2";
+  const SCRIPT_VERSION = "2026-04-29-admin-token-fix-1";
 
   const CFG = {
     debug: true,
@@ -33,7 +33,7 @@
      * Pumpkin = /u2.
      *
      * [2] = seul Pumpkin peut déclencher l'automatisation.
-     * [] = aucune restriction, pratique si tu testes avec un autre compte admin.
+     * [] = aucune restriction, utile uniquement pour débug avec un autre compte admin.
      */
     allowedRunnerUserIds: [2],
 
@@ -48,6 +48,13 @@
     leaveShadowTopic: false,
 
     storagePrefix: "pumpkins:auto-validation:",
+
+    /**
+     * Token PA : différent du tid de modération du sujet.
+     * Le script tente de le récupérer automatiquement depuis le PA.
+     */
+    adminIndexUrl: "/admin/index.forum?part=users_groups&sub=groups&mode=groups&extended_admin=1",
+    adminTidStorageKey: "pumpkins:admin-tid",
   };
 
   let runInProgress = false;
@@ -229,7 +236,6 @@
     return Array.from(document.querySelectorAll("a[href]")).some((a) => {
       try {
         const url = new URL(a.href, location.origin);
-
         return re.test(url.pathname);
       } catch {
         return false;
@@ -248,7 +254,6 @@
   function getPostContainers(doc = document) {
     const ppkPosts = Array.from(doc.querySelectorAll(".ppk-post")).filter((el) => {
       const text = normalizeText(el.textContent);
-
       return text.length > 0 && el.querySelector('a[href*="/u"]');
     });
 
@@ -267,7 +272,6 @@
 
     const candidates = Array.from(doc.querySelectorAll(selectors)).filter((el) => {
       const text = normalizeText(el.textContent);
-
       return text.length > 0 && el.querySelector('a[href*="/u"]');
     });
 
@@ -326,10 +330,8 @@
 
   function isAuthorizedValidationAuthor(authorId, authorUsername) {
     /**
-     * Important :
      * Sur ton forum, les pseudos sont stylisés dans le DOM.
      * Pumpkin peut apparaître comme "UMIN".
-     *
      * Donc si validatorUserId est renseigné, on valide uniquement par ID.
      */
     if (CFG.validatorUserId != null) {
@@ -377,11 +379,6 @@
   function getValidationPost() {
     const posts = getPostContainers();
 
-    /**
-     * Priorité absolue :
-     * Sur ton forum, <valid></valid> devient :
-     * <div class="valid-card">...</div>
-     */
     const renderedCard = document.querySelector(".valid-card");
 
     if (renderedCard) {
@@ -414,10 +411,6 @@
       };
     }
 
-    /**
-     * Fallback :
-     * Si un jour le tag brut reste visible.
-     */
     for (const post of posts) {
       if (!postContainsValidationMarker(post)) {
         continue;
@@ -462,9 +455,17 @@
       return null;
     }
 
+    const avatarImg =
+      firstPost.querySelector(".ppk-profile-avatar img[alt]") ||
+      firstPost.querySelector(".profil-avatar img[alt]");
+
+    const avatarAltUsername = avatarImg && avatarImg.getAttribute("alt")
+      ? avatarImg.getAttribute("alt").trim()
+      : "";
+
     return {
       id: userIdFromProfileLink(authorLink),
-      username: usernameFromProfileLink(authorLink),
+      username: avatarAltUsername || usernameFromProfileLink(authorLink),
       link: authorLink,
     };
   }
@@ -478,17 +479,15 @@
       return "";
     }
 
+    s = s.replace(/^voir un profil\s*[-—|:]\s*/i, "");
     s = s.replace(/^voir le profil de\s+/i, "");
     s = s.replace(/^profil de\s+/i, "");
+    s = s.replace(/^profil\s*[-—|:]\s*/i, "");
     s = s.replace(/^profil\s*:\s*/i, "");
     s = s.replace(/^utilisateur\s*:\s*/i, "");
 
-    const separators = [" :: ", " - ", " — ", " | "];
-
-    for (const sep of separators) {
-      if (s.includes(sep)) {
-        s = s.split(sep)[0].trim();
-      }
+    if (s.includes(" - ") && normalizeText(s).startsWith("voir un profil")) {
+      s = s.split(" - ").pop().trim();
     }
 
     if (normalizeText(s).includes("pumpkinsrpg")) {
@@ -504,10 +503,12 @@
 
   async function resolveUsernameForGroup(author) {
     /**
-     * Le pseudo visible dans les posts peut être stylisé avec des caractères spéciaux.
-     * Pour l'ajout au groupe, on tente donc de récupérer le pseudo brut depuis la page profil,
-     * dont le HTML fetché n'exécute normalement pas les scripts de stylisation.
+     * Si on a déjà un pseudo propre via l'alt de l'avatar, on le garde.
      */
+    if (author && author.username && !/[-]/.test(author.username)) {
+      return author.username;
+    }
+
     if (!author || !author.link) {
       return author ? author.username : "";
     }
@@ -750,36 +751,163 @@
     return true;
   }
 
-  function getGroupAdminUrl(group) {
-    const tid = getTidToken();
+  function extractTidFromString(value) {
+    const match = String(value || "").match(/[?&]tid=([a-z0-9]+)/i);
+    return match ? match[1] : null;
+  }
+
+  function getAdminTidFromCurrentPage() {
+    const adminLinks = Array.from(
+      document.querySelectorAll('a[href*="/admin/"][href*="tid="], form[action*="/admin/"][action*="tid="]')
+    );
+
+    for (const el of adminLinks) {
+      const raw = el.getAttribute("href") || el.getAttribute("action") || "";
+      const tid = extractTidFromString(raw);
+
+      if (tid) {
+        return tid;
+      }
+    }
+
+    return null;
+  }
+
+  function getAdminTidFromHtml(html, finalUrl = "") {
+    const fromUrl = extractTidFromString(finalUrl);
+
+    if (fromUrl) {
+      return fromUrl;
+    }
+
+    const doc = parseHtml(html);
+
+    const adminLinks = Array.from(
+      doc.querySelectorAll('a[href*="/admin/"][href*="tid="], form[action*="/admin/"][action*="tid="]')
+    );
+
+    for (const el of adminLinks) {
+      const raw = el.getAttribute("href") || el.getAttribute("action") || "";
+      const tid = extractTidFromString(raw);
+
+      if (tid) {
+        return tid;
+      }
+    }
+
+    const fromHtml = extractTidFromString(html);
+
+    if (fromHtml) {
+      return fromHtml;
+    }
+
+    return null;
+  }
+
+  async function fetchAdminTid() {
+    const currentPageTid = getAdminTidFromCurrentPage();
+
+    if (currentPageTid) {
+      localStorage.setItem(CFG.adminTidStorageKey, currentPageTid);
+      return currentPageTid;
+    }
+
+    const cachedTid = localStorage.getItem(CFG.adminTidStorageKey);
+
+    const candidateUrls = [
+      CFG.adminIndexUrl,
+      cachedTid ? `${CFG.adminIndexUrl}&tid=${encodeURIComponent(cachedTid)}` : null,
+      "/admin/",
+    ].filter(Boolean);
+
+    for (const url of candidateUrls) {
+      const response = await fetch(absoluteUrl(url), {
+        credentials: "include",
+        redirect: "follow",
+      });
+
+      const html = await response.text();
+
+      if (!response.ok) {
+        continue;
+      }
+
+      const tid = getAdminTidFromHtml(html, response.url);
+
+      if (tid) {
+        localStorage.setItem(CFG.adminTidStorageKey, tid);
+
+        log("Token PA récupéré", {
+          adminTid: tid,
+          from: url,
+          finalUrl: response.url,
+        });
+
+        return tid;
+      }
+
+      log("Token PA non trouvé dans la page admin testée", {
+        url,
+        finalUrl: response.url,
+        title: parseHtml(html).querySelector("title")?.textContent?.trim() || null,
+        snippet: normalizeText(html).slice(0, 240),
+      });
+    }
+
+    throw new Error(
+      "Token PA introuvable. Ouvre le PA dans un onglet, va sur Administration des groupes, puis recharge cette fiche."
+    );
+  }
+
+  async function getGroupAdminUrl(group) {
+    const adminTid = await fetchAdminTid();
     const template = CFG.groupAdminUrls[group];
 
     if (!template) {
       throw new Error(`URL du groupe non configurée pour : ${group}`);
     }
 
-    if (template.includes("{tid}")) {
-      if (!tid) {
-        throw new Error("Token tid introuvable pour construire l'URL du PA.");
-      }
-
-      return template.replace("{tid}", encodeURIComponent(tid));
-    }
-
-    return template;
+    return template
+      .replace("{adminTid}", encodeURIComponent(adminTid))
+      .replace("{tid}", encodeURIComponent(adminTid));
   }
 
   function looksLikeAdminLoginPage(html) {
-    const text = normalizeText(html);
+    const doc = parseHtml(html);
+    const title = normalizeText(doc.querySelector("title")?.textContent || "");
+    const bodyText = normalizeText(doc.body?.textContent || html);
 
-    return (
-      text.includes("connexion") ||
-      text.includes("login") ||
-      text.includes("mot de passe") ||
-      text.includes("vous n'avez pas les droits") ||
-      text.includes("not authorised") ||
-      text.includes("not authorized")
+    const passwordField = doc.querySelector('input[type="password"]');
+    const loginForm = doc.querySelector(
+      'form[action*="login"], form[action*="connexion"], form[action*="admin"] input[type="password"]'
     );
+
+    const explicitDenied =
+      bodyText.includes("vous n'avez pas les droits") ||
+      bodyText.includes("vous n avez pas les droits") ||
+      bodyText.includes("not authorised") ||
+      bodyText.includes("not authorized") ||
+      bodyText.includes("permission refusee") ||
+      bodyText.includes("permission refusée");
+
+    const looksLikeLoginTitle =
+      title.includes("connexion") ||
+      title.includes("login") ||
+      title.includes("identification");
+
+    const hasAdminContent =
+      bodyText.includes("administration des groupes") ||
+      bodyText.includes("membres du groupe") ||
+      bodyText.includes("ajouter le membre") ||
+      bodyText.includes("modifier un groupe");
+
+    // Le PA contient parfois le mot "Connexion" dans le menu ou le footer.
+    // Ce mot seul ne signifie donc PAS que la session est expirée.
+    if (hasAdminContent) {
+      return false;
+    }
+
+    return Boolean(explicitDenied || passwordField || loginForm || looksLikeLoginTitle);
   }
 
   function findAddMemberForm(doc) {
@@ -815,11 +943,15 @@
   }
 
   async function addUserToGroup(username, group) {
-    const groupUrl = getGroupAdminUrl(group);
+    const groupUrl = await getGroupAdminUrl(group);
     const html = await fetchText(groupUrl);
 
     if (looksLikeAdminLoginPage(html)) {
-      throw new Error("Accès PA refusé ou session PA expirée. Connecte-toi au PA puis recharge la fiche.");
+      localStorage.removeItem(CFG.adminTidStorageKey);
+
+      throw new Error(
+        "Accès PA refusé, session PA expirée, ou token PA invalide. Ouvre le PA > Administration des groupes, puis recharge la fiche."
+      );
     }
 
     const doc = parseHtml(html);
@@ -858,6 +990,7 @@
       groupUrl,
       action,
       method,
+      usernameField: usernameInput.name,
     });
 
     if (CFG.dryRun) {
