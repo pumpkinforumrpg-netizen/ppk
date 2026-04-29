@@ -1,75 +1,42 @@
 (() => {
   "use strict";
 
-  /**
-   * PUMPKINS RPG — Auto-validation Forumactif
-   *
-   * À héberger sur GitHub, puis à appeler dans overall_header.
-   *
-   * Ce que fait le script :
-   * 1. Repère une fiche de personnage dans /f2-personnages.
-   * 2. Vérifie qu'un message de validation contient <valid></valid>.
-   * 3. Vérifie que ce message a été posté par Pumpkin.
-   * 4. Récupère l'auteur du premier message du sujet.
-   * 5. Détecte le groupe via une classe dans le code de la fiche :
-   *    sorcier, humain, reliquaire, eveille, familier.
-   * 6. Ajoute l'auteur au groupe adéquat via le PA.
-   * 7. Déplace le sujet vers /f21-fiches-validees.
-   *
-   * Limite importante :
-   * - Ce n'est pas une API Forumactif.
-   * - Le script doit tourner dans le navigateur d'un compte staff/admin connecté.
-   * - Le compte doit avoir accès au PA et à l'administration des groupes.
-   */
+  const SCRIPT_VERSION = "2026-04-29-valid-card-1";
 
   const CFG = {
     debug: true,
-    dryRun: false,
+    dryRun: true,
 
     sourceForumId: 2,
+    sourceForumUrl: "https://pumpkinsrpg.forumactif.com/f2-personnages",
+
     targetForumId: 21,
     targetForumName: "Fiches validées",
+    targetForumUrl: "https://pumpkinsrpg.forumactif.com/f21-fiches-validees",
 
     validationMarker: "<valid></valid>",
+
     renderedValidationSelectors: [
       ".valid-card",
     ],
+
     renderedValidationTexts: [
       "Fiche validée",
       "Félicitations, nous te souhaitons la bienvenue parmi nous",
       "Ta fiche de personnage a été validée",
     ],
+
     validatorUsername: "Pumpkin",
+    validatorUserId: 2,
 
     /**
-     * Optionnel mais recommandé.
-     * ID du compte Pumpkin, visible dans son URL de profil : /u1, /u42, etc.
-     * Mets null si tu ne veux vérifier que le pseudo.
+     * Pumpkin = /u2.
+     *
+     * [2] = seul Pumpkin peut déclencher l'automatisation.
+     * [] = aucune restriction, pratique pour tester avec un autre compte admin.
      */
-    validatorUserId: null,
+    allowedRunnerUserIds: [2],
 
-    /**
-     * Optionnel mais recommandé.
-     * IDs des comptes admin/staff autorisés à exécuter automatiquement le script.
-     * L'ID est visible dans l'URL du profil : /u1, /u42, etc.
-     *
-     * Si le tableau reste vide, le script ne bloque pas l'exécution par ID.
-     * Si tu veux verrouiller proprement, mets l'ID de Pumpkin ou des admins ici.
-     */
-    allowedRunnerUserIds: [],
-
-    /**
-     * URLs des pages d'administration de chaque groupe.
-     *
-     * Va dans :
-     * PA > Utilisateurs & Groupes > Administration des groupes > écrou du groupe.
-     *
-     * Copie l'URL de la page.
-     * Si elle contient tid=xxxx, remplace la valeur par tid={tid}.
-     *
-     * Exemple fictif :
-     * "/admin/index.forum?part=users_groups&sub=groups&mode=editgroup&g=4&tid={tid}"
-     */
     groupAdminUrls: {
       sorcier: "/admin/?part=users_groups&sub=groups&g=4&mode=editgroup&extended_admin=1&tid={tid}",
       humain: "/admin/?part=users_groups&sub=groups&g=8&mode=editgroup&extended_admin=1&tid={tid}",
@@ -78,10 +45,6 @@
       familier: "/admin/?part=users_groups&sub=groups&g=6&mode=editgroup&extended_admin=1&tid={tid}",
     },
 
-    /**
-     * Si true, laisse un sujet traceur dans l'ancien forum.
-     * Pour ton cas, laisse false.
-     */
     leaveShadowTopic: false,
 
     storagePrefix: "pumpkins:auto-validation:",
@@ -114,6 +77,7 @@
 
   function toast(message, type = "info") {
     const el = document.createElement("div");
+
     el.textContent = message;
     el.style.cssText = [
       "position:fixed",
@@ -130,30 +94,31 @@
     ].join(";");
 
     document.body.appendChild(el);
-    setTimeout(() => el.remove(), type === "error" ? 12000 : 7000);
+
+    setTimeout(() => {
+      el.remove();
+    }, type === "error" ? 12000 : 7000);
   }
 
   function getCurrentUserId() {
     if (window._userdata && window._userdata.user_id) {
       const id = parseInt(window._userdata.user_id, 10);
-      if (!Number.isNaN(id) && id > 0) return id;
-    }
 
-    const candidates = Array.from(document.querySelectorAll('a[href*="/u"]'));
-
-    for (const a of candidates) {
-      const href = a.getAttribute("href") || "";
-      const match = href.match(/\/u(\d+)/);
-      if (match) return parseInt(match[1], 10);
+      if (!Number.isNaN(id) && id > 0) {
+        return id;
+      }
     }
 
     return null;
   }
 
   function runnerIsAllowed() {
-    if (!CFG.allowedRunnerUserIds.length) return true;
+    if (!CFG.allowedRunnerUserIds.length) {
+      return true;
+    }
 
     const currentUserId = getCurrentUserId();
+
     return CFG.allowedRunnerUserIds.includes(currentUserId);
   }
 
@@ -183,41 +148,64 @@
 
   function getTidToken(doc = document) {
     const input = doc.querySelector('input[name="tid"]');
-    if (input && input.value) return input.value;
 
-    const links = Array.from(doc.querySelectorAll('a[href*="tid="], form[action*="tid="]'));
+    if (input && input.value) {
+      return input.value;
+    }
+
+    const links = Array.from(
+      doc.querySelectorAll('a[href*="tid="], form[action*="tid="]')
+    );
 
     for (const el of links) {
       const raw = el.getAttribute("href") || el.getAttribute("action") || "";
       const match = raw.match(/[?&]tid=([a-z0-9]+)/i);
-      if (match) return match[1];
+
+      if (match) {
+        return match[1];
+      }
     }
 
     const html = doc.documentElement ? doc.documentElement.innerHTML : "";
     const match = html.match(/[?&]tid=([a-z0-9]+)/i);
+
     return match ? match[1] : null;
   }
 
   function getTopicId(doc = document) {
     const input = doc.querySelector('form[action*="/modcp"] input[name="t"]');
-    if (input && input.value) return input.value;
+
+    if (input && input.value) {
+      return input.value;
+    }
 
     const canonical = doc.querySelector('link[rel="canonical"]');
+
     if (canonical) {
       const match = (canonical.getAttribute("href") || "").match(/\/t(\d+)/);
-      if (match) return match[1];
+
+      if (match) {
+        return match[1];
+      }
     }
 
     const pathMatch = location.pathname.match(/\/t(\d+)/);
-    if (pathMatch) return pathMatch[1];
+
+    if (pathMatch) {
+      return pathMatch[1];
+    }
 
     const params = new URLSearchParams(location.search);
+
     return params.get("t");
   }
 
   function getTopicUrlKey() {
     const topicId = getTopicId();
-    return topicId ? `${CFG.storagePrefix}${topicId}` : `${CFG.storagePrefix}${location.pathname}`;
+
+    return topicId
+      ? `${CFG.storagePrefix}${topicId}`
+      : `${CFG.storagePrefix}${location.pathname}`;
   }
 
   function isAlreadyProcessed() {
@@ -235,9 +223,10 @@
   function hasForumBreadcrumb(forumId) {
     const re = new RegExp(`/f${forumId}(?:-|$)`);
 
-    return Array.from(document.querySelectorAll('a[href]')).some((a) => {
+    return Array.from(document.querySelectorAll("a[href]")).some((a) => {
       try {
         const url = new URL(a.href, location.origin);
+
         return re.test(url.pathname);
       } catch {
         return false;
@@ -246,41 +235,56 @@
   }
 
   function isSourceTopicPage() {
-    return Boolean(getTopicId()) && hasForumBreadcrumb(CFG.sourceForumId) && !hasForumBreadcrumb(CFG.targetForumId);
+    return (
+      Boolean(getTopicId()) &&
+      hasForumBreadcrumb(CFG.sourceForumId) &&
+      !hasForumBreadcrumb(CFG.targetForumId)
+    );
   }
 
   function getPostContainers(doc = document) {
+    const ppkPosts = Array.from(doc.querySelectorAll(".ppk-post")).filter((el) => {
+      const text = normalizeText(el.textContent);
+
+      return text.length > 0 && el.querySelector('a[href*="/u"]');
+    });
+
+    if (ppkPosts.length) {
+      return ppkPosts;
+    }
+
     const selectors = [
-      ".ppk-post",
       ".post",
       ".post-wrap",
       ".post_wrapper",
       ".post-container",
       ".postrow",
       "article[class*='post']",
-      "div[class*='post']",
     ].join(",");
 
     const candidates = Array.from(doc.querySelectorAll(selectors)).filter((el) => {
       const text = normalizeText(el.textContent);
+
       return text.length > 0 && el.querySelector('a[href*="/u"]');
     });
 
-    // On évite de garder des conteneurs parents si un vrai post enfant existe déjà.
     const posts = candidates.filter((candidate) => {
       return !candidates.some((other) => other !== candidate && candidate.contains(other));
     });
 
-    if (posts.length) return posts;
+    if (posts.length) {
+      return posts;
+    }
 
-    // Fallback Forumactif classique.
-    return Array.from(doc.querySelectorAll('table.forumline tr, .row1, .row2')).filter((el) => {
+    return Array.from(doc.querySelectorAll("table.forumline tr, .row1, .row2")).filter((el) => {
       return el.textContent && el.querySelector('a[href*="/u"]');
     });
   }
 
   function getAuthorLinkFromPost(post) {
-    if (!post) return null;
+    if (!post) {
+      return null;
+    }
 
     const selectors = [
       ".ppk-user-profil .nameprofil a[href*='/u']",
@@ -299,19 +303,28 @@
   }
 
   function userIdFromProfileLink(link) {
-    if (!link) return null;
+    if (!link) {
+      return null;
+    }
+
     const href = link.getAttribute("href") || "";
     const match = href.match(/\/u(\d+)/);
+
     return match ? parseInt(match[1], 10) : null;
   }
 
   function usernameFromProfileLink(link) {
-    if (!link) return null;
+    if (!link) {
+      return null;
+    }
+
     return link.textContent.replace(/\s+/g, " ").trim();
   }
 
   function postContainsValidationMarker(post) {
-    if (!post) return false;
+    if (!post) {
+      return false;
+    }
 
     const wanted = compact(CFG.validationMarker);
     const text = compact(post.textContent);
@@ -324,17 +337,18 @@
       html.includes(wanted) ||
       Boolean(post.querySelector("valid"));
 
-    if (hasRawMarker) return true;
+    if (hasRawMarker) {
+      return true;
+    }
 
-    // Sur ton forum, <valid></valid> est transformé en bloc HTML.
-    // Le test le plus fiable est donc la classe du bloc rendu.
     const hasRenderedValidationBlock = CFG.renderedValidationSelectors.some((selector) => {
       return Boolean(post.querySelector(selector));
     });
 
-    if (hasRenderedValidationBlock) return true;
+    if (hasRenderedValidationBlock) {
+      return true;
+    }
 
-    // Fallback texte, au cas où la classe changerait mais pas le contenu.
     const normalizedPostText = normalizeText(post.textContent);
 
     return CFG.renderedValidationTexts.some((expectedText) => {
@@ -345,21 +359,76 @@
   function getValidationPost() {
     const posts = getPostContainers();
 
-    for (const post of posts) {
-      if (!postContainsValidationMarker(post)) continue;
+    /**
+     * Priorité absolue :
+     * Sur ton forum, <valid></valid> devient :
+     * <div class="valid-card">...</div>
+     */
+    const renderedCard = document.querySelector(".valid-card");
+
+    if (renderedCard) {
+      const post =
+        renderedCard.closest(".ppk-post") ||
+        renderedCard.closest(".post") ||
+        renderedCard.closest("article") ||
+        renderedCard.parentElement;
 
       const authorLink = getAuthorLinkFromPost(post);
       const authorUsername = usernameFromProfileLink(authorLink);
       const authorId = userIdFromProfileLink(authorLink);
 
-      const usernameMatches = normalizeText(authorUsername) === normalizeText(CFG.validatorUsername);
-      const idMatches = CFG.validatorUserId == null || CFG.validatorUserId === authorId;
+      const usernameMatches =
+        normalizeText(authorUsername) === normalizeText(CFG.validatorUsername);
+
+      const idMatches =
+        CFG.validatorUserId == null || CFG.validatorUserId === authorId;
+
+      if (!usernameMatches || !idMatches) {
+        warn("Bloc .valid-card trouvé, mais pas posté par le compte autorisé.", {
+          authorUsername,
+          authorId,
+          expectedUsername: CFG.validatorUsername,
+          expectedId: CFG.validatorUserId,
+        });
+
+        return null;
+      }
+
+      return {
+        post,
+        authorLink,
+        authorUsername,
+        authorId,
+      };
+    }
+
+    /**
+     * Fallback :
+     * Si un jour le tag brut reste visible.
+     */
+    for (const post of posts) {
+      if (!postContainsValidationMarker(post)) {
+        continue;
+      }
+
+      const authorLink = getAuthorLinkFromPost(post);
+      const authorUsername = usernameFromProfileLink(authorLink);
+      const authorId = userIdFromProfileLink(authorLink);
+
+      const usernameMatches =
+        normalizeText(authorUsername) === normalizeText(CFG.validatorUsername);
+
+      const idMatches =
+        CFG.validatorUserId == null || CFG.validatorUserId === authorId;
 
       if (!usernameMatches || !idMatches) {
         warn("Marqueur trouvé, mais pas posté par le compte autorisé.", {
           authorUsername,
           authorId,
+          expectedUsername: CFG.validatorUsername,
+          expectedId: CFG.validatorUserId,
         });
+
         return null;
       }
 
@@ -376,10 +445,16 @@
 
   function getTopicAuthor() {
     const firstPost = getPostContainers()[0];
-    if (!firstPost) return null;
+
+    if (!firstPost) {
+      return null;
+    }
 
     const authorLink = getAuthorLinkFromPost(firstPost);
-    if (!authorLink) return null;
+
+    if (!authorLink) {
+      return null;
+    }
 
     return {
       id: userIdFromProfileLink(authorLink),
@@ -389,7 +464,9 @@
   }
 
   function getPostContentRoot(post) {
-    if (!post) return null;
+    if (!post) {
+      return null;
+    }
 
     return (
       post.querySelector(".contenu-post") ||
@@ -407,17 +484,27 @@
     const root = getPostContentRoot(firstPost);
     const groups = Object.keys(CFG.groupAdminUrls);
 
-    if (!root) return null;
+    if (!root) {
+      return null;
+    }
 
     for (const group of groups) {
       const escaped = cssEscape(group);
 
-      if (root.classList && root.classList.contains(group)) return group;
-      if (root.querySelector(`.${escaped}`)) return group;
+      if (root.classList && root.classList.contains(group)) {
+        return group;
+      }
+
+      if (root.querySelector(`.${escaped}`)) {
+        return group;
+      }
 
       const html = root.innerHTML || "";
       const re = new RegExp(`class=["'][^"']*\\b${group}\\b[^"']*["']`, "i");
-      if (re.test(html)) return group;
+
+      if (re.test(html)) {
+        return group;
+      }
     }
 
     return null;
@@ -427,12 +514,16 @@
     const data = new FormData();
 
     Array.from(form.elements).forEach((el) => {
-      if (!el.name || el.disabled) return;
+      if (!el.name || el.disabled) {
+        return;
+      }
 
       const tag = el.tagName.toLowerCase();
       const type = (el.getAttribute("type") || "").toLowerCase();
 
-      if ((type === "checkbox" || type === "radio") && !el.checked) return;
+      if ((type === "checkbox" || type === "radio") && !el.checked) {
+        return;
+      }
 
       if (tag === "select") {
         data.set(el.name, el.value);
@@ -443,6 +534,27 @@
     });
 
     return data;
+  }
+
+  async function submitFormLikeBrowser(action, method, data) {
+    const upperMethod = (method || "post").toUpperCase();
+
+    if (upperMethod === "GET") {
+      const url = new URL(action, location.origin);
+
+      for (const [key, value] of data.entries()) {
+        url.searchParams.set(key, value);
+      }
+
+      return fetchText(url.toString(), {
+        method: "GET",
+      });
+    }
+
+    return fetchText(action, {
+      method: upperMethod,
+      body: data,
+    });
   }
 
   function findTargetForumSelect(form) {
@@ -478,8 +590,13 @@
     const topicId = getTopicId();
     const tid = getTidToken();
 
-    if (!topicId) throw new Error("ID du sujet introuvable.");
-    if (!tid) throw new Error("Token tid introuvable pour la modération.");
+    if (!topicId) {
+      throw new Error("ID du sujet introuvable.");
+    }
+
+    if (!tid) {
+      throw new Error("Token tid introuvable pour la modération.");
+    }
 
     const movePageUrl = `/modcp?mode=move&t=${encodeURIComponent(topicId)}&tid=${encodeURIComponent(tid)}`;
     const movePageHtml = await fetchText(movePageUrl);
@@ -512,7 +629,6 @@
       data.set(targetForum.name, targetForum.value);
     }
 
-    // Noms fréquents selon les variantes Forumactif/phpBB.
     data.set("confirm", "Oui");
     data.set("submit", "Oui");
 
@@ -538,10 +654,7 @@
       return true;
     }
 
-    await fetchText(action, {
-      method,
-      body: method === "GET" ? undefined : data,
-    });
+    await submitFormLikeBrowser(action, method, data);
 
     return true;
   }
@@ -555,7 +668,10 @@
     }
 
     if (template.includes("{tid}")) {
-      if (!tid) throw new Error("Token tid introuvable pour construire l'URL du PA.");
+      if (!tid) {
+        throw new Error("Token tid introuvable pour construire l'URL du PA.");
+      }
+
       return template.replace("{tid}", encodeURIComponent(tid));
     }
 
@@ -629,14 +745,15 @@
     }
 
     const data = formToFormData(form);
+
     data.set(usernameInput.name, username);
 
-    // Noms fréquents selon les variantes Forumactif.
     data.set("add", "1");
     data.set("add_member", "1");
     data.set("submit", "Ajouter le membre");
 
     const submit = form.querySelector('input[type="submit"][name], button[type="submit"][name]');
+
     if (submit && submit.name) {
       data.set(submit.name, submit.value || submit.textContent || "1");
     }
@@ -647,6 +764,7 @@
     log("Ajout au groupe", {
       username,
       group,
+      groupUrl,
       action,
       method,
     });
@@ -656,17 +774,17 @@
       return true;
     }
 
-    await fetchText(action, {
-      method,
-      body: method === "GET" ? undefined : data,
-    });
+    await submitFormLikeBrowser(action, method, data);
 
     return true;
   }
 
   async function run() {
     log("Script chargé", {
+      version: SCRIPT_VERSION,
       url: location.href,
+      sourceForumUrl: CFG.sourceForumUrl,
+      targetForumUrl: CFG.targetForumUrl,
       topicId: getTopicId(),
       tid: getTidToken(),
       currentUserId: getCurrentUserId(),
@@ -683,6 +801,7 @@
           sourceForumId: CFG.sourceForumId,
           targetForumId: CFG.targetForumId,
         });
+
         return;
       }
 
@@ -691,6 +810,7 @@
           currentUserId: getCurrentUserId(),
           allowedRunnerUserIds: CFG.allowedRunnerUserIds,
         });
+
         return;
       }
 
@@ -699,37 +819,47 @@
           key: getTopicUrlKey(),
           value: localStorage.getItem(getTopicUrlKey()),
         });
+
         return;
       }
 
       const posts = getPostContainers();
+
       log("Posts détectés", {
         count: posts.length,
         previews: posts.map((post, index) => ({
           index,
+          id: post.id,
           author: usernameFromProfileLink(getAuthorLinkFromPost(post)),
           authorId: userIdFromProfileLink(getAuthorLinkFromPost(post)),
+          hasValidCard: Boolean(post.querySelector(".valid-card")),
           hasValidationMarker: postContainsValidationMarker(post),
           text: post.textContent.slice(0, 220),
         })),
       });
 
       const validationPost = getValidationPost();
+
       if (!validationPost) {
         log("Arrêt : aucun message de validation valide trouvé.", {
           expectedMarker: CFG.validationMarker,
+          expectedRenderedSelector: CFG.renderedValidationSelectors,
           expectedValidatorUsername: CFG.validatorUsername,
           expectedValidatorUserId: CFG.validatorUserId,
+          validCardsFound: document.querySelectorAll(".valid-card").length,
         });
+
         return;
       }
 
       const author = getTopicAuthor();
+
       if (!author || !author.username) {
         throw new Error("Auteur de la fiche introuvable.");
       }
 
       const group = detectGroupFromFirstPost();
+
       if (!group) {
         throw new Error("Groupe introuvable dans la classe de la fiche. Classes attendues : sorcier, humain, reliquaire, eveille, familier.");
       }
@@ -744,12 +874,11 @@
 
       toast(`Validation détectée : ${author.username} → ${group}. Automatisation en cours…`);
 
-      // Ordre volontaire : d'abord ajouter au groupe, puis déplacer la fiche.
-      // Si l'ajout groupe échoue, la fiche reste dans le forum à traiter.
       await addUserToGroup(author.username, group);
       await moveTopicToValidatedForum();
 
       markProcessed();
+
       toast(`Fiche validée automatiquement : ${author.username} → ${group}.`, "success");
     } catch (err) {
       fail(err);
