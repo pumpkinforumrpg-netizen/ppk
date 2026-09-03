@@ -108,45 +108,118 @@
       font-size: 0.9rem;
     }
 
+    /* Noms réservés : même langage visuel que les cards du registre. */
+    .reserved-names {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .reserved-names__title {
+      margin-bottom: 0;
+    }
+
     .reserved-names__list {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-      gap: 10px;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 11px;
       padding: 0;
-      margin: 14px 0 0;
+      margin: 0;
       list-style: none;
     }
 
     .reserved-name {
+      --o: var(--blanc);
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 12px;
       min-width: 0;
-      padding: 11px 13px;
-      border: 1px solid var(--registry-border);
+      min-height: 58px;
+      padding: 12px 15px;
+      border: 1px solid var(--color9);
       border-radius: 10px;
-      background: var(--registry-panel);
+      background: var(--color6);
+      transition: border-color 300ms ease;
+    }
+
+    .reserved-name:hover {
+      border-color: var(--o);
+    }
+
+    .reserved-name.humain {
+      --o: var(--hum);
+    }
+
+    .reserved-name.eveille {
+      --o: var(--eve);
+    }
+
+    .reserved-name.sorcier {
+      --o: var(--sor);
+    }
+
+    .reserved-name.familier {
+      --o: var(--fam);
+    }
+
+    .reserved-name.reliquaire {
+      --o: var(--rel);
+    }
+
+    .reserved-name.is-manual {
+      --o: var(--blanc);
     }
 
     .reserved-name__text {
       min-width: 0;
       overflow: hidden;
-      font-weight: 700;
+      color: var(--o);
+      font: 400 20px/1 "Glow Night", serif;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
 
-    .reserved-name__badge {
+    .reserved-name__badges {
+      display: flex;
       flex: 0 0 auto;
-      padding: 4px 7px;
-      border: 1px solid var(--registry-accent);
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 6px;
+    }
+
+    .reserved-name__badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 5px 10px;
+      border: 0;
       border-radius: 999px;
-      color: var(--registry-accent);
-      font-size: 0.62rem;
-      font-weight: 800;
-      letter-spacing: 0.04em;
-      line-height: 1.2;
+      background: var(--color9);
+      color: var(--blanc);
+      font: 14px/1 Calibri, sans-serif;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    a.reserved-name__badge {
+      cursor: pointer;
+      transition: 300ms ease;
+    }
+
+    a.reserved-name__badge:hover,
+    a.reserved-name__badge:focus-visible {
+      transform: translateY(-2px);
+      background: var(--color2);
+      color: var(--blanc);
+    }
+
+    .reserved-name__badge--pnj {
+      border: 1px solid var(--color9);
+      background: var(--color2);
+      color: var(--blanc);
+      font-weight: 700;
       text-transform: uppercase;
     }
 
@@ -162,6 +235,10 @@
       }
 
       .multi-account-group__others {
+        grid-template-columns: 1fr;
+      }
+
+      .reserved-names__list {
         grid-template-columns: 1fr;
       }
     }
@@ -914,7 +991,6 @@ const characters = [
     },                       
                          {
       id: "Elio",
-      multiAccountId: "cordiale",
       pseudo: "Elio",
       isPnj: false,
       origin: "humain",
@@ -936,7 +1012,6 @@ const characters = [
     }, 
            {
       id: "Denver",
-      multiAccountId: "cordiale",
       pseudo: "Denver",
       isPnj: false,
       origin: "humain",
@@ -980,7 +1055,6 @@ const characters = [
     },
     {
       id: "Mello",
-      multiAccountId: "cordiale",
       pseudo: "Mello",
       isPnj: false,
       origin: "familier",
@@ -1002,7 +1076,6 @@ const characters = [
     },
         {
       id: "Moka",
-      multiAccountId: "jace",
       pseudo: "Moka",
       isPnj: false,
       origin: "familier",
@@ -1911,6 +1984,27 @@ const characters = [
     relicForm: ""
   },
   {
+    id: "Muscade",
+    pseudo: "Muscade",
+    isPnj: true,
+    origin: "sorcier",
+    jobTitle: "Faiseur de Miracles & Alchimiste",
+    workplaceName: "Clafoutis",
+    workplaceType: "Vieux cabanon",
+    workDistrict: "Vesperune",
+    presentationLink: "",
+    profileLink: "",
+    avatar: "https://i.imgur.com/HsKW675.png",
+    faceclaimName: "Old Man",
+    faceclaimSource: "Various Artists",
+    faceclaimSourceType: "",
+    powerName: "Voyance",
+    powerDescription: "Obtiens des réponses de l'univers à l'aide de son esprit.",
+    magicDomain: "Détection",
+    animalForm: "",
+    relicForm: ""
+  },
+  {
     id: "Alistair",
     multiAccountId: "alistair",
     pseudo: "Alistair",
@@ -2191,20 +2285,23 @@ const characters = [
   NOMS RÉSERVÉS
 
   - characterId récupère automatiquement le pseudo d'une card existante.
+    Si la référence n'existe pas encore, sa valeur reste affichée en blanc.
   - name permet d'ajouter un nom qui n'existe pas dans characters.
   - scenarioAvailable affiche la pastille « Scénario disponible ».
+  - scenarioLink rend cette pastille cliquable quand une URL est renseignée.
 
   Exemples :
 
   { characterId: "Cannelle", scenarioAvailable: false },
-  { characterId: "ID_DU_SCENARIO", scenarioAvailable: true },
+  { characterId: "ID_DU_SCENARIO", scenarioAvailable: true, scenarioLink: "https://..." },
   { name: "Nom manuel", scenarioAvailable: false },
-  { name: "Scénario manuel", scenarioAvailable: true }
+  { name: "Scénario manuel", scenarioAvailable: true, scenarioLink: "https://..." }
 */
 const reservedNames = [
   {
     name: "Açaï",
-    scenarioAvailable: true
+    scenarioAvailable: true,
+    scenarioLink: "https://pumpkinsrpg.forumactif.com/t38-scenarios-preliens"
   },
   {
     characterId: "Aconit",
@@ -2231,7 +2328,7 @@ const reservedNames = [
     scenarioAvailable: false
   },
   {
-    characterId: "Cerise",
+    name: "Cerise",
     scenarioAvailable: false
   },
   {
@@ -2248,14 +2345,15 @@ const reservedNames = [
   },
   {
     name: "Curry",
-    scenarioAvailable: true
+    scenarioAvailable: true,
+    scenarioLink: "https://pumpkinsrpg.forumactif.com/t38-scenarios-preliens"
   },
   {
     characterId: "Dragée",
     scenarioAvailable: false
   },
   {
-    characterId: "Dulce",
+    name: "Dulce",
     scenarioAvailable: false
   },
   {
@@ -2263,11 +2361,11 @@ const reservedNames = [
     scenarioAvailable: false
   },
   {
-    characterId: "Figue",
+    name: "Figue",
     scenarioAvailable: false
   },
   {
-    characterId: "Flocon",
+    name: "Flocon",
     scenarioAvailable: false
   },
   {
@@ -2283,7 +2381,7 @@ const reservedNames = [
     scenarioAvailable: false
   },
   {
-    characterId: "Kirsch",
+    name: "Kirsch",
     scenarioAvailable: false
   },
   {
@@ -2291,12 +2389,13 @@ const reservedNames = [
     scenarioAvailable: false
   },
   {
-    characterId: "Laurier",
+    name: "Laurier",
     scenarioAvailable: false
   },
   {
     name: "Lavande",
-    scenarioAvailable: true
+    scenarioAvailable: true,
+    scenarioLink: "https://pumpkinsrpg.forumactif.com/t38-scenarios-preliens"
   },
   {
     characterId: "Litchi",
@@ -2315,7 +2414,7 @@ const reservedNames = [
     scenarioAvailable: false
   },
   {
-    characterId: "Menthe",
+    name: "Menthe",
     scenarioAvailable: false
   },
   {
@@ -2323,7 +2422,7 @@ const reservedNames = [
     scenarioAvailable: false
   },
   {
-    characterId: "Mochi",
+    name: "Mochi",
     scenarioAvailable: false
   },
   {
@@ -2343,7 +2442,7 @@ const reservedNames = [
     scenarioAvailable: false
   },
   {
-    characterId: "Pomme",
+    name: "Pomme",
     scenarioAvailable: false
   },
   {
@@ -2351,7 +2450,7 @@ const reservedNames = [
     scenarioAvailable: false
   },
   {
-    characterId: "Prune",
+    name: "Prune",
     scenarioAvailable: false
   },
   {
@@ -2375,7 +2474,7 @@ const reservedNames = [
     scenarioAvailable: false
   },
   {
-    characterId: "Sundae",
+    name: "Sundae",
     scenarioAvailable: false
   },
   {
@@ -4097,7 +4196,6 @@ function renderMultiAccounts() {
     connectorIcon.setAttribute("aria-hidden", "true");
 
     const connectorText = document.createElement("span");
-    connectorText.textContent = "incarne aussi…";
 
     connector.appendChild(connectorIcon);
     connector.appendChild(connectorText);
@@ -4121,33 +4219,64 @@ function renderMultiAccounts() {
 }
 
 function getReservedNames() {
-  const charactersById = new Map();
+  const charactersByReference = new Map();
   const uniqueNames = new Map();
 
+  /* Les id restent prioritaires en cas de collision avec un pseudo. */
   characters.forEach(function (character) {
-    charactersById.set(normalizeText(character.id), character);
+    const idKey = normalizeText(character.id);
+    if (idKey) {
+      charactersByReference.set(idKey, character);
+    }
+  });
+
+  /* Accepte aussi un pseudo dans characterId, par exemple « Amaretto ». */
+  characters.forEach(function (character) {
+    const pseudoKey = normalizeText(character.pseudo);
+    if (pseudoKey && !charactersByReference.has(pseudoKey)) {
+      charactersByReference.set(pseudoKey, character);
+    }
   });
 
   reservedNames.forEach(function (entry) {
     const character = entry.characterId
-      ? charactersById.get(normalizeText(entry.characterId))
+      ? charactersByReference.get(normalizeText(entry.characterId))
       : null;
 
     const name = character
       ? cleanText(character.pseudo, "")
-      : cleanText(entry.name, "");
+      : cleanText(entry.name || entry.characterId, "");
 
     if (!name) return;
 
     const key = normalizeText(name);
     const existing = uniqueNames.get(key);
+    const existingIsLinked = Boolean(existing && !existing.isManual);
+    const isLinked = Boolean(character) || existingIsLinked;
+    const scenarioLink =
+      cleanText(entry.scenarioLink, "") ||
+      (existing ? existing.scenarioLink : "");
 
     uniqueNames.set(key, {
-      name: name,
+      name: character
+        ? cleanText(character.pseudo, name)
+        : existingIsLinked
+          ? existing.name
+          : name,
       scenarioAvailable: Boolean(
         entry.scenarioAvailable ||
         (existing && existing.scenarioAvailable)
-      )
+      ),
+      scenarioLink: scenarioLink,
+      origin: character
+        ? cleanText(character.origin, "")
+        : existing
+          ? existing.origin
+          : "",
+      isPnj: character
+        ? Boolean(character.isPnj)
+        : Boolean(existing && existing.isPnj),
+      isManual: !isLinked
     });
   });
 
@@ -4164,7 +4293,9 @@ function renderReservedNames() {
   const names = getReservedNames().filter(function (item) {
     const searchableText = [
       item.name,
-      item.scenarioAvailable ? "scénario disponible" : "nom réservé"
+      item.scenarioAvailable ? "scénario disponible" : "nom réservé",
+      item.isPnj ? "pnj" : "",
+      ORIGIN_LABELS[item.origin] || ""
     ].join(" ");
 
     return !term || normalizeText(searchableText).includes(term);
@@ -4191,17 +4322,57 @@ function renderReservedNames() {
     const listItem = document.createElement("li");
     listItem.className = "reserved-name";
 
+    if (item.isManual) {
+      listItem.classList.add("is-manual");
+    } else if (item.origin) {
+      listItem.classList.add(item.origin);
+    }
+
+    if (item.isPnj) {
+      listItem.classList.add("is-pnj");
+    }
+
     const name = document.createElement("span");
     name.className = "reserved-name__text";
     setHighlightedText(name, item.name, state.search);
 
     listItem.appendChild(name);
 
+    const badges = document.createElement("span");
+    badges.className = "reserved-name__badges";
+
     if (item.scenarioAvailable) {
-      const badge = document.createElement("span");
-      badge.className = "reserved-name__badge";
+      const badge = document.createElement(
+        item.scenarioLink ? "a" : "span"
+      );
+
+      badge.className =
+        "reserved-name__badge reserved-name__badge--scenario";
       badge.textContent = "Scénario disponible";
-      listItem.appendChild(badge);
+
+      if (item.scenarioLink) {
+        badge.href = item.scenarioLink;
+        badge.target = "_blank";
+        badge.rel = "noopener noreferrer";
+        badge.setAttribute(
+          "aria-label",
+          "Voir le scénario disponible pour " + item.name
+        );
+      }
+
+      badges.appendChild(badge);
+    }
+
+    if (item.isPnj) {
+      const pnjBadge = document.createElement("span");
+      pnjBadge.className =
+        "reserved-name__badge reserved-name__badge--pnj";
+      pnjBadge.textContent = "PNJ";
+      badges.appendChild(pnjBadge);
+    }
+
+    if (badges.childElementCount) {
+      listItem.appendChild(badges);
     }
 
     list.appendChild(listItem);
