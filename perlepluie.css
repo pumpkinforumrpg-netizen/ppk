@@ -1,0 +1,1937 @@
+.pluie-collection {
+  width: 100%;
+  padding: 24px;
+  border-radius: 24px;
+  background: var(--color1);
+  box-shadow: var(--glass);
+  color: var(--color5);
+  box-sizing: border-box;
+}
+
+.pluie-collection h3 {
+  margin: 25px 0 5px;
+  color: var(--color5);
+  text-transform: uppercase;
+  font: normal 24px 'Glow Night';
+}
+
+.pluie-collection h3:first-child {
+  margin-top: 0;
+}
+
+.perles-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.perle-card {
+  width: 82px;
+  min-height: 82px;
+  padding: 12px 7px 9px;
+  border-radius: 18px;
+  background: var(--blanc);
+  border: 1px solid var(--color9);
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.perle-card b {
+  display: block;
+  margin-top: 8px;
+  font: 14px Calibri;
+  color: var(--color11);
+}
+
+/* BASE */
+.perle {
+  --c1: #dddddd;
+  --c2: #cccccc;
+  --c3: #bbbbbb;
+  --halo: rgba(255, 255, 255, 0.18);
+  --glow: rgba(255, 255, 255, 0.25);
+  --spark: rgba(255, 245, 210, 1);
+
+  position: relative;
+  display: inline-block;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  overflow: hidden;
+  vertical-align: middle;
+
+  background:
+    radial-gradient(circle at 28% 22%, rgba(255, 255, 255, 0.92) 0 3px, transparent 4px),
+    radial-gradient(circle at 70% 74%, rgba(255, 255, 255, 0.18) 0 7px, transparent 10px),
+    linear-gradient(135deg, var(--c1), var(--c2) 55%, var(--c3));
+
+  border: 1px solid rgba(255, 255, 255, 0.70);
+
+  box-shadow:
+    inset 6px 7px 12px rgba(255, 255, 255, 0.30),
+    inset -6px -8px 10px rgba(45, 24, 12, 0.14),
+    0 0 6px var(--halo);
+}
+
+.perle::after {
+  content: "";
+  position: absolute;
+  left: 9px;
+  top: 7px;
+  width: 8px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.80);
+  transform: rotate(-28deg);
+}
+
+/* RARES */
+.perle-card.rare .perle {
+  width: 35px;
+  height: 35px;
+
+  background:
+    radial-gradient(circle at 28% 22%, rgba(255, 255, 255, 0.92) 0 3px, transparent 4px),
+    radial-gradient(circle at 70% 74%, rgba(255, 255, 255, 0.16) 0 7px, transparent 10px),
+    linear-gradient(135deg, var(--c1) 0%, var(--c2) 56%, var(--c3) 100%);
+
+  box-shadow:
+    inset 6px 7px 12px rgba(255, 255, 255, 0.32),
+    inset -6px -8px 10px rgba(45, 24, 12, 0.14),
+    0 0 8px var(--halo),
+    0 0 10px var(--glow);
+}
+
+/* LEGENDAIRES */
+.perle-card.legendaire {
+  background: var(--blanc);
+  border-color: var(--color9);
+  width: 88px;
+}
+
+.perle-card.legendaire .perle {
+  width: 40px;
+  height: 40px;
+  border: 0;
+
+  background:
+    radial-gradient(circle at 26% 19%, rgba(255, 255, 255, 0.96) 0 4px, transparent 5px),
+    radial-gradient(circle at 33% 28%, rgba(255, 255, 255, 0.22) 0 10px, transparent 16px),
+    radial-gradient(circle at 76% 76%, rgba(255, 255, 255, 0.10) 0 9px, transparent 15px),
+    radial-gradient(circle at center, transparent 54%, rgba(255, 255, 255, 0.12) 76%, rgba(255, 255, 255, 0.34) 100%),
+    linear-gradient(135deg, var(--c1) 0%, var(--c2) 56%, var(--c3) 100%);
+
+  box-shadow:
+    inset 2px 2px 9px rgba(255, 255, 255, 0.30),
+    inset -1px -2px 6px rgba(255, 255, 255, 0.08),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.18),
+    inset 0 0 10px rgba(255, 255, 255, 0.10),
+    0 0 14px var(--halo),
+    0 0 24px var(--glow),
+    0 0 36px var(--glow);
+}
+
+/* voile clair doux + lissage des bords */
+.perle-card.legendaire .perle::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at center, transparent 52%, rgba(255, 255, 255, 0.10) 72%, rgba(255, 255, 255, 0.28) 100%),
+    radial-gradient(circle at 28% 24%, rgba(255, 255, 255, 0.20) 0 10px, transparent 15px),
+    radial-gradient(circle at 70% 72%, rgba(255, 255, 255, 0.08) 0 8px, transparent 13px);
+  opacity: 0.95;
+}
+
+/* reflet principal */
+.perle-card.legendaire .perle::after {
+  content: "";
+  position: absolute;
+  left: 8px;
+  top: 6px;
+  width: 16px;
+  height: 9px;
+  border-radius: 50%;
+  z-index: 2;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 30% 35%, rgba(255, 255, 255, 0.95) 0 3px, rgba(255, 255, 255, 0.55) 4px, transparent 8px);
+  transform: rotate(-28deg);
+}
+
+/* MYTHIQUES */
+.perle-card.mythique {
+  background: var(--blanc);
+  border-color: var(--color9);
+  width: 98px;
+}
+
+.perle-card.mythique .perle {
+  width: 50px;
+  height: 50px;
+  border: 0;
+  perspective: 260px;
+  transform-style: preserve-3d;
+
+  background:
+    radial-gradient(circle at 26% 18%, rgba(255, 255, 255, 0.97) 0 5px, transparent 6px),
+    radial-gradient(circle at 33% 28%, rgba(255, 255, 255, 0.24) 0 13px, transparent 20px),
+    radial-gradient(circle at 76% 77%, rgba(255, 255, 255, 0.11) 0 12px, transparent 18px),
+    radial-gradient(circle at center, transparent 54%, rgba(255, 255, 255, 0.12) 76%, rgba(255, 255, 255, 0.34) 100%),
+    linear-gradient(135deg, var(--c1) 0%, var(--c2) 56%, var(--c3) 100%);
+
+  box-shadow:
+    inset 2px 2px 10px rgba(255, 255, 255, 0.32),
+    inset -1px -2px 7px rgba(255, 255, 255, 0.08),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.18),
+    inset 0 0 12px rgba(255, 255, 255, 0.11),
+    0 0 16px var(--halo),
+    0 0 30px var(--glow);
+
+  animation: perleFloat 4s ease-in-out infinite;
+}
+
+/* voile clair doux + lissage des bords */
+.perle-card.mythique .perle::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at center, transparent 52%, rgba(255, 255, 255, 0.10) 72%, rgba(255, 255, 255, 0.30) 100%),
+    radial-gradient(circle at 28% 24%, rgba(255, 255, 255, 0.22) 0 12px, transparent 17px),
+    radial-gradient(circle at 70% 72%, rgba(255, 255, 255, 0.09) 0 10px, transparent 15px);
+  opacity: 0.96;
+}
+
+/* reflet principal */
+.perle-card.mythique .perle::after {
+  content: "";
+  position: absolute;
+  left: 10px;
+  top: 8px;
+  width: 20px;
+  height: 11px;
+  border-radius: 50%;
+  z-index: 2;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 30% 35%, rgba(255, 255, 255, 0.96) 0 4px, rgba(255, 255, 255, 0.56) 5px, transparent 10px);
+  transform: rotate(-28deg);
+}
+
+/* ANIMATIONS PERLES */
+@keyframes perlePulse {
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.06);
+  }
+}
+
+@keyframes perleFloat {
+
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+
+  50% {
+    transform: translateY(-3px) scale(1.03);
+  }
+}
+
+/* SPARK DES LÉGENDAIRES */
+.spark {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 20px;
+  height: 28px;
+  transform: translate(-50%, -50%);
+  transform-origin: center;
+  z-index: 4;
+  pointer-events: none;
+  animation: sparkPulse 2.1s ease-in-out infinite;
+}
+
+.spark::before,
+.spark::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--spark);
+
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50 0 C56 36 64 44 100 50 C64 56 56 64 50 100 C44 64 36 56 0 50 C36 44 44 36 50 0 Z'/%3E%3C/svg%3E");
+  -webkit-mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+
+  mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50 0 C56 36 64 44 100 50 C64 56 56 64 50 100 C44 64 36 56 0 50 C36 44 44 36 50 0 Z'/%3E%3C/svg%3E");
+  mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+  mask-position: center;
+}
+
+.spark::before {
+  filter:
+    drop-shadow(0 0 4px var(--spark)) drop-shadow(0 0 9px var(--spark)) drop-shadow(0 0 16px rgba(255, 255, 255, 0.75));
+}
+
+.spark::after {
+  transform: scale(0.48);
+  background: rgba(255, 255, 255, 0.95);
+  opacity: 0.75;
+}
+
+@keyframes sparkPulse {
+
+  0%,
+  100% {
+    opacity: 0.72;
+    transform: translate(-50%, -50%) scale(0.92);
+  }
+
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.16);
+  }
+}
+
+/* CONSTELLATIONS DES MYTHIQUES */
+.constellation {
+  --star: rgba(255, 255, 255, 0.96);
+  --line: rgba(255, 255, 255, 0.48);
+
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  display: block;
+  width: 36px;
+  height: 36px;
+  z-index: 4;
+  pointer-events: none;
+  background: transparent !important;
+  font-style: normal;
+  opacity: 0.96;
+
+  transform:
+    translate(-50%, -50%) rotateX(16deg) rotateY(0deg) rotateZ(-2deg) translateZ(0);
+
+  transform-origin: center center;
+  transform-style: preserve-3d;
+  backface-visibility: visible;
+  will-change: transform, opacity, filter;
+
+  filter:
+    drop-shadow(0 0 3px var(--spark)) drop-shadow(0 0 8px var(--glow));
+
+  animation: constellationTurn 13s linear infinite;
+}
+
+.constellation::before,
+.constellation::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  display: block;
+  background-color: transparent !important;
+  background-repeat: no-repeat !important;
+  transform-origin: center center;
+  transform-style: preserve-3d;
+  backface-visibility: visible;
+  will-change: transform, opacity, filter;
+}
+
+/* étoiles */
+.constellation::before {
+  opacity: 0.98;
+  transform: translateZ(2px);
+  animation:
+    constellationStarsLayer 6.2s ease-in-out infinite,
+    constellationStarsGlow 3.8s ease-in-out infinite;
+}
+
+/* lignes */
+.constellation::after {
+  opacity: 0.62;
+  transform: translateZ(0);
+  animation:
+    constellationLinesLayer 7.4s ease-in-out infinite,
+    constellationLinesGlow 4.4s ease-in-out infinite;
+}
+
+/* Orion */
+.co-ori::before {
+  background:
+    radial-gradient(circle, var(--star) 0 2px, transparent 2.4px) 8px 4px / 5px 5px,
+    radial-gradient(circle, var(--star) 0 1.7px, transparent 2.2px) 20px 9px / 5px 5px,
+    radial-gradient(circle, var(--star) 0 1.8px, transparent 2.3px) 14px 18px / 5px 5px,
+    radial-gradient(circle, var(--star) 0 1.7px, transparent 2.2px) 24px 25px / 5px 5px,
+    radial-gradient(circle, var(--star) 0 2px, transparent 2.4px) 7px 30px / 5px 5px;
+}
+
+.co-ori::after {
+  background:
+    linear-gradient(25deg, transparent 0 45%, var(--line) 46% 54%, transparent 55%) 9px 7px / 14px 8px,
+    linear-gradient(120deg, transparent 0 46%, var(--line) 47% 53%, transparent 54%) 16px 11px / 8px 11px,
+    linear-gradient(45deg, transparent 0 46%, var(--line) 47% 53%, transparent 54%) 16px 21px / 12px 10px,
+    linear-gradient(145deg, transparent 0 46%, var(--line) 47% 53%, transparent 54%) 7px 22px / 12px 12px;
+}
+
+/* Lyre */
+.co-lyr::before {
+  background:
+    radial-gradient(circle, var(--star) 0 2.2px, transparent 2.6px) 17px 3px / 6px 6px,
+    radial-gradient(circle, var(--star) 0 1.6px, transparent 2.1px) 9px 14px / 5px 5px,
+    radial-gradient(circle, var(--star) 0 1.6px, transparent 2.1px) 25px 14px / 5px 5px,
+    radial-gradient(circle, var(--star) 0 1.8px, transparent 2.2px) 12px 27px / 5px 5px,
+    radial-gradient(circle, var(--star) 0 1.8px, transparent 2.2px) 24px 27px / 5px 5px;
+}
+
+.co-lyr::after {
+  background:
+    linear-gradient(125deg, transparent 0 46%, var(--line) 47% 53%, transparent 54%) 11px 8px / 10px 10px,
+    linear-gradient(55deg, transparent 0 46%, var(--line) 47% 53%, transparent 54%) 19px 8px / 10px 10px,
+    linear-gradient(72deg, transparent 0 46%, var(--line) 47% 53%, transparent 54%) 11px 17px / 8px 13px,
+    linear-gradient(108deg, transparent 0 46%, var(--line) 47% 53%, transparent 54%) 22px 17px / 8px 13px,
+    linear-gradient(0deg, transparent 0 46%, var(--line) 47% 53%, transparent 54%) 15px 28px / 13px 2px;
+}
+
+/* Cassiopée */
+.co-cas::before {
+  background:
+    radial-gradient(circle, var(--star) 0 1.9px, transparent 2.4px) 3px 12px / 5px 5px,
+    radial-gradient(circle, var(--star) 0 1.8px, transparent 2.3px) 10px 22px / 5px 5px,
+    radial-gradient(circle, var(--star) 0 2px, transparent 2.5px) 18px 10px / 5px 5px,
+    radial-gradient(circle, var(--star) 0 1.8px, transparent 2.3px) 26px 22px / 5px 5px,
+    radial-gradient(circle, var(--star) 0 1.9px, transparent 2.4px) 32px 12px / 5px 5px;
+}
+
+.co-cas::after {
+  background:
+    linear-gradient(55deg, transparent 0 46%, var(--line) 47% 53%, transparent 54%) 5px 15px / 10px 10px,
+    linear-gradient(125deg, transparent 0 46%, var(--line) 47% 53%, transparent 54%) 12px 14px / 11px 11px,
+    linear-gradient(55deg, transparent 0 46%, var(--line) 47% 53%, transparent 54%) 21px 14px / 10px 10px,
+    linear-gradient(125deg, transparent 0 46%, var(--line) 47% 53%, transparent 54%) 27px 15px / 9px 9px;
+}
+
+/* Andromède */
+.co-and::before {
+  background:
+    radial-gradient(circle, var(--star) 0 1.8px, transparent 2.3px) 4px 26px / 5px 5px,
+    radial-gradient(circle, var(--star) 0 1.8px, transparent 2.3px) 13px 18px / 5px 5px,
+    radial-gradient(circle, var(--star) 0 2.1px, transparent 2.6px) 22px 10px / 6px 6px,
+    radial-gradient(circle, var(--star) 0 1.8px, transparent 2.3px) 30px 18px / 5px 5px,
+    radial-gradient(circle, var(--star) 0 1.6px, transparent 2.1px) 25px 28px / 5px 5px;
+}
+
+.co-and::after {
+  background:
+    linear-gradient(135deg, transparent 0 46%, var(--line) 47% 53%, transparent 54%) 6px 20px / 12px 10px,
+    linear-gradient(135deg, transparent 0 46%, var(--line) 47% 53%, transparent 54%) 15px 12px / 12px 10px,
+    linear-gradient(45deg, transparent 0 46%, var(--line) 47% 53%, transparent 54%) 25px 13px / 9px 9px,
+    linear-gradient(105deg, transparent 0 46%, var(--line) 47% 53%, transparent 54%) 25px 21px / 7px 10px;
+}
+
+/* Pégase */
+.co-peg::before {
+  background:
+    radial-gradient(circle, var(--star) 0 1.8px, transparent 2.3px) 8px 8px / 5px 5px,
+    radial-gradient(circle, var(--star) 0 1.8px, transparent 2.3px) 27px 8px / 5px 5px,
+    radial-gradient(circle, var(--star) 0 1.8px, transparent 2.3px) 8px 27px / 5px 5px,
+    radial-gradient(circle, var(--star) 0 1.8px, transparent 2.3px) 27px 27px / 5px 5px,
+    radial-gradient(circle, var(--star) 0 1.5px, transparent 2px) 17px 18px / 5px 5px;
+}
+
+.co-peg::after {
+  background:
+    linear-gradient(0deg, transparent 0 46%, var(--line) 47% 53%, transparent 54%) 10px 10px / 20px 2px,
+    linear-gradient(90deg, transparent 0 46%, var(--line) 47% 53%, transparent 54%) 29px 10px / 2px 20px,
+    linear-gradient(0deg, transparent 0 46%, var(--line) 47% 53%, transparent 54%) 10px 29px / 20px 2px,
+    linear-gradient(90deg, transparent 0 46%, var(--line) 47% 53%, transparent 54%) 10px 10px / 2px 20px,
+    linear-gradient(45deg, transparent 0 47%, var(--line) 48% 52%, transparent 53%) 13px 14px / 10px 10px;
+}
+
+/* Persée */
+.co-per::before {
+  background:
+    radial-gradient(circle, var(--star) 0 2px, transparent 2.5px) 19px 2px / 6px 6px,
+    radial-gradient(circle, var(--star) 0 1.7px, transparent 2.2px) 13px 12px / 5px 5px,
+    radial-gradient(circle, var(--star) 0 1.6px, transparent 2.1px) 22px 19px / 5px 5px,
+    radial-gradient(circle, var(--star) 0 1.7px, transparent 2.2px) 10px 27px / 5px 5px,
+    radial-gradient(circle, var(--star) 0 1.5px, transparent 2px) 29px 31px / 5px 5px;
+}
+
+.co-per::after {
+  background:
+    linear-gradient(120deg, transparent 0 46%, var(--line) 47% 53%, transparent 54%) 15px 7px / 9px 10px,
+    linear-gradient(35deg, transparent 0 46%, var(--line) 47% 53%, transparent 54%) 16px 15px / 10px 9px,
+    linear-gradient(145deg, transparent 0 46%, var(--line) 47% 53%, transparent 54%) 11px 22px / 14px 10px,
+    linear-gradient(20deg, transparent 0 46%, var(--line) 47% 53%, transparent 54%) 24px 25px / 9px 10px;
+}
+
+/* Phénix */
+.co-phe::before {
+  background:
+    radial-gradient(circle, var(--star) 0 1.8px, transparent 2.3px) 18px 5px / 5px 5px,
+    radial-gradient(circle, var(--star) 0 1.5px, transparent 2px) 9px 14px / 5px 5px,
+    radial-gradient(circle, var(--star) 0 1.5px, transparent 2px) 27px 14px / 5px 5px,
+    radial-gradient(circle, var(--star) 0 1.7px, transparent 2.2px) 14px 25px / 5px 5px,
+    radial-gradient(circle, var(--star) 0 1.7px, transparent 2.2px) 23px 25px / 5px 5px,
+    radial-gradient(circle, var(--star) 0 1.4px, transparent 1.9px) 18px 32px / 5px 5px;
+}
+
+.co-phe::after {
+  background:
+    linear-gradient(135deg, transparent 0 46%, var(--line) 47% 53%, transparent 54%) 11px 9px / 11px 10px,
+    linear-gradient(45deg, transparent 0 46%, var(--line) 47% 53%, transparent 54%) 21px 9px / 11px 10px,
+    linear-gradient(70deg, transparent 0 46%, var(--line) 47% 53%, transparent 54%) 12px 17px / 9px 11px,
+    linear-gradient(110deg, transparent 0 46%, var(--line) 47% 53%, transparent 54%) 23px 17px / 9px 11px,
+    linear-gradient(90deg, transparent 0 46%, var(--line) 47% 53%, transparent 54%) 21px 27px / 2px 8px;
+}
+
+/* Hydre */
+.co-hyd::before {
+  background:
+    radial-gradient(circle, var(--star) 0 1.5px, transparent 2px) 2px 23px / 5px 5px,
+    radial-gradient(circle, var(--star) 0 1.5px, transparent 2px) 9px 19px / 5px 5px,
+    radial-gradient(circle, var(--star) 0 1.7px, transparent 2.2px) 16px 22px / 5px 5px,
+    radial-gradient(circle, var(--star) 0 1.5px, transparent 2px) 23px 17px / 5px 5px,
+    radial-gradient(circle, var(--star) 0 1.6px, transparent 2.1px) 30px 21px / 5px 5px,
+    radial-gradient(circle, var(--star) 0 1.4px, transparent 1.9px) 34px 13px / 5px 5px;
+}
+
+.co-hyd::after {
+  background:
+    linear-gradient(150deg, transparent 0 46%, var(--line) 47% 53%, transparent 54%) 4px 21px / 9px 4px,
+    linear-gradient(25deg, transparent 0 46%, var(--line) 47% 53%, transparent 54%) 11px 21px / 9px 5px,
+    linear-gradient(145deg, transparent 0 46%, var(--line) 47% 53%, transparent 54%) 18px 20px / 9px 5px,
+    linear-gradient(30deg, transparent 0 46%, var(--line) 47% 53%, transparent 54%) 25px 19px / 9px 6px,
+    linear-gradient(120deg, transparent 0 46%, var(--line) 47% 53%, transparent 54%) 31px 15px / 6px 9px;
+}
+
+/* Cygne */
+.co-cyg::before {
+  background:
+    radial-gradient(circle, var(--star) 0 2px, transparent 2.5px) 18px 3px / 6px 6px,
+    radial-gradient(circle, var(--star) 0 1.7px, transparent 2.2px) 18px 16px / 5px 5px,
+    radial-gradient(circle, var(--star) 0 1.6px, transparent 2.1px) 6px 17px / 5px 5px,
+    radial-gradient(circle, var(--star) 0 1.6px, transparent 2.1px) 31px 17px / 5px 5px,
+    radial-gradient(circle, var(--star) 0 1.8px, transparent 2.3px) 18px 31px / 5px 5px;
+}
+
+.co-cyg::after {
+  background:
+    linear-gradient(90deg, transparent 0 46%, var(--line) 47% 53%, transparent 54%) 20px 8px / 2px 26px,
+    linear-gradient(0deg, transparent 0 46%, var(--line) 47% 53%, transparent 54%) 9px 19px / 25px 2px;
+}
+
+/* Draco */
+.co-dra::before {
+  background:
+    radial-gradient(circle, var(--star) 0 1.7px, transparent 2.2px) 6px 8px / 5px 5px,
+    radial-gradient(circle, var(--star) 0 1.5px, transparent 2px) 15px 6px / 5px 5px,
+    radial-gradient(circle, var(--star) 0 1.6px, transparent 2.1px) 25px 12px / 5px 5px,
+    radial-gradient(circle, var(--star) 0 1.5px, transparent 2px) 19px 22px / 5px 5px,
+    radial-gradient(circle, var(--star) 0 1.7px, transparent 2.2px) 30px 29px / 5px 5px,
+    radial-gradient(circle, var(--star) 0 1.4px, transparent 1.9px) 9px 30px / 5px 5px;
+}
+
+.co-dra::after {
+  background:
+    linear-gradient(170deg, transparent 0 46%, var(--line) 47% 53%, transparent 54%) 8px 9px / 10px 3px,
+    linear-gradient(30deg, transparent 0 46%, var(--line) 47% 53%, transparent 54%) 17px 9px / 11px 8px,
+    linear-gradient(120deg, transparent 0 46%, var(--line) 47% 53%, transparent 54%) 22px 15px / 8px 10px,
+    linear-gradient(35deg, transparent 0 46%, var(--line) 47% 53%, transparent 54%) 21px 25px / 12px 8px,
+    linear-gradient(145deg, transparent 0 46%, var(--line) 47% 53%, transparent 54%) 10px 25px / 12px 9px;
+}
+
+/* FIX FORUMACTIF : évite les mosaïques de gradients */
+.constellation::before,
+.constellation::after {
+  background-repeat: no-repeat !important;
+}
+
+/* vraie rotation 3D, avec dos visible */
+@keyframes constellationTurn {
+  0% {
+    transform:
+      translate(-50%, -50%) rotateX(16deg) rotateY(0deg) rotateZ(-2deg) translateZ(0) scale(0.99);
+    opacity: 0.94;
+  }
+
+  25% {
+    transform:
+      translate(-50%, -50%) rotateX(10deg) rotateY(90deg) rotateZ(4deg) translateZ(1px) scale(1.01);
+    opacity: 0.96;
+  }
+
+  50% {
+    transform:
+      translate(-50%, -50%) rotateX(-12deg) rotateY(180deg) rotateZ(8deg) translateZ(0) scale(1.02);
+    opacity: 1;
+  }
+
+  75% {
+    transform:
+      translate(-50%, -50%) rotateX(9deg) rotateY(270deg) rotateZ(4deg) translateZ(-1px) scale(1.01);
+    opacity: 0.96;
+  }
+
+  100% {
+    transform:
+      translate(-50%, -50%) rotateX(16deg) rotateY(360deg) rotateZ(-2deg) translateZ(0) scale(0.99);
+    opacity: 0.94;
+  }
+}
+
+/* Micro-parallaxe des étoiles */
+@keyframes constellationStarsLayer {
+
+  0%,
+  100% {
+    transform: translate3d(0, 0, 2px) scale(1);
+  }
+
+  25% {
+    transform: translate3d(0.6px, -0.5px, 3px) scale(1.012);
+  }
+
+  50% {
+    transform: translate3d(-0.4px, -0.2px, 2px) scale(1.018);
+  }
+
+  75% {
+    transform: translate3d(-0.5px, 0.6px, 3px) scale(1.01);
+  }
+}
+
+/* Micro-parallaxe des lignes */
+@keyframes constellationLinesLayer {
+
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+
+  25% {
+    transform: translate3d(-0.4px, 0.4px, 0) scale(0.997);
+  }
+
+  50% {
+    transform: translate3d(0.3px, 0.2px, 0) scale(1);
+  }
+
+  75% {
+    transform: translate3d(0.5px, -0.4px, 0) scale(0.998);
+  }
+}
+
+@keyframes constellationStarsGlow {
+
+  0%,
+  100% {
+    opacity: 0.86;
+    filter: brightness(0.96);
+  }
+
+  50% {
+    opacity: 1;
+    filter: brightness(1.16);
+  }
+}
+
+@keyframes constellationLinesGlow {
+
+  0%,
+  100% {
+    opacity: 0.44;
+  }
+
+  50% {
+    opacity: 0.72;
+  }
+}
+
+/* COMMUNES : COULEUR UNIQUE */
+#rose {
+  --c1: #f4a7c4;
+  --c2: #f4a7c4;
+  --c3: #f4a7c4;
+  --halo: rgba(244, 167, 196, .16);
+  --glow: rgba(244, 167, 196, .22);
+}
+
+#pech {
+  --c1: #f6ad84;
+  --c2: #f6ad84;
+  --c3: #f6ad84;
+  --halo: rgba(246, 173, 132, .16);
+  --glow: rgba(246, 173, 132, .22);
+}
+
+#abri {
+  --c1: #f2a85e;
+  --c2: #f2a85e;
+  --c3: #f2a85e;
+  --halo: rgba(242, 168, 94, .16);
+  --glow: rgba(242, 168, 94, .22);
+}
+
+#cora {
+  --c1: #eb7b70;
+  --c2: #eb7b70;
+  --c3: #eb7b70;
+  --halo: rgba(235, 123, 112, .16);
+  --glow: rgba(235, 123, 112, .22);
+}
+
+#roug {
+  --c1: #d84747;
+  --c2: #d84747;
+  --c3: #d84747;
+  --halo: rgba(216, 71, 71, .16);
+  --glow: rgba(216, 71, 71, .22);
+}
+
+#ceri {
+  --c1: #b7324d;
+  --c2: #b7324d;
+  --c3: #b7324d;
+  --halo: rgba(183, 50, 77, .16);
+  --glow: rgba(183, 50, 77, .22);
+}
+
+#gren {
+  --c1: #7b263a;
+  --c2: #7b263a;
+  --c3: #7b263a;
+  --halo: rgba(123, 38, 58, .16);
+  --glow: rgba(123, 38, 58, .22);
+}
+
+#fram {
+  --c1: #d74d7b;
+  --c2: #d74d7b;
+  --c3: #d74d7b;
+  --halo: rgba(215, 77, 123, .16);
+  --glow: rgba(215, 77, 123, .22);
+}
+
+#frai {
+  --c1: #ef6371;
+  --c2: #ef6371;
+  --c3: #ef6371;
+  --halo: rgba(239, 99, 113, .16);
+  --glow: rgba(239, 99, 113, .22);
+}
+
+#grnd {
+  --c1: #c94566;
+  --c2: #c94566;
+  --c3: #c94566;
+  --halo: rgba(201, 69, 102, .16);
+  --glow: rgba(201, 69, 102, .22);
+}
+
+#oran {
+  --c1: #ee8742;
+  --c2: #ee8742;
+  --c3: #ee8742;
+  --halo: rgba(238, 135, 66, .16);
+  --glow: rgba(238, 135, 66, .22);
+}
+
+#mand {
+  --c1: #f0a13f;
+  --c2: #f0a13f;
+  --c3: #f0a13f;
+  --halo: rgba(240, 161, 63, .16);
+  --glow: rgba(240, 161, 63, .22);
+}
+
+#ambr {
+  --c1: #d99036;
+  --c2: #d99036;
+  --c3: #d99036;
+  --halo: rgba(217, 144, 54, .16);
+  --glow: rgba(217, 144, 54, .22);
+}
+
+#miel {
+  --c1: #e5b64b;
+  --c2: #e5b64b;
+  --c3: #e5b64b;
+  --halo: rgba(229, 182, 75, .16);
+  --glow: rgba(229, 182, 75, .22);
+}
+
+#or {
+  --c1: #d9b94e;
+  --c2: #d9b94e;
+  --c3: #d9b94e;
+  --halo: rgba(217, 185, 78, .16);
+  --glow: rgba(217, 185, 78, .22);
+}
+
+#citr {
+  --c1: #eadb67;
+  --c2: #eadb67;
+  --c3: #eadb67;
+  --halo: rgba(234, 219, 103, .16);
+  --glow: rgba(234, 219, 103, .22);
+}
+
+#vani {
+  --c1: #efe0a3;
+  --c2: #efe0a3;
+  --c3: #efe0a3;
+  --halo: rgba(239, 224, 163, .16);
+  --glow: rgba(239, 224, 163, .22);
+}
+
+#crem {
+  --c1: #ead7b5;
+  --c2: #ead7b5;
+  --c3: #ead7b5;
+  --halo: rgba(234, 215, 181, .16);
+  --glow: rgba(234, 215, 181, .22);
+}
+
+#ivoi {
+  --c1: #eee7d5;
+  --c2: #eee7d5;
+  --c3: #eee7d5;
+  --halo: rgba(238, 231, 213, .16);
+  --glow: rgba(238, 231, 213, .22);
+}
+
+#neig {
+  --c1: #f3f6f6;
+  --c2: #f3f6f6;
+  --c3: #f3f6f6;
+  --halo: rgba(243, 246, 246, .18);
+  --glow: rgba(243, 246, 246, .24);
+}
+
+#saug {
+  --c1: #9baa7e;
+  --c2: #9baa7e;
+  --c3: #9baa7e;
+  --halo: rgba(155, 170, 126, .16);
+  --glow: rgba(155, 170, 126, .22);
+}
+
+#mous {
+  --c1: #7f9b5f;
+  --c2: #7f9b5f;
+  --c3: #7f9b5f;
+  --halo: rgba(127, 155, 95, .16);
+  --glow: rgba(127, 155, 95, .22);
+}
+
+#sapi {
+  --c1: #456846;
+  --c2: #456846;
+  --c3: #456846;
+  --halo: rgba(69, 104, 70, .16);
+  --glow: rgba(69, 104, 70, .22);
+}
+
+#ment {
+  --c1: #8fd8bd;
+  --c2: #8fd8bd;
+  --c3: #8fd8bd;
+  --halo: rgba(143, 216, 189, .16);
+  --glow: rgba(143, 216, 189, .22);
+}
+
+#emer {
+  --c1: #3da56d;
+  --c2: #3da56d;
+  --c3: #3da56d;
+  --halo: rgba(61, 165, 109, .16);
+  --glow: rgba(61, 165, 109, .22);
+}
+
+#jade {
+  --c1: #65b68c;
+  --c2: #65b68c;
+  --c3: #65b68c;
+  --halo: rgba(101, 182, 140, .16);
+  --glow: rgba(101, 182, 140, .22);
+}
+
+#oliv {
+  --c1: #7f7d45;
+  --c2: #7f7d45;
+  --c3: #7f7d45;
+  --halo: rgba(127, 125, 69, .16);
+  --glow: rgba(127, 125, 69, .22);
+}
+
+#till {
+  --c1: #bfd982;
+  --c2: #bfd982;
+  --c3: #bfd982;
+  --halo: rgba(191, 217, 130, .16);
+  --glow: rgba(191, 217, 130, .22);
+}
+
+#lagu {
+  --c1: #4fc7cc;
+  --c2: #4fc7cc;
+  --c3: #4fc7cc;
+  --halo: rgba(79, 199, 204, .16);
+  --glow: rgba(79, 199, 204, .22);
+}
+
+#turq {
+  --c1: #61d4df;
+  --c2: #61d4df;
+  --c3: #61d4df;
+  --halo: rgba(97, 212, 223, .16);
+  --glow: rgba(97, 212, 223, .22);
+}
+
+#azur {
+  --c1: #5aa9e6;
+  --c2: #5aa9e6;
+  --c3: #5aa9e6;
+  --halo: rgba(90, 169, 230, .16);
+  --glow: rgba(90, 169, 230, .22);
+}
+
+#ciel {
+  --c1: #9ccff0;
+  --c2: #9ccff0;
+  --c3: #9ccff0;
+  --halo: rgba(156, 207, 240, .16);
+  --glow: rgba(156, 207, 240, .22);
+}
+
+#mari {
+  --c1: #456d9a;
+  --c2: #456d9a;
+  --c3: #456d9a;
+  --halo: rgba(69, 109, 154, .16);
+  --glow: rgba(69, 109, 154, .22);
+}
+
+#nuit {
+  --c1: #2d335f;
+  --c2: #2d335f;
+  --c3: #2d335f;
+  --halo: rgba(45, 51, 95, .16);
+  --glow: rgba(45, 51, 95, .22);
+}
+
+#indi {
+  --c1: #5550a3;
+  --c2: #5550a3;
+  --c3: #5550a3;
+  --halo: rgba(85, 80, 163, .16);
+  --glow: rgba(85, 80, 163, .22);
+}
+
+#lava {
+  --c1: #b6a0df;
+  --c2: #b6a0df;
+  --c3: #b6a0df;
+  --halo: rgba(182, 160, 223, .16);
+  --glow: rgba(182, 160, 223, .22);
+}
+
+#lila {
+  --c1: #c69bdc;
+  --c2: #c69bdc;
+  --c3: #c69bdc;
+  --halo: rgba(198, 155, 220, .16);
+  --glow: rgba(198, 155, 220, .22);
+}
+
+#mauv {
+  --c1: #a875b2;
+  --c2: #a875b2;
+  --c3: #a875b2;
+  --halo: rgba(168, 117, 178, .16);
+  --glow: rgba(168, 117, 178, .22);
+}
+
+#prun {
+  --c1: #73416f;
+  --c2: #73416f;
+  --c3: #73416f;
+  --halo: rgba(115, 65, 111, .16);
+  --glow: rgba(115, 65, 111, .22);
+}
+
+#viol {
+  --c1: #7d56b3;
+  --c2: #7d56b3;
+  --c3: #7d56b3;
+  --halo: rgba(125, 86, 179, .16);
+  --glow: rgba(125, 86, 179, .22);
+}
+
+#parm {
+  --c1: #d8c1e8;
+  --c2: #d8c1e8;
+  --c3: #d8c1e8;
+  --halo: rgba(216, 193, 232, .16);
+  --glow: rgba(216, 193, 232, .22);
+}
+
+#perl {
+  --c1: #dad6cf;
+  --c2: #dad6cf;
+  --c3: #dad6cf;
+  --halo: rgba(218, 214, 207, .16);
+  --glow: rgba(218, 214, 207, .22);
+}
+
+#brum {
+  --c1: #bfc3c7;
+  --c2: #bfc3c7;
+  --c3: #bfc3c7;
+  --halo: rgba(191, 195, 199, .16);
+  --glow: rgba(191, 195, 199, .22);
+}
+
+#cend {
+  --c1: #8d8a87;
+  --c2: #8d8a87;
+  --c3: #8d8a87;
+  --halo: rgba(141, 138, 135, .16);
+  --glow: rgba(141, 138, 135, .22);
+}
+
+#fume {
+  --c1: #5f6063;
+  --c2: #5f6063;
+  --c3: #5f6063;
+  --halo: rgba(95, 96, 99, .16);
+  --glow: rgba(95, 96, 99, .22);
+}
+
+#choc {
+  --c1: #6d4631;
+  --c2: #6d4631;
+  --c3: #6d4631;
+  --halo: rgba(109, 70, 49, .16);
+  --glow: rgba(109, 70, 49, .22);
+}
+
+#cafe {
+  --c1: #8a6044;
+  --c2: #8a6044;
+  --c3: #8a6044;
+  --halo: rgba(138, 96, 68, .16);
+  --glow: rgba(138, 96, 68, .22);
+}
+
+#nois {
+  --c1: #aa7650;
+  --c2: #aa7650;
+  --c3: #aa7650;
+  --halo: rgba(170, 118, 80, .16);
+  --glow: rgba(170, 118, 80, .22);
+}
+
+#cann {
+  --c1: #b56f3e;
+  --c2: #b56f3e;
+  --c3: #b56f3e;
+  --halo: rgba(181, 111, 62, .16);
+  --glow: rgba(181, 111, 62, .22);
+}
+
+#cara {
+  --c1: #c8894d;
+  --c2: #c8894d;
+  --c3: #c8894d;
+  --halo: rgba(200, 137, 77, .16);
+  --glow: rgba(200, 137, 77, .22);
+}
+
+/* RARES : DÉGRADÉS DOUX */
+#aur {
+  --c1: #d86d91;
+  --c2: #fff1a8;
+  --c3: #8fb9ff;
+  --halo: rgba(255, 154, 174, .18);
+  --glow: rgba(255, 221, 150, .26);
+}
+
+#syl {
+  --c1: #6f8658;
+  --c2: #d8c98f;
+  --c3: #4d5b3d;
+  --halo: rgba(138, 161, 108, .18);
+  --glow: rgba(216, 201, 143, .26);
+}
+
+#suc {
+  --c1: #df5ab9;
+  --c2: #fbc0d4;
+  --c3: #8443b9;
+  --halo: rgba(223, 90, 111, .18);
+  --glow: rgba(255, 255, 255, .26);
+}
+
+#noc {
+  --c1: #6d7fc0;
+  --c2: #eef5ff;
+  --c3: #2f3c68;
+  --halo: rgba(138, 154, 211, .18);
+  --glow: rgba(238, 245, 255, .26);
+}
+
+#est {
+  --c1: #2fb7b0;
+  --c2: #fff0a3;
+  --c3: #f28b54;
+  --halo: rgba(47, 183, 176, .18);
+  --glow: rgba(255, 240, 163, .26);
+}
+
+#inf {
+  --c1: #b88b62;
+  --c2: #f5e4c4;
+  --c3: #8f694c;
+  --halo: rgba(184, 139, 98, .18);
+  --glow: rgba(245, 228, 196, .26);
+}
+
+#lun {
+  --c1: #8e7fd0;
+  --c2: #fff8e0;
+  --c3: #b7a9f0;
+  --halo: rgba(213, 201, 255, .18);
+  --glow: rgba(255, 248, 224, .26);
+}
+
+#org {
+  --c1: #72809f;
+  --c2: #e5cc6e;
+  --c3: #33394e;
+  --halo: rgba(114, 128, 159, .18);
+  --glow: rgba(229, 204, 110, .26);
+}
+
+#giv {
+  --c1: #b9dfdf;
+  --c2: #effbff;
+  --c3: #9fcfd2;
+  --halo: rgba(185, 223, 223, .18);
+  --glow: rgba(248, 250, 255, .26);
+}
+
+#bra {
+  --c1: #ef7b57;
+  --c2: #ffe4a7;
+  --c3: #b54c3d;
+  --halo: rgba(239, 123, 87, .18);
+  --glow: rgba(255, 228, 167, .26);
+}
+
+#ros {
+  --c1: #dcb2ca;
+  --c2: #f7dbe4;
+  --c3: #93a7c4;
+  --halo: rgba(220, 178, 202, .18);
+  --glow: rgba(147, 167, 196, .26);
+}
+
+#bos {
+  --c1: #7e9a67;
+  --c2: #dce6ac;
+  --c3: #429b57;
+  --halo: rgba(126, 154, 103, .18);
+  --glow: rgba(220, 230, 172, .26);
+}
+
+#bru {
+  --c1: #7c8ca0;
+  --c2: #f2edf2;
+  --c3: #6d6a7e;
+  --halo: rgba(124, 140, 160, .18);
+  --glow: rgba(242, 237, 242, .26);
+}
+
+#sol {
+  --c1: #f6af65;
+  --c2: #fff2aa;
+  --c3: #d98250;
+  --halo: rgba(246, 175, 101, .18);
+  --glow: rgba(255, 242, 170, .26);
+}
+
+#mth {
+  --c1: #5d748f;
+  --c2: #9de2c8;
+  --c3: #324659;
+  --halo: rgba(157, 226, 200, .18);
+  --glow: rgba(93, 116, 143, .26);
+}
+
+#amet {
+  --c1: #6b5a91;
+  --c2: #caa6ea;
+  --c3: #3f305b;
+  --halo: rgba(202, 166, 234, .18);
+  --glow: rgba(107, 90, 145, .26);
+}
+
+#carm {
+  --c1: #8f4f5d;
+  --c2: #e7a1aa;
+  --c3: #5b2e3a;
+  --halo: rgba(231, 161, 170, .18);
+  --glow: rgba(143, 79, 93, .26);
+}
+
+#onyx {
+  --c1: #393c42;
+  --c2: #afb4bd;
+  --c3: #000000;
+  --halo: rgba(184, 190, 200, .18);
+  --glow: rgba(85, 91, 102, .26);
+}
+
+#azum {
+  --c1: #3471bf;
+  --c2: #b3d6f5;
+  --c3: #0078ff;
+  --halo: rgba(159, 196, 228, .18);
+  --glow: rgba(79, 111, 152, .26);
+}
+
+#aut {
+  --c1: #e86c35;
+  --c2: #f2cc58;
+  --c3: #b93a32;
+  --halo: rgba(230, 107, 60, .18);
+  --glow: rgba(242, 193, 78, .26);
+}
+
+#lav {
+  --c1: #8265b7;
+  --c2: #efe1ff;
+  --c3: #7fa68e;
+  --halo: rgba(130, 101, 183, .18);
+  --glow: rgba(239, 225, 255, .26);
+}
+
+#cre {
+  --c1: #b06fa4;
+  --c2: #ffbf81;
+  --c3: #384371;
+  --halo: rgba(176, 111, 164, .18);
+  --glow: rgba(255, 191, 129, .26);
+}
+
+#con {
+  --c1: #ff93ab;
+  --c2: #ffe56f;
+  --c3: #77d8e8;
+  --halo: rgba(255, 147, 171, .18);
+  --glow: rgba(119, 216, 232, .26);
+}
+
+#mac {
+  --c1: #f39eb8;
+  --c2: #fff0c8;
+  --c3: #9cced0;
+  --halo: rgba(243, 158, 184, .18);
+  --glow: rgba(255, 240, 200, .26);
+}
+
+#arc {
+  --c1: #396b87;
+  --c2: #bff4ff;
+  --c3: #6e3f91;
+  --halo: rgba(57, 107, 135, .18);
+  --glow: rgba(191, 244, 255, .26);
+}
+
+#vei {
+  --c1: #6e557e;
+  --c2: #ffe6a8;
+  --c3: #bd6f52;
+  --halo: rgba(110, 85, 126, .18);
+  --glow: rgba(255, 230, 168, .26);
+}
+
+#opa {
+  --c1: #beddff;
+  --c2: #fff9ef;
+  --c3: #d8b984;
+  --halo: rgba(190, 221, 255, .18);
+  --glow: rgba(240, 218, 178, .26);
+}
+
+#ama {
+  --c1: #2f718c;
+  --c2: #f3bec9;
+  --c3: #6e466b;
+  --halo: rgba(47, 113, 140, .18);
+  --glow: rgba(243, 190, 201, .26);
+}
+
+/* RARES AJOUUUTS  */
+#hiv {
+  --c1: #adadad;
+  --c2: #cdeefd;
+  --c3: #5381ad;
+  --halo: rgba(47, 183, 176, .18);
+  --glow: rgba(255, 240, 163, .26);
+}
+
+#prin {
+  --c1: #63286e;
+  --c2: #efb3c7;
+  --c3: #7edb91;
+  --halo: rgba(47, 183, 176, .18);
+  --glow: rgba(255, 240, 163, .26);
+}
+
+#gre {
+  --c1: #c90206;
+  --c2: #f59e9e;
+  --c3: #6e3535;
+  --halo: rgba(47, 183, 176, .18);
+  --glow: rgba(255, 240, 163, .26);
+}
+
+#cru {
+  --c1: #010020;
+  --c2: #e60046;
+  --c3: #0011b9;
+  --halo: rgb(30 25 98 / 18%);
+  --glow: rgb(187 35 35 / 26%);
+}
+
+#fra {
+  --c1: #ff0594;
+  --c2: #ff869e;
+  --c3: #420a25;
+  --halo: rgba(47, 183, 176, .18);
+  --glow: rgba(255, 240, 163, .26);
+}
+
+#pas {
+  --c1: #8b3e9d;
+  --c2: #ffbab2;
+  --c3: #f31298;
+  --halo: rgb(243 173 152 / 18%);
+  --glow: rgb(255 177 154 / 26%);
+}
+
+#vio {
+  --c1: #000000;
+  --c2: #c36bff;
+  --c3: #34125c;
+  --halo: rgb(255 5 213 / 18%);
+  --glow: rgb(110 0 255 / 26%);
+}
+
+#myr {
+  --c1: #ffc1f4;
+  --c2: #ffffff;
+  --c3: #9c85ff;
+  --halo: rgb(193 125 255 / 14%);
+  --glow: rgb(238 191 234 / 32%);
+}
+/* MEMBRES AJOUTES */
+#alis {
+    --c1: #af0000;
+    --c2: #ffeb2d;
+    --c3: #eb0000;
+    --halo: rgb(193 125 255 / 14%);
+    --glow: rgb(238 191 234 / 32%);
+}
+
+/* LEGENDAIRES : DEGRADES + SPARK */
+#lamb {
+  --c1: #ffe6b8;
+  --c2: #d98a42;
+  --c3: #7f4b2e;
+  --halo: rgba(217, 138, 66, .34);
+  --glow: rgba(255, 225, 166, .58);
+  --spark: #ffe9a3;
+}
+
+#lopa {
+  --c1: #fffef5;
+  --c2: #f1d8a5;
+  --c3: #b7d8ff;
+  --halo: rgba(183, 216, 255, .34);
+  --glow: rgba(255, 253, 240, .60);
+  --spark: #fff4c8;
+}
+
+#lrub {
+  --c1: #ffbfd0;
+  --c2: #d74b70;
+  --c3: #6e1e36;
+  --halo: rgba(215, 75, 112, .34);
+  --glow: rgba(255, 186, 203, .60);
+  --spark: #ffd9e8;
+}
+
+#lcit {
+  --c1: #fff7b8;
+  --c2: #f0c758;
+  --c3: #b37c2d;
+  --halo: rgba(240, 199, 88, .34);
+  --glow: rgba(255, 246, 175, .60);
+  --spark: #fff7c8;
+}
+
+#ldor {
+  --c1: #fff5cf;
+  --c2: #e0b44f;
+  --c3: #8f6b2e;
+  --halo: rgba(224, 180, 79, .34);
+  --glow: rgba(255, 244, 190, .60);
+  --spark: #fff4bc;
+}
+
+#livo {
+  --c1: #fffdf7;
+  --c2: #ece2cf;
+  --c3: #cdbda7;
+  --halo: rgba(236, 226, 207, .34);
+  --glow: rgba(255, 253, 247, .60);
+  --spark: #fffaf1;
+}
+
+#lsap {
+  --c1: #d0e4ff;
+  --c2: #4f82d9;
+  --c3: #263b7c;
+  --halo: rgba(79, 130, 217, .34);
+  --glow: rgba(208, 228, 255, .60);
+  --spark: #eaf4ff;
+}
+
+#lcob {
+  --c1: #b6d5ff;
+  --c2: #4d6fd8;
+  --c3: #1d2f6d;
+  --halo: rgba(77, 111, 216, .34);
+  --glow: rgba(182, 213, 255, .60);
+  --spark: #dfeaff;
+}
+
+#ljad {
+  --c1: #dbfff0;
+  --c2: #63c79f;
+  --c3: #2f7a63;
+  --halo: rgba(99, 199, 159, .34);
+  --glow: rgba(219, 255, 240, .60);
+  --spark: #ecfff7;
+}
+
+#leme {
+  --c1: #ffcae0;
+  --c2: #fd90cc;
+  --c3: #7c3566;
+
+  --halo: rgba(78, 203, 130, .34);
+  --glow: rgba(215, 255, 231, .60);
+  --spark: #ebfff2;
+}
+
+#lamt {
+  --c1: #f0e2ff;
+  --c2: #a675e2;
+  --c3: #57337f;
+  --halo: rgba(166, 117, 226, .34);
+  --glow: rgba(240, 226, 255, .60);
+  --spark: #f8efff;
+}
+
+#lpou {
+  --c1: #efc1ef;
+  --c2: #b15584;
+  --c3: #5d1f44;
+  --halo: rgba(176, 85, 177, .34);
+  --glow: rgba(239, 193, 239, .60);
+  --spark: #f8d8fb;
+}
+
+#lcor {
+  --c1: #ffd4ca;
+  --c2: #ef8d74;
+  --c3: #b14f46;
+  --halo: rgba(239, 141, 116, .34);
+  --glow: rgba(255, 212, 202, .60);
+  --spark: #ffe9df;
+}
+
+#lony {
+  --c1: #d9d7ea;
+  --c2: #5e5a7c;
+  --c3: #14131f;
+  --halo: rgba(94, 90, 124, .34);
+  --glow: rgba(217, 215, 234, .60);
+  --spark: #f0eff8;
+}
+
+#lpri {
+  --c1: #fff6b8;
+  --c2: #8de5ff;
+  --c3: #d6a1ff;
+  --halo: rgba(141, 229, 255, .34);
+  --glow: rgba(214, 161, 255, .60);
+  --spark: #fff8d7;
+}
+
+/* MYTHIQUES : DÉGRADÉS + CONSTELLATIONS */
+#ori {
+  --c1: #8be5ff;
+  --c2: #4f7ce6;
+  --c3: #3f268f;
+  --halo: rgba(79, 124, 230, .34);
+  --glow: rgba(139, 229, 255, .52);
+  --spark: #eaf7ff;
+}
+
+#lyr {
+  --c1: #f5c9ff;
+  --c2: #a46ee8;
+  --c3: #45319a;
+  --halo: rgba(164, 110, 232, .34);
+  --glow: rgba(245, 201, 255, .52);
+  --spark: #f9e8ff;
+}
+
+#cas {
+  --c1: #ffc1e7;
+  --c2: #c66cd1;
+  --c3: #61379f;
+  --halo: rgba(198, 108, 209, .34);
+  --glow: rgba(255, 193, 231, .52);
+  --spark: #fff0fb;
+}
+
+#and {
+  --c1: #b8f1ff;
+  --c2: #72c4ea;
+  --c3: #5e5acf;
+  --halo: rgba(114, 196, 234, .34);
+  --glow: rgba(184, 241, 255, .52);
+  --spark: #eefaff;
+}
+
+#peg {
+  --c1: #ffe08d;
+  --c2: #df9f4d;
+  --c3: #9865cf;
+  --halo: rgba(223, 159, 77, .34);
+  --glow: rgba(255, 224, 141, .52);
+  --spark: #fff7df;
+}
+
+#per {
+  --c1: #b4ffd8;
+  --c2: #62cb9b;
+  --c3: #416cae;
+  --halo: rgba(98, 203, 155, .34);
+  --glow: rgba(180, 255, 216, .52);
+  --spark: #f0fff8;
+}
+
+#phe {
+  --c1: #ffc17d;
+  --c2: #e86f50;
+  --c3: #733db9;
+  --halo: rgba(232, 111, 80, .34);
+  --glow: rgba(255, 193, 125, .52);
+  --spark: #fff0d9;
+}
+
+#hyd {
+  --c1: #9df4ff;
+  --c2: #4bb8ce;
+  --c3: #2e4d86;
+  --halo: rgba(75, 184, 206, .34);
+  --glow: rgba(157, 244, 255, .52);
+  --spark: #effdff;
+}
+
+#cyg {
+  --c1: #ffffff;
+  --c2: #a9d9ff;
+  --c3: #7892e6;
+  --halo: rgba(169, 217, 255, .34);
+  --glow: rgba(255, 255, 255, .54);
+  --spark: #ffffff;
+}
+
+#dra {
+  --c1: #bfff9d;
+  --c2: #63c15c;
+  --c3: #3d5f91;
+  --halo: rgba(99, 193, 92, .34);
+  --glow: rgba(191, 255, 157, .52);
+  --spark: #f1ffe9;
+}
+
+
+.perlepluie-resultat {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  margin: 18px 0 8px;
+  padding: 14px 50px 14px 14px;
+  border-radius: 18px;
+  border: 1px solid var(--color9);
+  box-shadow: var(--glass);
+  background: var(--blanc);
+}
+
+.perlepluie-resultat .perle-card {
+  margin: 0;
+}
+
+.perlepluie-infos {
+  font: 13px Calibri, Arial, sans-serif;
+  color: var(--color11);
+  height: 75px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  line-height: 1.35;
+}
+
+.perlepluie-infos strong {
+  display: block;
+  font: bold 16px Calibri;
+  color: var(--color3);
+}
+
+.resultatperle {
+  font: 18px 'Glow Night';
+  color: var(--color9);
+  text-transform: uppercase;
+}
+
+.perlepluie-face {
+  opacity: 0.75;
+  font-size: 12px;
+}
+
+.perlepluie-rarete {
+  background: var(--color1);
+  border-radius: 10px;
+  padding: 2px 8px;
+  display: flex;
+  color: var(--color5);
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+}
+
+.perle-card {
+  width: 88px;
+  min-height: 88px;
+  display: flex;
+  padding: 0;
+  border-radius: 18px;
+  background: none;
+  border: 1px solid var(--color9);
+  text-align: center;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
+}
+
+.perle-card b {
+  display: none;
+}
+
+.user-collection {
+  position: absolute;
+  margin-top: 375px;
+  padding: 15px;
+  width: 68px;
+  display: flex;
+  font-size: 34px;
+  height: 68px;
+  border-radius: 10px;
+  background: var(--color9);
+  align-items: center;
+  justify-content: center;
+  margin-left: 586px;
+  cursor: pointer;
+}
+
+
+/* ================================
+   COLLECTION DE PERLES — PROFIL
+================================ */
+
+.ppk-profil,
+.ppk-profil2 {
+  position: relative;
+}
+
+.ppk-profil .infos-personnage {
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.ppk-profil .user-collection {
+  position: absolute;
+  z-index: 20;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.ppk-profil.user-collection-open .user-collection {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ================================
+   MODALE COLLECTION
+================================ */
+
+.ppk-profil .infos-personnage .awards_block_simple_wrapper {
+  display: none;
+}
+
+.ppk-profil .infos-personnage .awards_block_simple_wrapper.user-awards-open {
+  display: flex;
+  flex-direction: column;
+
+  position: absolute;
+  inset: 0;
+  z-index: 200;
+
+  padding: 18px;
+  box-sizing: border-box;
+
+  background: var(--color1);
+  color: var(--color5);
+  border-radius: inherit;
+
+  overflow: visible;
+
+  animation: perleCollectionOpen 0.18s cubic-bezier(.22, .61, .36, 1) both;
+}
+
+.ppk-profil .infos-personnage .awards_block_simple_wrapper.user-awards-closing {
+  animation: perleCollectionClose 0.14s ease both;
+  pointer-events: none;
+}
+
+@keyframes perleCollectionOpen {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes perleCollectionClose {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+/* Titre */
+.ppk-profil .infos-personnage .awards_block_simple_wrapper .h3 {
+  display: block;
+  flex: 0 0 auto;
+
+  margin: 0 45px 10px 0;
+
+  font: normal 24px 'Glow Night';
+  color: var(--color5);
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+/* Bouton fermer */
+.ppk-profil .infos-personnage .user-awards-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: var(--color2);
+  color: var(--blanc);
+
+  cursor: pointer;
+  z-index: 220;
+}
+
+/* ================================
+   GRILLE DES PERLES
+================================ */
+
+.ppk-profil .infos-personnage .awards_block_simple_wrapper.user-awards-open .awards_block.simple,
+.ppk-profil .awards_block.simple.perlepluie-collection-grid {
+  flex: 1;
+  min-height: 306px;
+  padding-bottom: 20px;
+
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  justify-content: center;
+  gap: 9px;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  padding-right: 12px;
+
+  scrollbar-width: none;
+}
+
+.ppk-profil .infos-personnage .awards_block_simple_wrapper.user-awards-open .awards_block.simple::-webkit-scrollbar,
+.ppk-profil .awards_block.simple.perlepluie-collection-grid::-webkit-scrollbar {
+  display: none;
+}
+
+/* Carte de perle */
+.ppk-profil .perle-collection-card {
+  width: 70px;
+  height: 70px;
+  min-height: 70px;
+  padding: 0;
+
+  border-radius: 16px;
+  background: var(--blanc);
+  border: 1px solid var(--color9);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-sizing: border-box;
+}
+
+/* Pas de texte sous les perles */
+.ppk-profil .perle-collection-card b {
+  display: none;
+}
+
+.ppk-profil .perle-collection-card.fa-tip {
+  position: relative;
+  overflow: visible;
+  z-index: 1;
+}
+
+.ppk-profil .perle-collection-card.fa-tip:hover {
+  z-index: 999;
+}
+
+/* Perles non obtenues */
+.ppk-profil .perle-collection-card.perle-locked {
+  opacity: 0.35;
+  filter: grayscale(1);
+}
+
+.ppk-profil .perle-collection-card.perle-locked .perle {
+  --c1: #c7c7c7;
+  --c2: #a9a9a9;
+  --c3: #888888;
+  --halo: rgba(160, 160, 160, .15);
+  --glow: rgba(160, 160, 160, .20);
+  --spark: #dddddd;
+}
+
+.ppk-profil .perle-collection-card.perle-locked .spark,
+.ppk-profil .perle-collection-card.perle-locked .constellation {
+  opacity: 0.25;
+  filter: grayscale(1);
+}
+
+/* On désactive les tooltips natifs seulement sur les perles */
+.ppk-profil .perle-collection-card.fa-tip::before,
+.ppk-profil .perle-collection-card.fa-tip::after {
+  display: none !important;
+  content: none !important;
+}
+
+/* ================================
+   TOOLTIP FLOTTANT DES PERLES
+================================ */
+
+#perlepluie-floating-tip {
+  position: fixed;
+  z-index: 999999;
+  pointer-events: none;
+
+  background: var(--color11);
+  color: var(--blanc);
+  padding: 8px 10px;
+  border-radius: 10px;
+  box-shadow: 2px 3px 5px rgba(17, 3, 39, 0.7);
+
+  font: 13px / 1.3 Calibri;
+  line-height: 15px;
+  text-align: center;
+  white-space: nowrap;
+
+  opacity: 0;
+  transform: translateX(-50%) translateY(8px) scale(0.96);
+
+  transition:
+    opacity 0.18s ease,
+    transform 0.18s ease;
+}
+
+#perlepluie-floating-tip.is-visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0) scale(1);
+  animation: perleTipIn 0.22s ease both;
+}
+
+#perlepluie-floating-tip strong {
+  font-weight: 700;
+}
+
+@keyframes perleTipIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(8px) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+}
