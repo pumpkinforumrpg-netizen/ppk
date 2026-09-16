@@ -718,13 +718,6 @@ const avatarsCatalog = [
     faceclaimSourceType: "Série",
     status: "Will Gramah (par Automne)"
   },
-            {
-    avatar: "https://i.redd.it/7yipg8jfekwe1.jpeg",
-    faceclaimName: "Réservé",
-    faceclaimSource: "My Hero Academia",
-    faceclaimSourceType: "Manga",
-    status: "Dabi/Toya (par Cannelle)"
-  },
     {
     avatar: "https://pbs.twimg.com/media/F-ALPOoX0AAGHdK.jpg",
     faceclaimName: "Réservé",
@@ -1122,6 +1115,27 @@ const characters = [
       relicForm: ""
     },
           {
+      id: "Absinthe",
+      pseudo: "Absinthe",
+      isPnj: false,
+      origin: "familier",
+      jobTitle: "Cuisinier",
+      workplaceName: "Un bon moment",
+      workplaceType: "Restaurant",
+      workDistrict: "Centre-ville",
+      presentationLink: "https://pumpkinsrpg.forumactif.com/t495-absinthe-jusqu-a-la-derniere-goute-en-cours",
+      profileLink: "https://pumpkinsrpg.forumactif.com/u119",
+      avatar: "https://sig.grumpybumpers.com/host/Absintherpg.gif",
+      faceclaimName: "Dabi/Toya",
+      faceclaimSource: "My Hero Academia",
+      faceclaimSourceType: "Manga",
+      powerName: "Analyse",
+      powerDescription: " Repère en surbrillance les points faibles physique des gens.",
+      magicDomain: "Combat",
+      animalForm: "Martre",
+      relicForm: ""
+    },
+          {
       id: "Luna",
       pseudo: "Luna",
       isPnj: false,
@@ -1186,6 +1200,7 @@ const characters = [
     },
         {
       id: "Cannelle",
+      multiAccountId: "Absinthe",
       pseudo: "Cannelle",
       isPnj: false,
       origin: "familier",
@@ -2319,6 +2334,10 @@ const reservedNames = [
     scenarioAvailable: true,
     scenarioLink: "https://pumpkinsrpg.forumactif.com/t38-scenarios-preliens"
   },
+   {
+    characterId: "Absinthe",
+    scenarioAvailable: false
+  },
   {
     characterId: "Aconit",
     scenarioAvailable: false
@@ -2516,6 +2535,10 @@ const reservedNames = [
     characterId: "Vanille",
     scenarioAvailable: false
   }
+   {
+    name: "Whisky",
+    scenarioAvailable: false
+  },
 ];
 
 function enhanceRegisterUI() {
