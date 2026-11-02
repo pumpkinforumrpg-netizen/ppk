@@ -1359,12 +1359,19 @@
     --halo: rgb(193 125 255 / 14%);
     --glow: rgb(238 191 234 / 32%);
 }
-#ronc {
+#ronce {
     --c1: #06173a;
-    --c2: #92e2e0;
-    --c3: #fff999;
-    --halo: rgb(193 125 255 / 14%);
-    --glow: rgb(238 191 234 / 32%);
+    --c2: #fff999;
+    --c3: #92e2e0;
+    --halo: rgb(39 225 146 / 14%);
+    --glow: rgb(114 203 165 / 32%);
+}
+#brow {
+    --c1: #7b1aaf;
+    --c2: #0cfbdab8;
+    --c3: #38128e;
+    --halo: rgb(40 39 225 / 14%);
+    --glow: rgb(19 38 167 / 32%);
 }
 
 /* LEGENDAIRES : DEGRADES + SPARK */
